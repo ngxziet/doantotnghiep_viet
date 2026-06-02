@@ -6,21 +6,21 @@ namespace RobotConfig {
 
 static constexpr float PI_F = 3.14159265358979323846f;
 
-static constexpr int MOTOR_LEFT_IN1 = 16;
-static constexpr int MOTOR_LEFT_IN2 = 17;
-static constexpr int MOTOR_LEFT_ENA = 25;
-static constexpr int MOTOR_RIGHT_IN3 = 18;
-static constexpr int MOTOR_RIGHT_IN4 = 19;
-static constexpr int MOTOR_RIGHT_ENB = 33;
+static constexpr int MOTOR_LEFT_IN1 = 12;
+static constexpr int MOTOR_LEFT_IN2 = 13;
+static constexpr int MOTOR_LEFT_ENA = 14;
+static constexpr int MOTOR_RIGHT_IN3 = 26;
+static constexpr int MOTOR_RIGHT_IN4 = 27;
+static constexpr int MOTOR_RIGHT_ENB = 25;
 
 static constexpr int ENCODER_LEFT_PIN = 34;
-static constexpr int ENCODER_RIGHT_PIN = 35;
+static constexpr int ENCODER_RIGHT_PIN = 32;
 
 static constexpr int MPU6050_SDA_PIN = 21;
 static constexpr int MPU6050_SCL_PIN = 22;
 
 static constexpr int ULTRASONIC_TRIG_PIN = 5;
-static constexpr int ULTRASONIC_ECHO_PIN = 26;
+static constexpr int ULTRASONIC_ECHO_PIN = 18;
 
 static constexpr int BUZZER_PIN = 4;
 
