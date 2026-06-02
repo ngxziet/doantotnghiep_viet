@@ -53,7 +53,8 @@ static constexpr int DRIVE_SLEW_STEP = 18;
 static constexpr int DRIVE_SLOWDOWN_PULSES = 12;
 static constexpr int DRIVE_STEER_MAX = 45;
 static constexpr float DRIVE_HEADING_GAIN = 95.0f;
-static constexpr float DRIVE_ENCODER_BALANCE_GAIN = 2.2f;
+static constexpr float DRIVE_ENCODER_BALANCE_GAIN = 1.2f;
+static constexpr float DRIVE_HEADING_DEADBAND_RAD = 3.0f * PI_F / 180.0f;
 
 // Nudge rotation: fixed-burst step-stop-measure for all rotation
 static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;

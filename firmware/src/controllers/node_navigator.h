@@ -17,7 +17,8 @@ public:
 
     void update(const Pose& pose, MotorDriver& motors,
                 Encoder& leftEncoder, Encoder& rightEncoder,
-                CalibrationManager& calibration, bool imuAvailable);
+                CalibrationManager& calibration, bool imuAvailable,
+                float imuHeadingRad = 0.0f);
 
     bool isActive() const;
     bool isDrivingStraight() const;
@@ -80,7 +81,8 @@ private:
                              Encoder& leftEncoder, Encoder& rightEncoder);
     void _handleDrive(const Pose& pose, MotorDriver& motors,
                       Encoder& leftEncoder, Encoder& rightEncoder,
-                      CalibrationManager& calibration, bool imuAvailable);
+                      CalibrationManager& calibration, bool imuAvailable,
+                      float imuHeadingRad);
     void _handleNodePause(const Pose& pose, MotorDriver& motors);
 
     void _scheduleBeeps(int count);
