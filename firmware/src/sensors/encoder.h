@@ -38,6 +38,12 @@ private:
 
     volatile long _pulseCount;
     volatile int  _direction;
+    volatile unsigned long _lastPulseMicros;
+
+    // Minimum microseconds between valid pulses (EMI noise filter)
+    // At max speed ~10 rev/s * 20 pulses/rev = 200 Hz → 5000us between pulses
+    // 1500us debounce filters noise while allowing up to 666 pulses/s
+    static constexpr unsigned long MIN_PULSE_INTERVAL_US = 1500;
 
     // Velocity tracking
     long  _lastPulseSnapshot;

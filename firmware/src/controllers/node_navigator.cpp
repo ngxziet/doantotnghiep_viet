@@ -255,7 +255,21 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
         return;
     }
 
-    if (fastProgress > _targetPulses + 30 && trustedProgress < _targetPulses / 2) {
+    // Debug: log encoder progress every 200ms during drive
+    static unsigned long lastDriveDebugMs = 0;
+    if (millis() - lastDriveDebugMs >= 200) {
+        lastDriveDebugMs = millis();
+        Serial.printf("DRIVE enc L=%ld R=%ld target=%d pwm=%d/%d heading=%.1f\n",
+                      leftProgress, rightProgress, _targetPulses,
+                      motors.getLeftSpeed(), motors.getRightSpeed(),
+                      pose.theta * 180.0f / PI);
+    }
+
+    // Only check mismatch after 800ms of driving (let slew ramp + balance stabilize)
+    if (millis() - _stateStartMs > 800 &&
+        fastProgress > _targetPulses + 40 && trustedProgress < _targetPulses / 3) {
+        Serial.printf("FAULT encoder_mismatch L=%ld R=%ld target=%d\n",
+                      leftProgress, rightProgress, _targetPulses);
         _setFault("encoder_mismatch", motors);
         return;
     }
