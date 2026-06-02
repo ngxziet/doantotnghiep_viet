@@ -322,6 +322,13 @@ void loop() {
     odometry.update(leftPulses, rightPulses, imuHeading,
                     imuConnected, suppressTranslation);
 
+    // During straight driving, override heading with pure IMU.
+    // Encoder differential is entirely from heading correction, not real rotation.
+    if (navigator.isDrivingStraight() && imuConnected) {
+        Pose p = odometry.getPose();
+        odometry.setPose(p.x, p.y, imuHeading);
+    }
+
     float obstacleDist = MAX_RANGE_CM;
     bool emergency = false;
     if (USE_ULTRASONIC) {
