@@ -4,6 +4,15 @@
 
 void CalibrationManager::begin() {
     _prefs.begin("robot-cal", false);
+
+    int storedVersion = _prefs.getInt("ver", 0);
+    if (storedVersion != RobotConfig::CONFIG_VERSION) {
+        Serial.printf("Config version changed (%d -> %d), resetting calibration\n",
+                      storedVersion, RobotConfig::CONFIG_VERSION);
+        _prefs.clear();
+        _prefs.putInt("ver", RobotConfig::CONFIG_VERSION);
+    }
+
     _leftTrim = _prefs.getFloat("left", 1.0f);
     _rightTrim = _prefs.getFloat("right", 1.0f);
     _encoderScale = _prefs.getFloat("enc", 1.0f);

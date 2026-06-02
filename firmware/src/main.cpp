@@ -65,8 +65,14 @@ static void setTemporaryStatus(const char* status, unsigned long durationMs) {
 }
 
 static bool testStepActive = false;
+static float savedStepX = 0.0f;
+static float savedStepY = 0.0f;
 
 static void stopManual() {
+    if (testStepActive) {
+        Pose pose = odometry.getPose();
+        odometry.setPose(savedStepX, savedStepY, pose.theta);
+    }
     manualDurationMs = 0;
     manualLeftSpeed = 0;
     manualRightSpeed = 0;
@@ -142,6 +148,9 @@ static void applyStepCommand(const UdpCommand& command) {
         return;
     }
 
+    Pose pose = odometry.getPose();
+    savedStepX = pose.x;
+    savedStepY = pose.y;
     testStepActive = true;
     manualStartMs = millis();
     manualDurationMs = RobotConfig::TEST_STEP_DURATION_MS;

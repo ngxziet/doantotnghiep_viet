@@ -24,6 +24,9 @@ static constexpr int ULTRASONIC_ECHO_PIN = 18;
 
 static constexpr int BUZZER_PIN = 4;
 
+// Bump this when pin mapping or hardware changes to auto-reset calibration
+static constexpr int CONFIG_VERSION = 2;
+
 static constexpr const char* WIFI_SSID = "RobotCar";
 static constexpr const char* WIFI_PASS = "12345678";
 static constexpr int WIFI_CHANNEL = 6;
