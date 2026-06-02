@@ -59,9 +59,9 @@ private:
     long _driveStartRight = 0;
     unsigned long _stateStartMs = 0;
     unsigned long _pauseUntilMs = 0;
-    unsigned long _nudgeBurstStartMs = 0;
-    int _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
-    float _headingBeforeNudge = 0.0f;
+    unsigned long _turnStableSinceMs = 0;
+    int _rotateMinPwm = RobotConfig::ROTATE_MIN_PWM;
+    float _headingBeforeRotate = 0.0f;
 
     bool _snapPending = false;
     float _snapX = 0.0f;
@@ -75,6 +75,7 @@ private:
 
     void _beginRotateOrDrive(const Pose& pose);
     void _beginDrive(Encoder& leftEncoder, Encoder& rightEncoder);
+    void _handleStepTurn(const Pose& pose, MotorDriver& motors);
     void _handleRotate(const Pose& pose, MotorDriver& motors);
     void _handleRotateSettle(const Pose& pose, MotorDriver& motors,
                              Encoder& leftEncoder, Encoder& rightEncoder);

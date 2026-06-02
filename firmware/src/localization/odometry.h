@@ -10,8 +10,6 @@ struct Pose {
 };
 
 // Complementary filter weight: 0 = pure encoder, 1 = pure IMU.
-// During straight driving, heading is overridden with pure IMU in main.cpp,
-// so this alpha only applies to non-drive states (manual, idle).
 static constexpr float ODOMETRY_ALPHA = 0.35f;
 
 // Must match encoder constants
