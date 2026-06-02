@@ -40,17 +40,15 @@ static unsigned long lastLoopMs = 0;
 static unsigned long lastTelemetryMs = 0;
 static unsigned long lastDebugMs = 0;
 static unsigned long lastWifiCheckMs = 0;
-static unsigned long manualUntilMs = 0;
+static unsigned long manualStartMs = 0;
+static unsigned long manualDurationMs = 0;
 static int manualLeftSpeed = 0;
 static int manualRightSpeed = 0;
 static bool hadStation = false;
 static bool imuReady = false;
 static char overrideStatus[24] = "";
-static unsigned long overrideStatusUntilMs = 0;
-
-static bool testStepActive = false;
-static float savedStepX = 0.0f;
-static float savedStepY = 0.0f;
+static unsigned long overrideStartMs = 0;
+static unsigned long overrideDurationMs = 0;
 
 static float normalizeAngle(float angle) {
     if (!isfinite(angle)) return 0.0f;
@@ -62,15 +60,20 @@ static float normalizeAngle(float angle) {
 static void setTemporaryStatus(const char* status, unsigned long durationMs) {
     strncpy(overrideStatus, status, sizeof(overrideStatus) - 1);
     overrideStatus[sizeof(overrideStatus) - 1] = '\0';
-    overrideStatusUntilMs = millis() + durationMs;
+    overrideStartMs = millis();
+    overrideDurationMs = durationMs;
 }
+
+static bool testStepActive = false;
+static float savedStepX = 0.0f;
+static float savedStepY = 0.0f;
 
 static void stopManual() {
     if (testStepActive) {
         Pose pose = odometry.getPose();
         odometry.setPose(savedStepX, savedStepY, pose.theta);
     }
-    manualUntilMs = 0;
+    manualDurationMs = 0;
     manualLeftSpeed = 0;
     manualRightSpeed = 0;
     testStepActive = false;
@@ -113,7 +116,8 @@ static void applyManualCommand(const UdpCommand& command) {
     }
 
     navigator.clear();
-    manualUntilMs = millis() + RobotConfig::MANUAL_TIMEOUT_MS;
+    manualStartMs = millis();
+    manualDurationMs = RobotConfig::MANUAL_TIMEOUT_MS;
 }
 
 static void applyStepCommand(const UdpCommand& command) {
@@ -148,7 +152,8 @@ static void applyStepCommand(const UdpCommand& command) {
     savedStepX = pose.x;
     savedStepY = pose.y;
     testStepActive = true;
-    manualUntilMs = millis() + RobotConfig::TEST_STEP_DURATION_MS;
+    manualStartMs = millis();
+    manualDurationMs = RobotConfig::TEST_STEP_DURATION_MS;
 }
 
 static void resetPose() {
@@ -287,8 +292,7 @@ void loop() {
             hadStation = true;
         } else if (hadStation) {
             Serial.println("WiFi station lost, refreshing AP...");
-            WiFi.softAP(RobotConfig::WIFI_SSID, RobotConfig::WIFI_PASS,
-                        RobotConfig::WIFI_CHANNEL);
+            WiFi.softAP(RobotConfig::WIFI_SSID, RobotConfig::WIFI_PASS, RobotConfig::WIFI_CHANNEL);
             hadStation = false;
         }
     }
@@ -313,10 +317,17 @@ void loop() {
     long rightPulses = encRight.getPulseCount();
     float imuHeading = imuConnected ? imu.getAbsoluteYawRad() : 0.0f;
     bool suppressTranslation = navigator.isRotating() ||
-        testStepActive ||
+        navigator.isStep() || testStepActive ||
         (motors.getLeftSpeed() * motors.getRightSpeed() < 0);
     odometry.update(leftPulses, rightPulses, imuHeading,
                     imuConnected, suppressTranslation);
+
+    // During straight driving, override heading with pure IMU.
+    // Encoder differential is entirely from heading correction, not real rotation.
+    if (navigator.isDrivingStraight() && imuConnected) {
+        Pose p = odometry.getPose();
+        odometry.setPose(p.x, p.y, imuHeading);
+    }
 
     float obstacleDist = MAX_RANGE_CM;
     bool emergency = false;
@@ -330,7 +341,7 @@ void loop() {
         navigator.clear();
         stopManual();
         setTemporaryStatus("emergency_stop", 1000);
-    } else if (now < manualUntilMs) {
+    } else if (manualDurationMs > 0 && (now - manualStartMs) < manualDurationMs) {
         motors.setLeft(manualLeftSpeed);
         motors.setRight(manualRightSpeed);
     } else {
@@ -343,8 +354,7 @@ void loop() {
                 Pose current = odometry.getPose();
                 odometry.setPose(current.x, current.y, navigator.snapTheta());
             } else {
-                odometry.setPose(navigator.snapX(), navigator.snapY(),
-                                 navigator.snapTheta());
+                odometry.setPose(navigator.snapX(), navigator.snapY(), navigator.snapTheta());
             }
             navigator.acknowledgeSnap();
         }
@@ -355,12 +365,13 @@ void loop() {
     calibration.update();
 
     const char* status = navigator.status();
-    if (now < manualUntilMs) {
+    bool manualActive = manualDurationMs > 0 && (now - manualStartMs) < manualDurationMs;
+    if (manualActive) {
         status = (manualLeftSpeed == 0 && manualRightSpeed == 0) ? "idle" : "moving";
     }
-    if (overrideStatus[0] && now < overrideStatusUntilMs) {
+    if (overrideStatus[0] && (now - overrideStartMs) < overrideDurationMs) {
         status = overrideStatus;
-    } else if (overrideStatus[0] && now >= overrideStatusUntilMs) {
+    } else if (overrideStatus[0]) {
         overrideStatus[0] = '\0';
     }
     if (!imuConnected && navigator.isActive()) {
