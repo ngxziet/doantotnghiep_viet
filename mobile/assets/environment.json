@@ -1,0 +1,1503 @@
+﻿{
+    "metadata":  {
+                     "description":  "5m x 5m waypoint grid with selected middle corridors",
+                     "coordinate_unit":  "meters",
+                     "coordinate_range":  "0.0 to 5.0",
+                     "grid_step_m":  0.5,
+                     "version":  "2.4"
+                 },
+    "nodes":  [
+                  {
+                      "id":  "N0000",
+                      "x":  0,
+                      "y":  0,
+                      "label":  "0,0"
+                  },
+                  {
+                      "id":  "N0500",
+                      "x":  0.5,
+                      "y":  0,
+                      "label":  "0.5,0"
+                  },
+                  {
+                      "id":  "N1000",
+                      "x":  1,
+                      "y":  0,
+                      "label":  "1,0"
+                  },
+                  {
+                      "id":  "N1500",
+                      "x":  1.5,
+                      "y":  0,
+                      "label":  "1.5,0"
+                  },
+                  {
+                      "id":  "N2000",
+                      "x":  2,
+                      "y":  0,
+                      "label":  "2,0"
+                  },
+                  {
+                      "id":  "N2500",
+                      "x":  2.5,
+                      "y":  0,
+                      "label":  "2.5,0"
+                  },
+                  {
+                      "id":  "N3000",
+                      "x":  3,
+                      "y":  0,
+                      "label":  "3,0"
+                  },
+                  {
+                      "id":  "N3500",
+                      "x":  3.5,
+                      "y":  0,
+                      "label":  "3.5,0"
+                  },
+                  {
+                      "id":  "N4000",
+                      "x":  4,
+                      "y":  0,
+                      "label":  "4,0"
+                  },
+                  {
+                      "id":  "N4500",
+                      "x":  4.5,
+                      "y":  0,
+                      "label":  "4.5,0"
+                  },
+                  {
+                      "id":  "N5000",
+                      "x":  5,
+                      "y":  0,
+                      "label":  "5,0"
+                  },
+                  {
+                      "id":  "N0005",
+                      "x":  0,
+                      "y":  0.5,
+                      "label":  "0,0.5"
+                  },
+                  {
+                      "id":  "N0505",
+                      "x":  0.5,
+                      "y":  0.5,
+                      "label":  "0.5,0.5"
+                  },
+                  {
+                      "id":  "N1005",
+                      "x":  1,
+                      "y":  0.5,
+                      "label":  "1,0.5"
+                  },
+                  {
+                      "id":  "N1505",
+                      "x":  1.5,
+                      "y":  0.5,
+                      "label":  "1.5,0.5"
+                  },
+                  {
+                      "id":  "N2005",
+                      "x":  2,
+                      "y":  0.5,
+                      "label":  "2,0.5"
+                  },
+                  {
+                      "id":  "N2505",
+                      "x":  2.5,
+                      "y":  0.5,
+                      "label":  "2.5,0.5"
+                  },
+                  {
+                      "id":  "N3005",
+                      "x":  3,
+                      "y":  0.5,
+                      "label":  "3,0.5"
+                  },
+                  {
+                      "id":  "N3505",
+                      "x":  3.5,
+                      "y":  0.5,
+                      "label":  "3.5,0.5"
+                  },
+                  {
+                      "id":  "N4005",
+                      "x":  4,
+                      "y":  0.5,
+                      "label":  "4,0.5"
+                  },
+                  {
+                      "id":  "N4505",
+                      "x":  4.5,
+                      "y":  0.5,
+                      "label":  "4.5,0.5"
+                  },
+                  {
+                      "id":  "N5005",
+                      "x":  5,
+                      "y":  0.5,
+                      "label":  "5,0.5"
+                  },
+                  {
+                      "id":  "N0010",
+                      "x":  0,
+                      "y":  1,
+                      "label":  "0,1"
+                  },
+                  {
+                      "id":  "N0510",
+                      "x":  0.5,
+                      "y":  1,
+                      "label":  "0.5,1"
+                  },
+                  {
+                      "id":  "N2010",
+                      "x":  2,
+                      "y":  1,
+                      "label":  "2,1"
+                  },
+                  {
+                      "id":  "N2510",
+                      "x":  2.5,
+                      "y":  1,
+                      "label":  "2.5,1"
+                  },
+                  {
+                      "id":  "N3010",
+                      "x":  3,
+                      "y":  1,
+                      "label":  "3,1"
+                  },
+                  {
+                      "id":  "N4510",
+                      "x":  4.5,
+                      "y":  1,
+                      "label":  "4.5,1"
+                  },
+                  {
+                      "id":  "N5010",
+                      "x":  5,
+                      "y":  1,
+                      "label":  "5,1"
+                  },
+                  {
+                      "id":  "N0015",
+                      "x":  0,
+                      "y":  1.5,
+                      "label":  "0,1.5"
+                  },
+                  {
+                      "id":  "N0515",
+                      "x":  0.5,
+                      "y":  1.5,
+                      "label":  "0.5,1.5"
+                  },
+                  {
+                      "id":  "N2015",
+                      "x":  2,
+                      "y":  1.5,
+                      "label":  "2,1.5"
+                  },
+                  {
+                      "id":  "N2515",
+                      "x":  2.5,
+                      "y":  1.5,
+                      "label":  "2.5,1.5"
+                  },
+                  {
+                      "id":  "N3015",
+                      "x":  3,
+                      "y":  1.5,
+                      "label":  "3,1.5"
+                  },
+                  {
+                      "id":  "N4515",
+                      "x":  4.5,
+                      "y":  1.5,
+                      "label":  "4.5,1.5"
+                  },
+                  {
+                      "id":  "N5015",
+                      "x":  5,
+                      "y":  1.5,
+                      "label":  "5,1.5"
+                  },
+                  {
+                      "id":  "N0020",
+                      "x":  0,
+                      "y":  2,
+                      "label":  "0,2"
+                  },
+                  {
+                      "id":  "N0520",
+                      "x":  0.5,
+                      "y":  2,
+                      "label":  "0.5,2"
+                  },
+                  {
+                      "id":  "N1020",
+                      "x":  1,
+                      "y":  2,
+                      "label":  "1,2"
+                  },
+                  {
+                      "id":  "N1520",
+                      "x":  1.5,
+                      "y":  2,
+                      "label":  "1.5,2"
+                  },
+                  {
+                      "id":  "N2020",
+                      "x":  2,
+                      "y":  2,
+                      "label":  "2,2"
+                  },
+                  {
+                      "id":  "N2520",
+                      "x":  2.5,
+                      "y":  2,
+                      "label":  "2.5,2"
+                  },
+                  {
+                      "id":  "N3020",
+                      "x":  3,
+                      "y":  2,
+                      "label":  "3,2"
+                  },
+                  {
+                      "id":  "N3520",
+                      "x":  3.5,
+                      "y":  2,
+                      "label":  "3.5,2"
+                  },
+                  {
+                      "id":  "N4020",
+                      "x":  4,
+                      "y":  2,
+                      "label":  "4,2"
+                  },
+                  {
+                      "id":  "N4520",
+                      "x":  4.5,
+                      "y":  2,
+                      "label":  "4.5,2"
+                  },
+                  {
+                      "id":  "N5020",
+                      "x":  5,
+                      "y":  2,
+                      "label":  "5,2"
+                  },
+                  {
+                      "id":  "N0025",
+                      "x":  0,
+                      "y":  2.5,
+                      "label":  "0,2.5"
+                  },
+                  {
+                      "id":  "N0525",
+                      "x":  0.5,
+                      "y":  2.5,
+                      "label":  "0.5,2.5"
+                  },
+                  {
+                      "id":  "N1025",
+                      "x":  1,
+                      "y":  2.5,
+                      "label":  "1,2.5"
+                  },
+                  {
+                      "id":  "N1525",
+                      "x":  1.5,
+                      "y":  2.5,
+                      "label":  "1.5,2.5"
+                  },
+                  {
+                      "id":  "N2025",
+                      "x":  2,
+                      "y":  2.5,
+                      "label":  "2,2.5"
+                  },
+                  {
+                      "id":  "N2525",
+                      "x":  2.5,
+                      "y":  2.5,
+                      "label":  "2.5,2.5"
+                  },
+                  {
+                      "id":  "N3025",
+                      "x":  3,
+                      "y":  2.5,
+                      "label":  "3,2.5"
+                  },
+                  {
+                      "id":  "N3525",
+                      "x":  3.5,
+                      "y":  2.5,
+                      "label":  "3.5,2.5"
+                  },
+                  {
+                      "id":  "N4025",
+                      "x":  4,
+                      "y":  2.5,
+                      "label":  "4,2.5"
+                  },
+                  {
+                      "id":  "N4525",
+                      "x":  4.5,
+                      "y":  2.5,
+                      "label":  "4.5,2.5"
+                  },
+                  {
+                      "id":  "N5025",
+                      "x":  5,
+                      "y":  2.5,
+                      "label":  "5,2.5"
+                  },
+                  {
+                      "id":  "N0030",
+                      "x":  0,
+                      "y":  3,
+                      "label":  "0,3"
+                  },
+                  {
+                      "id":  "N0530",
+                      "x":  0.5,
+                      "y":  3,
+                      "label":  "0.5,3"
+                  },
+                  {
+                      "id":  "N1030",
+                      "x":  1,
+                      "y":  3,
+                      "label":  "1,3"
+                  },
+                  {
+                      "id":  "N1530",
+                      "x":  1.5,
+                      "y":  3,
+                      "label":  "1.5,3"
+                  },
+                  {
+                      "id":  "N2030",
+                      "x":  2,
+                      "y":  3,
+                      "label":  "2,3"
+                  },
+                  {
+                      "id":  "N2530",
+                      "x":  2.5,
+                      "y":  3,
+                      "label":  "2.5,3"
+                  },
+                  {
+                      "id":  "N3030",
+                      "x":  3,
+                      "y":  3,
+                      "label":  "3,3"
+                  },
+                  {
+                      "id":  "N3530",
+                      "x":  3.5,
+                      "y":  3,
+                      "label":  "3.5,3"
+                  },
+                  {
+                      "id":  "N4030",
+                      "x":  4,
+                      "y":  3,
+                      "label":  "4,3"
+                  },
+                  {
+                      "id":  "N4530",
+                      "x":  4.5,
+                      "y":  3,
+                      "label":  "4.5,3"
+                  },
+                  {
+                      "id":  "N5030",
+                      "x":  5,
+                      "y":  3,
+                      "label":  "5,3"
+                  },
+                  {
+                      "id":  "N0035",
+                      "x":  0,
+                      "y":  3.5,
+                      "label":  "0,3.5"
+                  },
+                  {
+                      "id":  "N0535",
+                      "x":  0.5,
+                      "y":  3.5,
+                      "label":  "0.5,3.5"
+                  },
+                  {
+                      "id":  "N2035",
+                      "x":  2,
+                      "y":  3.5,
+                      "label":  "2,3.5"
+                  },
+                  {
+                      "id":  "N2535",
+                      "x":  2.5,
+                      "y":  3.5,
+                      "label":  "2.5,3.5"
+                  },
+                  {
+                      "id":  "N3035",
+                      "x":  3,
+                      "y":  3.5,
+                      "label":  "3,3.5"
+                  },
+                  {
+                      "id":  "N4535",
+                      "x":  4.5,
+                      "y":  3.5,
+                      "label":  "4.5,3.5"
+                  },
+                  {
+                      "id":  "N5035",
+                      "x":  5,
+                      "y":  3.5,
+                      "label":  "5,3.5"
+                  },
+                  {
+                      "id":  "N0040",
+                      "x":  0,
+                      "y":  4,
+                      "label":  "0,4"
+                  },
+                  {
+                      "id":  "N0540",
+                      "x":  0.5,
+                      "y":  4,
+                      "label":  "0.5,4"
+                  },
+                  {
+                      "id":  "N2040",
+                      "x":  2,
+                      "y":  4,
+                      "label":  "2,4"
+                  },
+                  {
+                      "id":  "N2540",
+                      "x":  2.5,
+                      "y":  4,
+                      "label":  "2.5,4"
+                  },
+                  {
+                      "id":  "N3040",
+                      "x":  3,
+                      "y":  4,
+                      "label":  "3,4"
+                  },
+                  {
+                      "id":  "N4540",
+                      "x":  4.5,
+                      "y":  4,
+                      "label":  "4.5,4"
+                  },
+                  {
+                      "id":  "N5040",
+                      "x":  5,
+                      "y":  4,
+                      "label":  "5,4"
+                  },
+                  {
+                      "id":  "N0045",
+                      "x":  0,
+                      "y":  4.5,
+                      "label":  "0,4.5"
+                  },
+                  {
+                      "id":  "N0545",
+                      "x":  0.5,
+                      "y":  4.5,
+                      "label":  "0.5,4.5"
+                  },
+                  {
+                      "id":  "N1045",
+                      "x":  1,
+                      "y":  4.5,
+                      "label":  "1,4.5"
+                  },
+                  {
+                      "id":  "N1545",
+                      "x":  1.5,
+                      "y":  4.5,
+                      "label":  "1.5,4.5"
+                  },
+                  {
+                      "id":  "N2045",
+                      "x":  2,
+                      "y":  4.5,
+                      "label":  "2,4.5"
+                  },
+                  {
+                      "id":  "N2545",
+                      "x":  2.5,
+                      "y":  4.5,
+                      "label":  "2.5,4.5"
+                  },
+                  {
+                      "id":  "N3045",
+                      "x":  3,
+                      "y":  4.5,
+                      "label":  "3,4.5"
+                  },
+                  {
+                      "id":  "N3545",
+                      "x":  3.5,
+                      "y":  4.5,
+                      "label":  "3.5,4.5"
+                  },
+                  {
+                      "id":  "N4045",
+                      "x":  4,
+                      "y":  4.5,
+                      "label":  "4,4.5"
+                  },
+                  {
+                      "id":  "N4545",
+                      "x":  4.5,
+                      "y":  4.5,
+                      "label":  "4.5,4.5"
+                  },
+                  {
+                      "id":  "N5045",
+                      "x":  5,
+                      "y":  4.5,
+                      "label":  "5,4.5"
+                  },
+                  {
+                      "id":  "N0050",
+                      "x":  0,
+                      "y":  5,
+                      "label":  "0,5"
+                  },
+                  {
+                      "id":  "N0550",
+                      "x":  0.5,
+                      "y":  5,
+                      "label":  "0.5,5"
+                  },
+                  {
+                      "id":  "N1050",
+                      "x":  1,
+                      "y":  5,
+                      "label":  "1,5"
+                  },
+                  {
+                      "id":  "N1550",
+                      "x":  1.5,
+                      "y":  5,
+                      "label":  "1.5,5"
+                  },
+                  {
+                      "id":  "N2050",
+                      "x":  2,
+                      "y":  5,
+                      "label":  "2,5"
+                  },
+                  {
+                      "id":  "N2550",
+                      "x":  2.5,
+                      "y":  5,
+                      "label":  "2.5,5"
+                  },
+                  {
+                      "id":  "N3050",
+                      "x":  3,
+                      "y":  5,
+                      "label":  "3,5"
+                  },
+                  {
+                      "id":  "N3550",
+                      "x":  3.5,
+                      "y":  5,
+                      "label":  "3.5,5"
+                  },
+                  {
+                      "id":  "N4050",
+                      "x":  4,
+                      "y":  5,
+                      "label":  "4,5"
+                  },
+                  {
+                      "id":  "N4550",
+                      "x":  4.5,
+                      "y":  5,
+                      "label":  "4.5,5"
+                  },
+                  {
+                      "id":  "N5050",
+                      "x":  5,
+                      "y":  5,
+                      "label":  "5,5"
+                  }
+              ],
+    "edges":  [
+                  {
+                      "from":  "N0000",
+                      "to":  "N0500",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0000",
+                      "to":  "N0005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0500",
+                      "to":  "N1000",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0500",
+                      "to":  "N0505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1000",
+                      "to":  "N1500",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1000",
+                      "to":  "N1005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1500",
+                      "to":  "N2000",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1500",
+                      "to":  "N1505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2000",
+                      "to":  "N2500",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2000",
+                      "to":  "N2005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2500",
+                      "to":  "N3000",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2500",
+                      "to":  "N2505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3000",
+                      "to":  "N3500",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3000",
+                      "to":  "N3005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3500",
+                      "to":  "N4000",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3500",
+                      "to":  "N3505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4000",
+                      "to":  "N4500",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4000",
+                      "to":  "N4005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4500",
+                      "to":  "N5000",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4500",
+                      "to":  "N4505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5000",
+                      "to":  "N5005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0005",
+                      "to":  "N0505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0005",
+                      "to":  "N0010",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0505",
+                      "to":  "N1005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0505",
+                      "to":  "N0510",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1005",
+                      "to":  "N1505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1505",
+                      "to":  "N2005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2005",
+                      "to":  "N2505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2005",
+                      "to":  "N2010",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2505",
+                      "to":  "N3005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2505",
+                      "to":  "N2510",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3005",
+                      "to":  "N3505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3005",
+                      "to":  "N3010",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3505",
+                      "to":  "N4005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4005",
+                      "to":  "N4505",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4505",
+                      "to":  "N5005",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4505",
+                      "to":  "N4510",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5005",
+                      "to":  "N5010",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0010",
+                      "to":  "N0510",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0010",
+                      "to":  "N0015",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0510",
+                      "to":  "N0515",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2010",
+                      "to":  "N2510",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2010",
+                      "to":  "N2015",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2510",
+                      "to":  "N3010",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2510",
+                      "to":  "N2515",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3010",
+                      "to":  "N3015",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4510",
+                      "to":  "N5010",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4510",
+                      "to":  "N4515",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5010",
+                      "to":  "N5015",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0015",
+                      "to":  "N0515",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0015",
+                      "to":  "N0020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0515",
+                      "to":  "N0520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2015",
+                      "to":  "N2515",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2015",
+                      "to":  "N2020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2515",
+                      "to":  "N3015",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2515",
+                      "to":  "N2520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3015",
+                      "to":  "N3020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4515",
+                      "to":  "N5015",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4515",
+                      "to":  "N4520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5015",
+                      "to":  "N5020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0020",
+                      "to":  "N0520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0020",
+                      "to":  "N0025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0520",
+                      "to":  "N1020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0520",
+                      "to":  "N0525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1020",
+                      "to":  "N1520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1020",
+                      "to":  "N1025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1520",
+                      "to":  "N2020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1520",
+                      "to":  "N1525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2020",
+                      "to":  "N2520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2020",
+                      "to":  "N2025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2520",
+                      "to":  "N3020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2520",
+                      "to":  "N2525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3020",
+                      "to":  "N3520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3020",
+                      "to":  "N3025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3520",
+                      "to":  "N4020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3520",
+                      "to":  "N3525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4020",
+                      "to":  "N4520",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4020",
+                      "to":  "N4025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4520",
+                      "to":  "N5020",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4520",
+                      "to":  "N4525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5020",
+                      "to":  "N5025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0025",
+                      "to":  "N0525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0025",
+                      "to":  "N0030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0525",
+                      "to":  "N1025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0525",
+                      "to":  "N0530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1025",
+                      "to":  "N1525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1025",
+                      "to":  "N1030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1525",
+                      "to":  "N2025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1525",
+                      "to":  "N1530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2025",
+                      "to":  "N2525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2025",
+                      "to":  "N2030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2525",
+                      "to":  "N3025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2525",
+                      "to":  "N2530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3025",
+                      "to":  "N3525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3025",
+                      "to":  "N3030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3525",
+                      "to":  "N4025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3525",
+                      "to":  "N3530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4025",
+                      "to":  "N4525",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4025",
+                      "to":  "N4030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4525",
+                      "to":  "N5025",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4525",
+                      "to":  "N4530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5025",
+                      "to":  "N5030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0030",
+                      "to":  "N0530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0030",
+                      "to":  "N0035",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0530",
+                      "to":  "N1030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0530",
+                      "to":  "N0535",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1030",
+                      "to":  "N1530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1530",
+                      "to":  "N2030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2030",
+                      "to":  "N2530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2030",
+                      "to":  "N2035",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2530",
+                      "to":  "N3030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2530",
+                      "to":  "N2535",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3030",
+                      "to":  "N3530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3030",
+                      "to":  "N3035",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3530",
+                      "to":  "N4030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4030",
+                      "to":  "N4530",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4530",
+                      "to":  "N5030",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4530",
+                      "to":  "N4535",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5030",
+                      "to":  "N5035",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0035",
+                      "to":  "N0535",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0035",
+                      "to":  "N0040",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0535",
+                      "to":  "N0540",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2035",
+                      "to":  "N2535",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2035",
+                      "to":  "N2040",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2535",
+                      "to":  "N3035",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2535",
+                      "to":  "N2540",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3035",
+                      "to":  "N3040",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4535",
+                      "to":  "N5035",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4535",
+                      "to":  "N4540",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5035",
+                      "to":  "N5040",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0040",
+                      "to":  "N0540",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0040",
+                      "to":  "N0045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0540",
+                      "to":  "N0545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2040",
+                      "to":  "N2540",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2040",
+                      "to":  "N2045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2540",
+                      "to":  "N3040",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2540",
+                      "to":  "N2545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3040",
+                      "to":  "N3045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4540",
+                      "to":  "N5040",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4540",
+                      "to":  "N4545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5040",
+                      "to":  "N5045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0045",
+                      "to":  "N0545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0045",
+                      "to":  "N0050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0545",
+                      "to":  "N1045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0545",
+                      "to":  "N0550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1045",
+                      "to":  "N1545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1045",
+                      "to":  "N1050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1545",
+                      "to":  "N2045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1545",
+                      "to":  "N1550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2045",
+                      "to":  "N2545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2045",
+                      "to":  "N2050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2545",
+                      "to":  "N3045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2545",
+                      "to":  "N2550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3045",
+                      "to":  "N3545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3045",
+                      "to":  "N3050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3545",
+                      "to":  "N4045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3545",
+                      "to":  "N3550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4045",
+                      "to":  "N4545",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4045",
+                      "to":  "N4050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4545",
+                      "to":  "N5045",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4545",
+                      "to":  "N4550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N5045",
+                      "to":  "N5050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0050",
+                      "to":  "N0550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N0550",
+                      "to":  "N1050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1050",
+                      "to":  "N1550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N1550",
+                      "to":  "N2050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2050",
+                      "to":  "N2550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N2550",
+                      "to":  "N3050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3050",
+                      "to":  "N3550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N3550",
+                      "to":  "N4050",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4050",
+                      "to":  "N4550",
+                      "bidirectional":  true
+                  },
+                  {
+                      "from":  "N4550",
+                      "to":  "N5050",
+                      "bidirectional":  true
+                  }
+              ]
+}
