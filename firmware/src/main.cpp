@@ -347,7 +347,7 @@ void loop() {
     } else {
         stopManual();
         Pose pose = odometry.getPose();
-        navigator.update(pose, motors, encLeft, encRight, calibration, imuConnected);
+        navigator.update(pose, motors, encLeft, encRight, calibration, imuConnected, imuHeading);
 
         if (navigator.hasSnap()) {
             if (navigator.isStep()) {

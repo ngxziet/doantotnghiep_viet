@@ -77,7 +77,8 @@ void NodeNavigator::clear() {
 
 void NodeNavigator::update(const Pose& pose, MotorDriver& motors,
                            Encoder& leftEncoder, Encoder& rightEncoder,
-                           CalibrationManager& calibration, bool imuAvailable) {
+                           CalibrationManager& calibration, bool imuAvailable,
+                           float imuHeadingRad) {
     _updateBuzzer();
 
     switch (_state) {
@@ -93,7 +94,7 @@ void NodeNavigator::update(const Pose& pose, MotorDriver& motors,
             return;
         case State::Drive:
             _handleDrive(pose, motors, leftEncoder, rightEncoder,
-                         calibration, imuAvailable);
+                         calibration, imuAvailable, imuHeadingRad);
             return;
         case State::NodePause:
             _handleNodePause(pose, motors);
@@ -234,7 +235,8 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
 
 void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                                  Encoder& leftEncoder, Encoder& rightEncoder,
-                                 CalibrationManager& calibration, bool imuAvailable) {
+                                 CalibrationManager& calibration, bool imuAvailable,
+                                 float imuHeadingRad) {
     long leftProgress = _absDelta(leftEncoder.getPulseCount(), _driveStartLeft);
     long rightProgress = _absDelta(rightEncoder.getPulseCount(), _driveStartRight);
     long avgProgress = (leftProgress + rightProgress) / 2;
@@ -271,14 +273,24 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                    RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_SPEED_PWM);
     }
 
+    // Heading correction from RAW IMU (not odometry) to avoid feedback loop
+    float headingError = _normalizeAngle(_targetHeading - imuHeadingRad);
+    int headingCorrection = 0;
+    if (imuAvailable && fabsf(headingError) > RobotConfig::DRIVE_HEADING_DEADBAND_RAD) {
+        headingCorrection = constrain(
+            (int)(headingError * RobotConfig::DRIVE_HEADING_GAIN),
+            -RobotConfig::DRIVE_STEER_MAX,
+            RobotConfig::DRIVE_STEER_MAX);
+    }
+
     int balanceCorrection = constrain((int)((rightProgress - leftProgress) *
                                       RobotConfig::DRIVE_ENCODER_BALANCE_GAIN),
                                       -RobotConfig::DRIVE_STEER_MAX,
                                       RobotConfig::DRIVE_STEER_MAX);
 
-    int leftTarget = constrain(base + balanceCorrection,
+    int leftTarget = constrain(base + balanceCorrection + headingCorrection,
                                RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
-    int rightTarget = constrain(base - balanceCorrection,
+    int rightTarget = constrain(base - balanceCorrection - headingCorrection,
                                 RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
     calibration.applyMotorTrim(&leftTarget, &rightTarget);
 
