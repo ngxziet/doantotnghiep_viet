@@ -8,6 +8,7 @@ Encoder::Encoder(int pinA, int pinB)
     : _pinA(pinA), _pinB(pinB),
       _pulseCount(0),
       _direction(1),
+      _lastPulseMicros(0),
       _lastPulseSnapshot(0),
       _lastVelocityMs(0),
       _velocityCmPerSec(0.0f)
@@ -89,6 +90,9 @@ void Encoder::setDirection(int direction) {
 }
 
 void IRAM_ATTR Encoder::onRisingA() {
+    unsigned long now = micros();
+    if (now - _lastPulseMicros < MIN_PULSE_INTERVAL_US) return;
+    _lastPulseMicros = now;
     _pulseCount += _direction;
 }
 
