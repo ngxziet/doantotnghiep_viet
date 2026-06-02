@@ -10,9 +10,9 @@ struct Pose {
 };
 
 // Complementary filter weight: 0 = pure encoder, 1 = pure IMU.
-// High alpha trusts IMU heading over encoder differential, prevents phantom
-// rotation from intentional encoder asymmetry during heading correction.
-static constexpr float ODOMETRY_ALPHA = 0.70f;
+// During straight driving, heading is overridden with pure IMU in main.cpp,
+// so this alpha only applies to non-drive states (manual, idle).
+static constexpr float ODOMETRY_ALPHA = 0.35f;
 
 // Must match encoder constants
 static constexpr int   ODO_PULSES_PER_REV  = RobotConfig::ENCODER_PULSES_PER_REV;
