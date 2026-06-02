@@ -271,20 +271,14 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                    RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_SPEED_PWM);
     }
 
-    float headingError = _normalizeAngle(_targetHeading - pose.theta);
-    int headingCorrection = imuAvailable
-        ? constrain((int)(headingError * RobotConfig::DRIVE_HEADING_GAIN),
-                    -RobotConfig::DRIVE_STEER_MAX,
-                    RobotConfig::DRIVE_STEER_MAX)
-        : 0;
     int balanceCorrection = constrain((int)((rightProgress - leftProgress) *
                                       RobotConfig::DRIVE_ENCODER_BALANCE_GAIN),
                                       -RobotConfig::DRIVE_STEER_MAX,
                                       RobotConfig::DRIVE_STEER_MAX);
 
-    int leftTarget = constrain(base + balanceCorrection + headingCorrection,
+    int leftTarget = constrain(base + balanceCorrection,
                                RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
-    int rightTarget = constrain(base - balanceCorrection - headingCorrection,
+    int rightTarget = constrain(base - balanceCorrection,
                                 RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
     calibration.applyMotorTrim(&leftTarget, &rightTarget);
 
