@@ -237,10 +237,9 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                                  CalibrationManager& calibration, bool imuAvailable) {
     long leftProgress = _absDelta(leftEncoder.getPulseCount(), _driveStartLeft);
     long rightProgress = _absDelta(rightEncoder.getPulseCount(), _driveStartRight);
-    long trustedProgress = min(leftProgress, rightProgress);
-    long fastProgress = max(leftProgress, rightProgress);
+    long avgProgress = (leftProgress + rightProgress) / 2;
 
-    if (trustedProgress >= _targetPulses) {
+    if (avgProgress >= _targetPulses) {
         motors.stop();
         calibration.recordStraightSegment(leftProgress, rightProgress);
 
@@ -259,22 +258,13 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
     static unsigned long lastDriveDebugMs = 0;
     if (millis() - lastDriveDebugMs >= 200) {
         lastDriveDebugMs = millis();
-        Serial.printf("DRIVE enc L=%ld R=%ld target=%d pwm=%d/%d heading=%.1f\n",
-                      leftProgress, rightProgress, _targetPulses,
+        Serial.printf("DRIVE enc L=%ld R=%ld avg=%ld target=%d pwm=%d/%d heading=%.1f\n",
+                      leftProgress, rightProgress, avgProgress, _targetPulses,
                       motors.getLeftSpeed(), motors.getRightSpeed(),
                       pose.theta * 180.0f / PI);
     }
 
-    // Only check mismatch after 800ms of driving (let slew ramp + balance stabilize)
-    if (millis() - _stateStartMs > 800 &&
-        fastProgress > _targetPulses + 40 && trustedProgress < _targetPulses / 3) {
-        Serial.printf("FAULT encoder_mismatch L=%ld R=%ld target=%d\n",
-                      leftProgress, rightProgress, _targetPulses);
-        _setFault("encoder_mismatch", motors);
-        return;
-    }
-
-    int remaining = _targetPulses - trustedProgress;
+    int remaining = _targetPulses - avgProgress;
     int base = RobotConfig::DRIVE_SPEED_PWM;
     if (remaining < RobotConfig::DRIVE_SLOWDOWN_PULSES) {
         base = map(remaining, 0, RobotConfig::DRIVE_SLOWDOWN_PULSES,
