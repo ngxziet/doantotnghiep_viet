@@ -58,8 +58,9 @@ void NodeNavigator::setStepTurn(float targetHeading) {
     _currentIndex = 0;
     _targetHeading = _normalizeAngle(targetHeading);
     _targetPulses = 0;
-    _turnStableSinceMs = 0;
     _stateStartMs = millis();
+    _nudgeBurstStartMs = millis();
+    _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
     _state = State::Rotate;
 }
 
@@ -70,7 +71,7 @@ void NodeNavigator::clear() {
     _rotateOnly = false;
     _isStep = false;
     _snapPending = false;
-    _turnStableSinceMs = 0;
+    _nudgeBurstStartMs = 0;
     _faultStatus[0] = '\0';
 }
 
@@ -138,9 +139,9 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose) {
                                            _xs[_currentIndex], _ys[_currentIndex]);
     _targetPulses = _segmentPulses(pose.x, pose.y,
                                    _xs[_currentIndex], _ys[_currentIndex]);
-    _rotateMinPwm = RobotConfig::ROTATE_MIN_PWM;
-    _headingBeforeRotate = pose.theta;
     _stateStartMs = millis();
+    _nudgeBurstStartMs = millis();
+    _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
     _state = State::Rotate;
 }
 
@@ -151,90 +152,47 @@ void NodeNavigator::_beginDrive(Encoder& leftEncoder, Encoder& rightEncoder) {
     _state = State::Drive;
 }
 
-// 3-speed step turn for test mode
-void NodeNavigator::_handleStepTurn(const Pose& pose, MotorDriver& motors) {
-    unsigned long now = millis();
-    float error = _normalizeAngle(_targetHeading - pose.theta);
-    float absError = fabsf(error);
-
-    if (absError <= RobotConfig::STEP_TURN_DONE_TOL_RAD) {
-        motors.stop();
-        if (_turnStableSinceMs == 0) {
-            _turnStableSinceMs = now;
-            return;
-        }
-        if (now - _turnStableSinceMs < RobotConfig::STEP_TURN_STABLE_MS) {
-            return;
-        }
-
-        _snapX = pose.x;
-        _snapY = pose.y;
-        _snapTheta = _targetHeading;
-        _snapPending = true;
-        _currentIndex = 1;
-        _state = State::Arrived;
-        _scheduleBeeps(1);
-        return;
-    }
-
-    _turnStableSinceMs = 0;
-
-    if (now - _stateStartMs > RobotConfig::ROTATE_TIMEOUT_MS) {
-        _setFault("rotation_timeout", motors);
-        return;
-    }
-
-    int speed = RobotConfig::STEP_TURN_FAST_PWM;
-    if (absError <= RobotConfig::STEP_TURN_SLOW_REMAIN_RAD) {
-        speed = RobotConfig::STEP_TURN_FINE_PWM;
-    } else if (absError <= RobotConfig::STEP_TURN_FAST_REMAIN_RAD) {
-        speed = RobotConfig::STEP_TURN_SLOW_PWM;
-    }
-
-    int turnDirection = error > 0.0f ? 1 : -1;
-    turnDirection *= RobotConfig::ROTATE_DIRECTION_SIGN;
-    if (turnDirection > 0) {
-        motors.setLeftSlew(-speed, RobotConfig::ROTATE_SLEW_STEP);
-        motors.setRightSlew(speed, RobotConfig::ROTATE_SLEW_STEP);
-    } else {
-        motors.setLeftSlew(speed, RobotConfig::ROTATE_SLEW_STEP);
-        motors.setRightSlew(-speed, RobotConfig::ROTATE_SLEW_STEP);
-    }
-}
-
-// Proportional rotation for route navigation
+// Nudge rotation: fixed burst → stop → measure → repeat (all rotation)
 void NodeNavigator::_handleRotate(const Pose& pose, MotorDriver& motors) {
-    if (_rotateOnly) {
-        _handleStepTurn(pose, motors);
-        return;
-    }
-
     float error = _normalizeAngle(_targetHeading - pose.theta);
     float absError = fabsf(error);
 
-    if (absError <= RobotConfig::ROTATE_START_TOL_RAD) {
+    // Within tolerance — stop and confirm via settle
+    if (absError <= RobotConfig::NUDGE_DONE_TOL_RAD) {
         motors.stop();
         _state = State::RotateSettle;
-        _pauseUntilMs = millis() + RobotConfig::ROTATE_SETTLE_MS;
+        _pauseUntilMs = millis() + RobotConfig::NUDGE_SETTLE_MS;
         return;
     }
 
+    // Overall timeout
     if (millis() - _stateStartMs > RobotConfig::ROTATE_TIMEOUT_MS) {
         _setFault("rotation_timeout", motors);
         return;
     }
 
-    int speed = constrain((int)(absError * RobotConfig::ROTATE_GAIN),
-                          _rotateMinPwm,
-                          RobotConfig::ROTATE_MAX_PWM);
-    int turnDirection = error > 0.0f ? 1 : -1;
-    turnDirection *= RobotConfig::ROTATE_DIRECTION_SIGN;
-    if (turnDirection > 0) {
-        motors.setLeftSlew(-speed, RobotConfig::ROTATE_SLEW_STEP);
-        motors.setRightSlew(speed, RobotConfig::ROTATE_SLEW_STEP);
+    // Nudge burst done — stop and settle before measuring
+    if (millis() - _nudgeBurstStartMs >= RobotConfig::NUDGE_BURST_MS) {
+        motors.stop();
+        _state = State::RotateSettle;
+        _pauseUntilMs = millis() + RobotConfig::NUDGE_SETTLE_MS;
+        return;
+    }
+
+    // Record heading at burst start for adaptive PWM
+    if (millis() - _nudgeBurstStartMs < RobotConfig::LOOP_INTERVAL_MS + 5) {
+        _headingBeforeNudge = pose.theta;
+    }
+
+    // During burst: apply adaptive PWM in correct direction
+    int dir = (error > 0.0f ? 1 : -1) * RobotConfig::ROTATE_DIRECTION_SIGN;
+    int pwm = _nudgePwm;
+    if (dir > 0) {
+        motors.setLeft(-pwm);
+        motors.setRight(pwm);
     } else {
-        motors.setLeftSlew(speed, RobotConfig::ROTATE_SLEW_STEP);
-        motors.setRightSlew(-speed, RobotConfig::ROTATE_SLEW_STEP);
+        motors.setLeft(pwm);
+        motors.setRight(-pwm);
     }
 }
 
@@ -243,32 +201,35 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
     motors.stop();
     if (millis() < _pauseUntilMs) return;
 
+    // Settled — measure heading error
     float error = fabsf(_normalizeAngle(_targetHeading - pose.theta));
-    if (_rotateOnly) {
-        _snapX = pose.x;
-        _snapY = pose.y;
-        _snapTheta = error <= RobotConfig::ROTATE_SETTLE_TOL_RAD
-            ? _targetHeading
-            : _normalizeAngle(pose.theta);
-        _snapPending = true;
-        _currentIndex = 1;
-        _state = State::Arrived;
-        _scheduleBeeps(1);
+
+    if (error <= RobotConfig::NUDGE_DONE_TOL_RAD) {
+        // Within tolerance — rotation complete
+        if (_rotateOnly) {
+            _snapX = pose.x;
+            _snapY = pose.y;
+            _snapTheta = _targetHeading;
+            _snapPending = true;
+            _currentIndex = 1;
+            _state = State::Arrived;
+            _scheduleBeeps(1);
+        } else {
+            _beginDrive(leftEncoder, rightEncoder);
+        }
         return;
     }
 
-    if (error <= RobotConfig::ROTATE_SETTLE_TOL_RAD) {
-        _beginDrive(leftEncoder, rightEncoder);
-    } else {
-        // Check if rotation made enough progress, if not increase PWM
-        float progress = fabsf(_normalizeAngle(pose.theta - _headingBeforeRotate));
-        if (progress < RobotConfig::ROTATE_MIN_PROGRESS_RAD) {
-            _rotateMinPwm = min(_rotateMinPwm + RobotConfig::ROTATE_PWM_STEP,
-                                (int)RobotConfig::ROTATE_MAX_PWM);
-        }
-        _headingBeforeRotate = pose.theta;
-        _state = State::Rotate;
+    // Adaptive PWM: if heading barely changed, increase power
+    float progress = fabsf(_normalizeAngle(pose.theta - _headingBeforeNudge));
+    if (progress < RobotConfig::NUDGE_MIN_PROGRESS_RAD) {
+        _nudgePwm = min(_nudgePwm + RobotConfig::NUDGE_PWM_STEP,
+                        (int)RobotConfig::NUDGE_MAX_PWM);
     }
+
+    // Still off — nudge again
+    _nudgeBurstStartMs = millis();
+    _state = State::Rotate;
 }
 
 void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
@@ -293,6 +254,16 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
         return;
     }
 
+    // Debug: log encoder progress every 200ms during drive
+    static unsigned long lastDriveDebugMs = 0;
+    if (millis() - lastDriveDebugMs >= 200) {
+        lastDriveDebugMs = millis();
+        Serial.printf("DRIVE enc L=%ld R=%ld avg=%ld target=%d pwm=%d/%d heading=%.1f\n",
+                      leftProgress, rightProgress, avgProgress, _targetPulses,
+                      motors.getLeftSpeed(), motors.getRightSpeed(),
+                      pose.theta * 180.0f / PI);
+    }
+
     int remaining = _targetPulses - avgProgress;
     int base = RobotConfig::DRIVE_SPEED_PWM;
     if (remaining < RobotConfig::DRIVE_SLOWDOWN_PULSES) {
@@ -311,9 +282,9 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                                       -RobotConfig::DRIVE_STEER_MAX,
                                       RobotConfig::DRIVE_STEER_MAX);
 
-    int leftTarget = constrain(base + balanceCorrection - headingCorrection,
+    int leftTarget = constrain(base + balanceCorrection + headingCorrection,
                                RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
-    int rightTarget = constrain(base - balanceCorrection + headingCorrection,
+    int rightTarget = constrain(base - balanceCorrection - headingCorrection,
                                 RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
     calibration.applyMotorTrim(&leftTarget, &rightTarget);
 

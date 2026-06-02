@@ -55,27 +55,16 @@ static constexpr int DRIVE_STEER_MAX = 45;
 static constexpr float DRIVE_HEADING_GAIN = 95.0f;
 static constexpr float DRIVE_ENCODER_BALANCE_GAIN = 2.2f;
 
-// Proportional rotation for route navigation
-static constexpr float ROTATE_START_TOL_RAD = 0.055f;
-static constexpr float ROTATE_SETTLE_TOL_RAD = 0.075f;
-static constexpr float ROTATE_GAIN = 145.0f;
+// Nudge rotation: fixed-burst step-stop-measure for all rotation
+static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;
 static constexpr int ROTATE_DIRECTION_SIGN = 1;
-static constexpr int ROTATE_MIN_PWM = 170;
-static constexpr int ROTATE_MAX_PWM = 205;
-static constexpr int ROTATE_SLEW_STEP = 24;
-static constexpr unsigned long ROTATE_SETTLE_MS = 180;
+static constexpr int NUDGE_ROTATE_PWM = 160;
+static constexpr int NUDGE_MAX_PWM = 220;
+static constexpr int NUDGE_PWM_STEP = 10;
+static constexpr float NUDGE_MIN_PROGRESS_RAD = 1.0f * PI_F / 180.0f;
+static constexpr unsigned long NUDGE_BURST_MS = 50;
+static constexpr unsigned long NUDGE_SETTLE_MS = 150;
 static constexpr unsigned long ROTATE_TIMEOUT_MS = 9000;
-static constexpr float ROTATE_MIN_PROGRESS_RAD = 1.0f * PI_F / 180.0f;
-static constexpr int ROTATE_PWM_STEP = 10;
-
-// Step turn: 3-speed approach for test mode turns
-static constexpr float STEP_TURN_FAST_REMAIN_RAD = 15.0f * PI_F / 180.0f;
-static constexpr float STEP_TURN_SLOW_REMAIN_RAD = 6.0f * PI_F / 180.0f;
-static constexpr float STEP_TURN_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;
-static constexpr int STEP_TURN_FAST_PWM = 200;
-static constexpr int STEP_TURN_SLOW_PWM = 160;
-static constexpr int STEP_TURN_FINE_PWM = 120;
-static constexpr unsigned long STEP_TURN_STABLE_MS = 200;
 
 // Test step: direct motor control, no navigator/IMU
 static constexpr int TEST_STEP_DRIVE_PWM = 160;
