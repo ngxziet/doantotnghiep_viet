@@ -8,7 +8,8 @@ void NodeNavigator::begin() {
 }
 
 void NodeNavigator::setRoute(const float xs[], const float ys[], int count,
-                             const Pose& currentPose) {
+                             const Pose& currentPose,
+                             Encoder& leftEncoder, Encoder& rightEncoder) {
     clear();
     _rotateOnly = false;
     int limit = constrain(count, 0, RobotConfig::ROUTE_MAX_WAYPOINTS);
@@ -32,7 +33,7 @@ void NodeNavigator::setRoute(const float xs[], const float ys[], int count,
     }
 
     _currentIndex = 0;
-    _beginRotateOrDrive(currentPose);
+    _beginRotateOrDrive(currentPose, leftEncoder, rightEncoder);
 }
 
 void NodeNavigator::setStepDrive(const Pose& currentPose,
@@ -97,7 +98,7 @@ void NodeNavigator::update(const Pose& pose, MotorDriver& motors,
                          calibration, imuAvailable, imuHeadingRad);
             return;
         case State::NodePause:
-            _handleNodePause(pose, motors);
+            _handleNodePause(pose, motors, leftEncoder, rightEncoder);
             return;
     }
 }
@@ -129,7 +130,9 @@ const char* NodeNavigator::status() const {
     return "idle";
 }
 
-void NodeNavigator::_beginRotateOrDrive(const Pose& pose) {
+void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
+                                        Encoder& leftEncoder,
+                                        Encoder& rightEncoder) {
     if (_currentIndex >= _count) {
         _state = State::Arrived;
         _scheduleBeeps(3);
@@ -140,6 +143,14 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose) {
                                            _xs[_currentIndex], _ys[_currentIndex]);
     _targetPulses = _segmentPulses(pose.x, pose.y,
                                    _xs[_currentIndex], _ys[_currentIndex]);
+
+    // Lệch < 10°: đi thẳng luôn, heading correction tự điều chỉnh
+    float headingError = fabsf(_normalizeAngle(_targetHeading - pose.theta));
+    if (headingError < RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) {
+        _beginDrive(leftEncoder, rightEncoder);
+        return;
+    }
+
     _stateStartMs = millis();
     _nudgeBurstStartMs = millis();
     _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
@@ -245,13 +256,34 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
 
     // --- 2. Kiem tra da den dich chua ---
     if (avgProgress >= _targetPulses) {
-        motors.stop();
         calibration.recordStraightSegment(leftProgress, rightProgress);
         _snapX = _xs[_currentIndex];
         _snapY = _ys[_currentIndex];
         _snapTheta = _targetHeading;
         _snapPending = true;
         _currentIndex++;
+
+        // Node tiếp thẳng hàng (< 10°) → tiếp tục đi, không dừng
+        if (_currentIndex < _count) {
+            float nextHeading = _targetHeadingBetween(
+                _xs[_currentIndex - 1], _ys[_currentIndex - 1],
+                _xs[_currentIndex], _ys[_currentIndex]);
+            float headingDiff = fabsf(_normalizeAngle(nextHeading - _targetHeading));
+
+            if (headingDiff < RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) {
+                _targetHeading = nextHeading;
+                _targetPulses = _segmentPulses(
+                    _xs[_currentIndex - 1], _ys[_currentIndex - 1],
+                    _xs[_currentIndex], _ys[_currentIndex]);
+                _driveStartLeft = leftEncoder.getPulseCount();
+                _driveStartRight = rightEncoder.getPulseCount();
+                _scheduleBeeps(1);
+                return;  // giữ State::Drive, không dừng motor
+            }
+        }
+
+        // Lệch hướng lớn hoặc node cuối → dừng, pause, xoay
+        motors.stop();
         _pauseUntilMs = millis() + RobotConfig::NODE_PAUSE_MS;
         _state = State::NodePause;
         _scheduleBeeps(_currentIndex >= _count ? 3 : 1);
@@ -299,7 +331,8 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
     motors.setRightSlew(rightTarget, RobotConfig::DRIVE_SLEW_STEP);
 }
 
-void NodeNavigator::_handleNodePause(const Pose& pose, MotorDriver& motors) {
+void NodeNavigator::_handleNodePause(const Pose& pose, MotorDriver& motors,
+                                     Encoder& leftEncoder, Encoder& rightEncoder) {
     motors.stop();
     if (millis() < _pauseUntilMs) return;
 
@@ -308,7 +341,7 @@ void NodeNavigator::_handleNodePause(const Pose& pose, MotorDriver& motors) {
         return;
     }
 
-    _beginRotateOrDrive(pose);
+    _beginRotateOrDrive(pose, leftEncoder, rightEncoder);
 }
 
 void NodeNavigator::_scheduleBeeps(int count) {

@@ -214,7 +214,8 @@ static void handleCommand(const UdpCommand& command) {
         case UdpCommandType::Route: {
             stopManual();
             Pose pose = odometry.getPose();
-            navigator.setRoute(routeXs, routeYs, command.waypointCount, pose);
+            navigator.setRoute(routeXs, routeYs, command.waypointCount, pose,
+                               encLeft, encRight);
             Serial.printf("Route: seq=%d nodes=%d start=(%.2f,%.2f) heading=%.1f\n",
                           command.seq, command.waypointCount, pose.x, pose.y,
                           pose.theta * 180.0f / PI);
@@ -285,14 +286,18 @@ void setup() {
 void loop() {
     unsigned long now = millis();
 
+    // Theo dõi trạng thái WiFi station, CHỈ log, KHÔNG restart AP
+    // (restart AP sẽ đá client đang cố reconnect → vòng lặp disconnect)
     if (now - lastWifiCheckMs >= RobotConfig::WIFI_CHECK_INTERVAL_MS) {
         lastWifiCheckMs = now;
         int stationCount = WiFi.softAPgetStationNum();
         if (stationCount > 0) {
+            if (!hadStation) {
+                Serial.println("WiFi station connected.");
+            }
             hadStation = true;
         } else if (hadStation) {
-            Serial.println("WiFi station lost, refreshing AP...");
-            WiFi.softAP(RobotConfig::WIFI_SSID, RobotConfig::WIFI_PASS, RobotConfig::WIFI_CHANNEL);
+            Serial.println("WiFi station lost, waiting for reconnect...");
             hadStation = false;
         }
     }
