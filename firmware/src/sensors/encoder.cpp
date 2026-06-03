@@ -1,6 +1,6 @@
 #include "encoder.h"
 
-// Static instance dispatch table
+// Bảng dispatch tĩnh cho các instance encoder
 Encoder* Encoder::_instances[4] = {nullptr, nullptr, nullptr, nullptr};
 int      Encoder::_instanceCount = 0;
 
@@ -20,7 +20,7 @@ void Encoder::begin() {
         pinMode(_pinB, INPUT_PULLUP);
     }
 
-    // Register this instance and attach matching static ISR
+    // Đăng ký instance và gắn ISR tĩnh tương ứng
     if (_instanceCount >= 4) return;
     int idx = _instanceCount++;
     _instances[idx] = this;
@@ -31,14 +31,13 @@ void Encoder::begin() {
         case 1: isrFn = _isr1; break;
         case 2: isrFn = _isr2; break;
         case 3: isrFn = _isr3; break;
-        default: return; // More than 4 encoders not supported
+        default: return; // Không hỗ trợ quá 4 encoder
     }
     attachInterrupt(digitalPinToInterrupt(_pinA), isrFn, RISING);
 }
 
 long Encoder::getPulseCount() {
-    // Atomic snapshot: disable interrupts briefly on ESP32 is not needed for
-    // 32-bit reads, but noInterrupts/restoreInterrupts is safest.
+    // Đọc atomic: tắt interrupt tạm để tránh race condition khi đọc giá trị
     noInterrupts();
     long count = _pulseCount;
     interrupts();
@@ -49,13 +48,13 @@ float Encoder::getVelocityCmPerSec() {
     unsigned long now = millis();
     unsigned long elapsed = now - _lastVelocityMs;
 
-    // Recompute every 50 ms
+    // Tính lại mỗi 50ms
     if (elapsed >= 50) {
         long currentCount = getPulseCount();
         long deltaPulses   = currentCount - _lastPulseSnapshot;
         float dt_sec       = elapsed / 1000.0f;
 
-        // velocity = (pulses / pulses_per_rev) * circumference / dt
+        // vận tốc = (xung / xung_mỗi_vòng) × chu_vi / dt
         _velocityCmPerSec = (deltaPulses / (float)ENCODER_PULSES_PER_REV)
                             * (PI * ENCODER_WHEEL_DIAM_CM)
                             / dt_sec;
@@ -96,7 +95,7 @@ void IRAM_ATTR Encoder::onRisingA() {
     _pulseCount += _direction;
 }
 
-// Static ISR stubs — each dispatches to the corresponding instance
+// ISR tĩnh — mỗi hàm chuyển tiếp đến instance tương ứng
 void IRAM_ATTR Encoder::_isr0() { if (_instances[0]) _instances[0]->onRisingA(); }
 void IRAM_ATTR Encoder::_isr1() { if (_instances[1]) _instances[1]->onRisingA(); }
 void IRAM_ATTR Encoder::_isr2() { if (_instances[2]) _instances[2]->onRisingA(); }

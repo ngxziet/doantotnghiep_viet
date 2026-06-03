@@ -33,22 +33,19 @@ class UdpServer {
 public:
     UdpServer() = default;
 
-    // Create soft-AP with given SSID/password, start UDP listener on RECV_PORT.
-    // AP IP is always 192.168.4.1.
+    // Tạo WiFi Access Point với SSID/password, bắt đầu lắng nghe UDP trên RECV_PORT.
+    // IP cố định: 192.168.4.1.
     void begin(const char* ssid, const char* password);
 
-    // Serialize pose + obstacle distance + status string and broadcast to
-    // 192.168.4.255:UDP_SEND_PORT.
-    // Format: {"pose":{"x":X,"y":Y,"theta":T},"obstacle_dist_cm":D,
-    //          "status":"S","imu_connected":true}
+    // Chuyển đổi pose + khoảng cách vật cản + trạng thái thành JSON
+    // và broadcast đến 192.168.4.255:UDP_SEND_PORT.
     void sendTelemetry(float x, float y, float theta,
                        float obstDistCm, const char* status,
                        bool imuConnected, bool calibrated,
                        int nodeIndex, int routeSize);
 
-    // Parse inbound JSON command. Populates waypointXs/Ys (flat arrays) and count.
-    // outSeq receives the command sequence number.
-    // Returns true only when a NEW command (seq != last) is received.
+    // Phân tích lệnh JSON đến. Điền waypointXs/Ys (mảng phẳng) và số lượng.
+    // Chỉ trả về true khi nhận lệnh MỚI (seq khác lần trước).
     bool receiveCommand(float waypointXs[], float waypointYs[], UdpCommand* command);
 
 private:
@@ -62,12 +59,12 @@ private:
     float   _routeXs[UDP_MAX_WAYPOINTS] = {};
     float   _routeYs[UDP_MAX_WAYPOINTS] = {};
 
-    // Reusable send/receive buffers
+    // Bộ đệm gửi/nhận tái sử dụng
     char _txBuf[384];
     char _rxBuf[2048];
 
-    // Simple JSON number extraction helpers (no external lib needed)
-    // Returns true and sets *value on success.
+    // Hàm trích xuất JSON đơn giản (không cần thư viện ngoài)
+    // Trả về true và gán *value khi thành công.
     static bool _extractFloat(const char* json, const char* key, float* value);
     static bool _extractInt(const char* json, const char* key, int* value);
     static bool _extractString(const char* json, const char* key,

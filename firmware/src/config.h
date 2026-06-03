@@ -24,7 +24,7 @@ static constexpr int ULTRASONIC_ECHO_PIN = 18;
 
 static constexpr int BUZZER_PIN = 4;
 
-// Bump this when pin mapping or hardware changes to auto-reset calibration
+// Tăng số này khi thay đổi chân hoặc phần cứng để tự động reset calibration
 static constexpr int CONFIG_VERSION = 2;
 
 static constexpr const char* WIFI_SSID = "RobotCar";
@@ -56,10 +56,10 @@ static constexpr float DRIVE_HEADING_GAIN = 149.0f;
 static constexpr float DRIVE_ENCODER_BALANCE_GAIN = 1.2f;
 static constexpr float DRIVE_HEADING_DEADBAND_RAD = 2.0f * PI_F / 180.0f;
 
-// Nguong bo qua xoay: heading error < 10 do thi di thang luon
+// Ngưỡng bỏ qua xoay: heading error < 10° thì đi thẳng luôn
 static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 
-// Nudge rotation: fixed-burst step-stop-measure for all rotation
+// Xoay nudge: burst cố định → dừng → đo → lặp lại cho mọi phép xoay
 static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;
 static constexpr int ROTATE_DIRECTION_SIGN = 1;
 static constexpr int NUDGE_ROTATE_PWM = 160;
@@ -70,7 +70,7 @@ static constexpr unsigned long NUDGE_BURST_MS = 50;
 static constexpr unsigned long NUDGE_SETTLE_MS = 150;
 static constexpr unsigned long ROTATE_TIMEOUT_MS = 9000;
 
-// Test step: direct motor control, no navigator/IMU
+// Bước test: điều khiển motor trực tiếp, không qua navigator/IMU
 static constexpr int TEST_STEP_DRIVE_PWM = 160;
 static constexpr int TEST_STEP_TURN_PWM = 180;
 static constexpr unsigned long TEST_STEP_DURATION_MS = 400;

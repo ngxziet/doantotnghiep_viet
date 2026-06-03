@@ -9,12 +9,12 @@ struct Pose {
     float theta; // radians, normalized to [-π, π]
 };
 
-// Complementary filter weight: 0 = pure encoder, 1 = pure IMU.
-// During straight driving, heading is overridden with pure IMU in main.cpp,
-// so this alpha only applies to non-drive states (manual, idle).
+// Trọng số bộ lọc bù: 0 = chỉ encoder, 1 = chỉ IMU.
+// Khi đi thẳng, heading bị ghi đè bằng IMU thuần trong main.cpp,
+// nên alpha này chỉ áp dụng cho trạng thái không lái (thủ công, chờ).
 static constexpr float ODOMETRY_ALPHA = 0.35f;
 
-// Must match encoder constants
+// Phải khớp với hằng số encoder
 static constexpr int   ODO_PULSES_PER_REV  = RobotConfig::ENCODER_PULSES_PER_REV;
 static constexpr float ODO_WHEEL_DIAM_CM   = RobotConfig::WHEEL_DIAM_CM;
 static constexpr float ODO_WHEEL_BASE_CM   = RobotConfig::WHEEL_BASE_CM;
@@ -23,10 +23,10 @@ class Odometry {
 public:
     explicit Odometry(float wheelBaseCm = ODO_WHEEL_BASE_CM);
 
-    // leftPulses/rightPulses: absolute pulse counts from encoders
-    // imuYawRad: current fused yaw from IMU (radians)
-    // useImuHeading: false when IMU is unavailable, so encoder heading is used
-    // dt: time step in seconds
+    // leftPulses/rightPulses: số xung tuyệt đối từ encoder
+    // imuYawRad: góc yaw hiện tại từ IMU (radian)
+    // useImuHeading: false khi IMU không khả dụng, dùng heading encoder thay thế
+    // suppressTranslation: true khi xoay tại chỗ, chỉ cập nhật theta
     void update(long leftPulses, long rightPulses, float imuYawRad,
                 bool useImuHeading = true, bool suppressTranslation = false);
 
@@ -45,6 +45,6 @@ private:
 
     static float _normalizeAngle(float a);
 
-    // Convert pulse delta to centimeters of wheel travel
+    // Chuyển đổi số xung sang cm quãng đường bánh xe
     static float _pulsesToCm(long pulses);
 };

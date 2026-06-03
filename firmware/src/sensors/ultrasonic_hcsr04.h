@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-// Distance thresholds (cm)
+// Ngưỡng khoảng cách (cm)
 static constexpr float EMERGENCY_STOP_CM  = 10.0f;
 static constexpr float WARN_THRESHOLD_CM  = 20.0f;
 static constexpr float MAX_RANGE_CM       = 200.0f;
@@ -13,13 +13,13 @@ public:
 
     void begin();
 
-    // Returns median of 5 single readings (cm). Capped at MAX_RANGE_CM.
+    // Trả về trung vị của 5 lần đo (cm). Giới hạn tại MAX_RANGE_CM.
     float readDistanceCm();
 
-    // true if last read distance < WARN_THRESHOLD_CM
+    // true nếu khoảng cách đo gần nhất < ngưỡng cảnh báo (20cm)
     bool isObstacleNear();
 
-    // true if last read distance < EMERGENCY_STOP_CM
+    // true nếu khoảng cách đo gần nhất < ngưỡng dừng khẩn cấp (10cm)
     bool isEmergency();
 
 private:
@@ -27,9 +27,9 @@ private:
     int _echoPin;
     float _lastDistCm = MAX_RANGE_CM;
 
-    // Trigger one pulse and return raw distance in cm
+    // Phát 1 xung trigger và trả về khoảng cách thô (cm)
     float _singleReadCm();
 
-    // Sort 5-element float array in place; return element at index 2
+    // Sắp xếp mảng 5 phần tử; trả về phần tử ở vị trí giữa (trung vị)
     static float _median5(float arr[5]);
 };

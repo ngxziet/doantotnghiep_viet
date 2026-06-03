@@ -327,8 +327,8 @@ void loop() {
     odometry.update(leftPulses, rightPulses, imuHeading,
                     imuConnected, suppressTranslation);
 
-    // During straight driving, override heading with pure IMU.
-    // Encoder differential is entirely from heading correction, not real rotation.
+    // Khi đi thẳng, ghi đè heading bằng IMU thuần.
+    // Chênh lệch encoder hoàn toàn do heading correction, không phải xoay thật.
     if (navigator.isDrivingStraight() && imuConnected) {
         Pose p = odometry.getPose();
         odometry.setPose(p.x, p.y, imuHeading);
