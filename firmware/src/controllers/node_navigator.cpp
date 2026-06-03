@@ -233,18 +233,20 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
     _state = State::Rotate;
 }
 
+// Drive straight toward current waypoint using encoder distance + IMU heading
 void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                                  Encoder& leftEncoder, Encoder& rightEncoder,
                                  CalibrationManager& calibration, bool imuAvailable,
                                  float imuHeadingRad) {
+    // --- 1. Tinh tien trinh tu encoder ---
     long leftProgress = _absDelta(leftEncoder.getPulseCount(), _driveStartLeft);
     long rightProgress = _absDelta(rightEncoder.getPulseCount(), _driveStartRight);
     long avgProgress = (leftProgress + rightProgress) / 2;
 
+    // --- 2. Kiem tra da den dich chua ---
     if (avgProgress >= _targetPulses) {
         motors.stop();
         calibration.recordStraightSegment(leftProgress, rightProgress);
-
         _snapX = _xs[_currentIndex];
         _snapY = _ys[_currentIndex];
         _snapTheta = _targetHeading;
@@ -256,16 +258,7 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
         return;
     }
 
-    // Debug: log encoder progress every 200ms during drive
-    static unsigned long lastDriveDebugMs = 0;
-    if (millis() - lastDriveDebugMs >= 200) {
-        lastDriveDebugMs = millis();
-        Serial.printf("DRIVE enc L=%ld R=%ld avg=%ld target=%d pwm=%d/%d heading=%.1f\n",
-                      leftProgress, rightProgress, avgProgress, _targetPulses,
-                      motors.getLeftSpeed(), motors.getRightSpeed(),
-                      pose.theta * 180.0f / PI);
-    }
-
+    // --- 3. Tinh toc do co so (giam dan khi gan dich) ---
     int remaining = _targetPulses - avgProgress;
     int base = RobotConfig::DRIVE_SPEED_PWM;
     if (remaining < RobotConfig::DRIVE_SLOWDOWN_PULSES) {
@@ -273,7 +266,10 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                    RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_SPEED_PWM);
     }
 
-    // Heading correction from RAW IMU (not odometry) to avoid feedback loop
+    // --- 4. Heading correction: giu huong bang IMU truc tiep ---
+    // Dung raw IMU thay vi odometry de tranh feedback loop
+    // (encoder lech -> odometry sai -> correction sai them)
+    // Deadband 3 do: bo qua nhieu IMU nho do rung motor
     float headingError = _normalizeAngle(_targetHeading - imuHeadingRad);
     int headingCorrection = 0;
     if (imuAvailable && fabsf(headingError) > RobotConfig::DRIVE_HEADING_DEADBAND_RAD) {
@@ -283,14 +279,19 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
             RobotConfig::DRIVE_STEER_MAX);
     }
 
+    // --- 5. Balance correction: can bang encoder 2 banh ---
+    // Neu 1 banh quay nhieu hon -> giam toc banh do, tang banh kia
     int balanceCorrection = constrain((int)((rightProgress - leftProgress) *
                                       RobotConfig::DRIVE_ENCODER_BALANCE_GAIN),
                                       -RobotConfig::DRIVE_STEER_MAX,
                                       RobotConfig::DRIVE_STEER_MAX);
 
-    int leftTarget = constrain(base + balanceCorrection + headingCorrection,
+    // --- 6. Ap dung ca 2 correction vao motor ---
+    // heading > 0: xe lech phai, can re trai -> giam trai, tang phai
+    // balance > 0: phai nhieu hon -> tang trai, giam phai -> can bang
+    int leftTarget = constrain(base + balanceCorrection - headingCorrection,
                                RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
-    int rightTarget = constrain(base - balanceCorrection - headingCorrection,
+    int rightTarget = constrain(base - balanceCorrection + headingCorrection,
                                 RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
     calibration.applyMotorTrim(&leftTarget, &rightTarget);
 
