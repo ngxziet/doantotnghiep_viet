@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include "../config.h"
 
-// Tunable hardware constants
+// Hằng số phần cứng có thể điều chỉnh
 static constexpr int   ENCODER_PULSES_PER_REV  = RobotConfig::ENCODER_PULSES_PER_REV;
 static constexpr float ENCODER_WHEEL_DIAM_CM   = RobotConfig::WHEEL_DIAM_CM;
 
@@ -11,25 +11,25 @@ class Encoder {
 public:
     explicit Encoder(int pinA, int pinB = -1);
 
-    // Attach interrupt on pinA RISING edge
+    // Gắn interrupt trên pinA cạnh lên (RISING)
     void begin();
 
-    // Total accumulated pulse count (thread-safe snapshot)
+    // Tổng số xung tích lũy (đọc an toàn từ interrupt)
     long getPulseCount();
 
-    // Velocity in cm/s, recomputed every 50 ms
+    // Vận tốc cm/s, tính lại mỗi 50ms
     float getVelocityCmPerSec();
 
-    // Zero pulse count and velocity
+    // Reset số xung và vận tốc về 0
     void reset();
     void resetPulses() { reset(); }
 
     float getDistanceCm();
 
-    // For single-channel encoders (LM393 D0), direction comes from motor command.
+    // Encoder 1 kênh (LM393 D0): hướng quay lấy từ lệnh motor.
     void setDirection(int direction);
 
-    // Called from ISR — do not call directly
+    // Gọi từ ISR — không gọi trực tiếp
     void IRAM_ATTR onRisingA();
 
 private:
@@ -40,21 +40,21 @@ private:
     volatile int  _direction;
     volatile unsigned long _lastPulseMicros;
 
-    // Minimum microseconds between valid pulses (EMI noise filter)
-    // At max speed ~10 rev/s * 20 pulses/rev = 200 Hz → 5000us between pulses
-    // 1500us debounce filters noise while allowing up to 666 pulses/s
+    // Thời gian tối thiểu giữa 2 xung hợp lệ (lọc nhiễu EMI motor)
+    // Tốc độ max ~10 vòng/s × 20 xung/vòng = 200 Hz → 5000µs giữa 2 xung
+    // Debounce 1500µs lọc nhiễu, cho phép tối đa 666 xung/s
     static constexpr unsigned long MIN_PULSE_INTERVAL_US = 1500;
 
-    // Velocity tracking
+    // Theo dõi vận tốc
     long  _lastPulseSnapshot;
     unsigned long _lastVelocityMs;
     float _velocityCmPerSec;
 
-    // Up to 4 Encoder instances supported via static dispatch table
+    // Hỗ trợ tối đa 4 encoder qua bảng dispatch tĩnh
     static Encoder* _instances[4];
     static int      _instanceCount;
 
-    // Static ISR stubs — dispatched to instance onRisingA()
+    // ISR tĩnh — chuyển tiếp đến onRisingA() của từng instance
     static void IRAM_ATTR _isr0();
     static void IRAM_ATTR _isr1();
     static void IRAM_ATTR _isr2();

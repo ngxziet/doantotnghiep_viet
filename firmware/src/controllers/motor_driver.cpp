@@ -13,7 +13,7 @@ void MotorDriver::begin() {
     pinMode(_in3, OUTPUT);
     pinMode(_in4, OUTPUT);
 
-    // Configure LEDC PWM channels for enable pins
+    // Cấu hình kênh LEDC PWM cho chân enable
     ledcSetup(MOTOR_CH_LEFT,  MOTOR_PWM_FREQ, MOTOR_PWM_BITS);
     ledcSetup(MOTOR_CH_RIGHT, MOTOR_PWM_FREQ, MOTOR_PWM_BITS);
     ledcAttachPin(_ena, MOTOR_CH_LEFT);

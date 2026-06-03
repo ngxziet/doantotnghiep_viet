@@ -34,14 +34,14 @@ void UdpServer::sendTelemetry(float x, float y, float theta,
     _udpTx.endPacket();
 }
 
-// --- Minimal JSON helpers (no heap allocation, no external lib) --------------
+// --- Hàm trích xuất JSON tối giản (không cấp phát heap, không thư viện ngoài) ---
 
 bool UdpServer::_extractFloat(const char* json, const char* key, float* value) {
-    // Find "key": in the string
+    // Tìm "key": trong chuỗi JSON
     const char* p = strstr(json, key);
     if (!p) return false;
     p += strlen(key);
-    // Skip whitespace and colon
+    // Bỏ qua khoảng trắng và dấu hai chấm
     while (*p == ' ' || *p == ':') p++;
     if (*p == '\0') return false;
     char* end = nullptr;
@@ -131,7 +131,7 @@ int UdpServer::_parseWaypoints(float waypointXs[], float waypointYs[],
     return wpCount;
 }
 
-// Parse: {"seq":N,"waypoints":[{"x":X,"y":Y},...]}
+// Phân tích lệnh: {"seq":N,"waypoints":[{"x":X,"y":Y},...]}
 bool UdpServer::receiveCommand(float waypointXs[], float waypointYs[], UdpCommand* command) {
     bool gotCommand = false;
 
@@ -157,11 +157,11 @@ bool UdpServer::_parseCommandBuffer(float waypointXs[], float waypointYs[],
                                     UdpCommand* command) {
     if (!command) return false;
 
-    // Extract sequence number
+    // Trích xuất số thứ tự lệnh
     int seq = 0;
     if (!_extractInt(_rxBuf, "\"seq\"", &seq)) return false;
 
-    // Deduplicate: ignore if same seq as last received
+    // Chống trùng lặp: bỏ qua nếu seq trùng với lệnh trước
     if (seq == _lastSeq) return false;
     _lastSeq = seq;
     *command = UdpCommand{};

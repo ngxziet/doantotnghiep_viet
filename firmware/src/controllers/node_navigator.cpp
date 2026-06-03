@@ -164,12 +164,12 @@ void NodeNavigator::_beginDrive(Encoder& leftEncoder, Encoder& rightEncoder) {
     _state = State::Drive;
 }
 
-// Nudge rotation: fixed burst → stop → measure → repeat (all rotation)
+// Xoay nudge: burst ngắn → dừng → đo → lặp lại (mọi phép xoay)
 void NodeNavigator::_handleRotate(const Pose& pose, MotorDriver& motors) {
     float error = _normalizeAngle(_targetHeading - pose.theta);
     float absError = fabsf(error);
 
-    // Within tolerance — stop and confirm via settle
+    // Đã nằm trong ngưỡng cho phép → dừng motor, chuyển sang settle để xác nhận
     if (absError <= RobotConfig::NUDGE_DONE_TOL_RAD) {
         motors.stop();
         _state = State::RotateSettle;
@@ -177,13 +177,13 @@ void NodeNavigator::_handleRotate(const Pose& pose, MotorDriver& motors) {
         return;
     }
 
-    // Overall timeout
+    // Timeout bảo vệ: xoay quá lâu → báo lỗi (motor yếu, bánh kẹt, IMU hỏng)
     if (millis() - _stateStartMs > RobotConfig::ROTATE_TIMEOUT_MS) {
         _setFault("rotation_timeout", motors);
         return;
     }
 
-    // Nudge burst done — stop and settle before measuring
+    // Burst đã hết thời gian → dừng motor, chờ ổn định rồi đo heading
     if (millis() - _nudgeBurstStartMs >= RobotConfig::NUDGE_BURST_MS) {
         motors.stop();
         _state = State::RotateSettle;
@@ -191,12 +191,12 @@ void NodeNavigator::_handleRotate(const Pose& pose, MotorDriver& motors) {
         return;
     }
 
-    // Record heading at burst start for adaptive PWM
+    // Ghi lại heading đầu burst để so sánh tiến bộ (adaptive PWM)
     if (millis() - _nudgeBurstStartMs < RobotConfig::LOOP_INTERVAL_MS + 5) {
         _headingBeforeNudge = pose.theta;
     }
 
-    // During burst: apply adaptive PWM in correct direction
+    // Trong burst: quay motor theo hướng cần xoay, PWM tự điều chỉnh
     int dir = (error > 0.0f ? 1 : -1) * RobotConfig::ROTATE_DIRECTION_SIGN;
     int pwm = _nudgePwm;
     if (dir > 0) {
@@ -213,11 +213,11 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
     motors.stop();
     if (millis() < _pauseUntilMs) return;
 
-    // Settled — measure heading error
+    // Đã ổn định — đo sai lệch heading
     float error = fabsf(_normalizeAngle(_targetHeading - pose.theta));
 
     if (error <= RobotConfig::NUDGE_DONE_TOL_RAD) {
-        // Within tolerance — rotation complete
+        // Trong ngưỡng cho phép — xoay hoàn tất
         if (_rotateOnly) {
             _snapX = pose.x;
             _snapY = pose.y;
@@ -232,29 +232,29 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
         return;
     }
 
-    // Adaptive PWM: if heading barely changed, increase power
+    // PWM thích ứng: nếu heading gần như không đổi → tăng công suất
     float progress = fabsf(_normalizeAngle(pose.theta - _headingBeforeNudge));
     if (progress < RobotConfig::NUDGE_MIN_PROGRESS_RAD) {
         _nudgePwm = min(_nudgePwm + RobotConfig::NUDGE_PWM_STEP,
                         (int)RobotConfig::NUDGE_MAX_PWM);
     }
 
-    // Still off — nudge again
+    // Vẫn còn lệch — thử burst tiếp
     _nudgeBurstStartMs = millis();
     _state = State::Rotate;
 }
 
-// Drive straight toward current waypoint using encoder distance + IMU heading
+// Đi thẳng đến waypoint hiện tại, dùng encoder đo quãng đường + IMU giữ hướng
 void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                                  Encoder& leftEncoder, Encoder& rightEncoder,
                                  CalibrationManager& calibration, bool imuAvailable,
                                  float imuHeadingRad) {
-    // --- 1. Tinh tien trinh tu encoder ---
+    // --- 1. Tính tiến trình từ encoder ---
     long leftProgress = _absDelta(leftEncoder.getPulseCount(), _driveStartLeft);
     long rightProgress = _absDelta(rightEncoder.getPulseCount(), _driveStartRight);
     long avgProgress = (leftProgress + rightProgress) / 2;
 
-    // --- 2. Kiem tra da den dich chua ---
+    // --- 2. Kiểm tra đã đến đích chưa ---
     if (avgProgress >= _targetPulses) {
         calibration.recordStraightSegment(leftProgress, rightProgress);
         _snapX = _xs[_currentIndex];
@@ -290,7 +290,7 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
         return;
     }
 
-    // --- 3. Tinh toc do co so (giam dan khi gan dich) ---
+    // --- 3. Tính tốc độ cơ sở (giảm dần khi gần đích) ---
     int remaining = _targetPulses - avgProgress;
     int base = RobotConfig::DRIVE_SPEED_PWM;
     if (remaining < RobotConfig::DRIVE_SLOWDOWN_PULSES) {
@@ -298,10 +298,10 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
                    RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_SPEED_PWM);
     }
 
-    // --- 4. Heading correction: giu huong bang IMU truc tiep ---
-    // Dung raw IMU thay vi odometry de tranh feedback loop
-    // (encoder lech -> odometry sai -> correction sai them)
-    // Deadband 3 do: bo qua nhieu IMU nho do rung motor
+    // --- 4. Chỉnh hướng: giữ hướng bằng IMU trực tiếp ---
+    // Dùng raw IMU thay vì odometry để tránh feedback loop
+    // (encoder lệch → odometry sai → correction sai thêm)
+    // Deadband 2°: bỏ qua nhiễu IMU nhỏ do rung motor
     float headingError = _normalizeAngle(_targetHeading - imuHeadingRad);
     int headingCorrection = 0;
     if (imuAvailable && fabsf(headingError) > RobotConfig::DRIVE_HEADING_DEADBAND_RAD) {
@@ -311,16 +311,16 @@ void NodeNavigator::_handleDrive(const Pose& pose, MotorDriver& motors,
             RobotConfig::DRIVE_STEER_MAX);
     }
 
-    // --- 5. Balance correction: can bang encoder 2 banh ---
-    // Neu 1 banh quay nhieu hon -> giam toc banh do, tang banh kia
+    // --- 5. Cân bằng encoder: bù chênh lệch 2 bánh ---
+    // Nếu 1 bánh quay nhiều hơn → giảm tốc bánh đó, tăng bánh kia
     int balanceCorrection = constrain((int)((rightProgress - leftProgress) *
                                       RobotConfig::DRIVE_ENCODER_BALANCE_GAIN),
                                       -RobotConfig::DRIVE_STEER_MAX,
                                       RobotConfig::DRIVE_STEER_MAX);
 
-    // --- 6. Ap dung ca 2 correction vao motor ---
-    // heading > 0: xe lech phai, can re trai -> giam trai, tang phai
-    // balance > 0: phai nhieu hon -> tang trai, giam phai -> can bang
+    // --- 6. Áp dụng cả 2 correction vào motor ---
+    // heading > 0: xe lệch phải, cần rẽ trái → giảm trái, tăng phải
+    // balance > 0: phải nhiều hơn → tăng trái, giảm phải → cân bằng
     int leftTarget = constrain(base + balanceCorrection - headingCorrection,
                                RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
     int rightTarget = constrain(base - balanceCorrection + headingCorrection,
