@@ -45,8 +45,8 @@ class UdpService implements ITransportService {
   static const String esp32Ip = '192.168.4.1';
   static const int recvPort = 4210;
   static const int sendPort = 4211;
-  static const Duration _connectionTimeout = Duration(seconds: 6);
-  static const Duration _connectionCheckInterval = Duration(seconds: 3);
+  static const Duration _connectionTimeout = Duration(seconds: 12);
+  static const Duration _connectionCheckInterval = Duration(seconds: 4);
 
   final _controller = StreamController<RobotState>.broadcast();
   final _connController = StreamController<bool>.broadcast();
@@ -104,14 +104,30 @@ class UdpService implements ITransportService {
     }
   }
 
+  int _rebindCount = 0;
+
   void _startConnectionMonitor() {
     _connectionTimer = Timer.periodic(_connectionCheckInterval, (_) {
       if (_disposed) return;
       final elapsed = DateTime.now().difference(_lastRxTime);
       if (elapsed > _connectionTimeout && _connected) {
         _setConnected(false);
-        // Rebind sockets in case phone WiFi reconnected
-        _rebind();
+        // Chỉ rebind sau 2 lần check liên tiếp mất kết nối
+        // tránh rebind quá sớm khi chỉ mất sóng thoáng qua
+        _rebindCount++;
+        if (_rebindCount >= 2) {
+          _rebind();
+          _rebindCount = 0;
+        }
+      } else if (!_connected && elapsed > _connectionTimeout) {
+        // Đã disconnect, thử rebind định kỳ
+        _rebindCount++;
+        if (_rebindCount >= 3) {
+          _rebind();
+          _rebindCount = 0;
+        }
+      } else {
+        _rebindCount = 0;
       }
     });
   }

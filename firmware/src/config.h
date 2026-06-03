@@ -51,10 +51,13 @@ static constexpr int DRIVE_MIN_PWM = 135;
 static constexpr int DRIVE_MAX_PWM = 220;
 static constexpr int DRIVE_SLEW_STEP = 18;
 static constexpr int DRIVE_SLOWDOWN_PULSES = 12;
-static constexpr int DRIVE_STEER_MAX = 45;
-static constexpr float DRIVE_HEADING_GAIN = 95.0f;
+static constexpr int DRIVE_STEER_MAX = 50;
+static constexpr float DRIVE_HEADING_GAIN = 149.0f;
 static constexpr float DRIVE_ENCODER_BALANCE_GAIN = 1.2f;
-static constexpr float DRIVE_HEADING_DEADBAND_RAD = 3.0f * PI_F / 180.0f;
+static constexpr float DRIVE_HEADING_DEADBAND_RAD = 2.0f * PI_F / 180.0f;
+
+// Nguong bo qua xoay: heading error < 10 do thi di thang luon
+static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 
 // Nudge rotation: fixed-burst step-stop-measure for all rotation
 static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;

@@ -10,7 +10,8 @@
 class NodeNavigator {
 public:
     void begin();
-    void setRoute(const float xs[], const float ys[], int count, const Pose& currentPose);
+    void setRoute(const float xs[], const float ys[], int count, const Pose& currentPose,
+                  Encoder& leftEncoder, Encoder& rightEncoder);
     void setStepDrive(const Pose& currentPose, Encoder& leftEncoder, Encoder& rightEncoder);
     void setStepTurn(float targetHeading);
     void clear();
@@ -74,7 +75,8 @@ private:
     bool _buzzerOn = false;
     unsigned long _nextBuzzerMs = 0;
 
-    void _beginRotateOrDrive(const Pose& pose);
+    void _beginRotateOrDrive(const Pose& pose,
+                             Encoder& leftEncoder, Encoder& rightEncoder);
     void _beginDrive(Encoder& leftEncoder, Encoder& rightEncoder);
     void _handleRotate(const Pose& pose, MotorDriver& motors);
     void _handleRotateSettle(const Pose& pose, MotorDriver& motors,
@@ -83,7 +85,8 @@ private:
                       Encoder& leftEncoder, Encoder& rightEncoder,
                       CalibrationManager& calibration, bool imuAvailable,
                       float imuHeadingRad);
-    void _handleNodePause(const Pose& pose, MotorDriver& motors);
+    void _handleNodePause(const Pose& pose, MotorDriver& motors,
+                          Encoder& leftEncoder, Encoder& rightEncoder);
 
     void _scheduleBeeps(int count);
     void _updateBuzzer();
