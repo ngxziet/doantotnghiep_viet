@@ -59,7 +59,13 @@ static constexpr float DRIVE_HEADING_DEADBAND_RAD = 2.0f * PI_F / 180.0f;
 // Ngưỡng bỏ qua xoay: heading error < 10° thì đi thẳng luôn
 static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 
-// Xoay nudge: burst cố định → dừng → đo → lặp lại cho mọi phép xoay
+// Xoay nhanh: ước lượng thời gian xoay liên tục cho góc lớn, rồi nudge phần còn lại
+static constexpr float FAST_ROTATE_THRESHOLD_RAD = 25.0f * PI_F / 180.0f;  // >25° dùng xoay nhanh
+static constexpr float FAST_ROTATE_SPEED_DPS = 130.0f;  // tốc độ ước lượng (°/s) ở PWM xoay nhanh
+static constexpr int FAST_ROTATE_PWM = 180;              // PWM cho pha xoay nhanh
+static constexpr float FAST_ROTATE_UNDERSHOOT = 0.75f;   // xoay 75% thời gian ước lượng (tránh trượt quá)
+
+// Xoay nudge: burst cố định → dừng → đo → lặp lại cho tinh chỉnh góc nhỏ
 static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;
 static constexpr int ROTATE_DIRECTION_SIGN = 1;
 static constexpr int NUDGE_ROTATE_PWM = 160;
