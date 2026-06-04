@@ -87,6 +87,9 @@ void NodeNavigator::update(const Pose& pose, MotorDriver& motors,
         case State::Arrived:
         case State::Fault:
             return;
+        case State::FastRotate:
+            _handleFastRotate(pose, motors);
+            return;
         case State::Rotate:
             _handleRotate(pose, motors);
             return;
@@ -104,7 +107,8 @@ void NodeNavigator::update(const Pose& pose, MotorDriver& motors,
 }
 
 bool NodeNavigator::isActive() const {
-    return _state == State::Rotate || _state == State::RotateSettle ||
+    return _state == State::FastRotate || _state == State::Rotate ||
+           _state == State::RotateSettle ||
            _state == State::Drive || _state == State::NodePause;
 }
 
@@ -113,7 +117,8 @@ bool NodeNavigator::isDrivingStraight() const {
 }
 
 bool NodeNavigator::isRotating() const {
-    return _state == State::Rotate || _state == State::RotateSettle;
+    return _state == State::FastRotate || _state == State::Rotate ||
+           _state == State::RotateSettle;
 }
 
 const char* NodeNavigator::status() const {
@@ -121,6 +126,7 @@ const char* NodeNavigator::status() const {
         case State::Idle: return "idle";
         case State::Arrived: return "arrived";
         case State::Fault: return _faultStatus[0] ? _faultStatus : "fault";
+        case State::FastRotate:
         case State::Rotate:
         case State::RotateSettle:
         case State::Drive:
@@ -144,14 +150,29 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
     _targetPulses = _segmentPulses(pose.x, pose.y,
                                    _xs[_currentIndex], _ys[_currentIndex]);
 
+    float headingErrorRaw = _normalizeAngle(_targetHeading - pose.theta);
+    float headingError = fabsf(headingErrorRaw);
+
     // Lệch < 10°: đi thẳng luôn, heading correction tự điều chỉnh
-    float headingError = fabsf(_normalizeAngle(_targetHeading - pose.theta));
     if (headingError < RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) {
         _beginDrive(leftEncoder, rightEncoder);
         return;
     }
 
     _stateStartMs = millis();
+
+    // Lệch > 25°: xoay nhanh liên tục trước, rồi nudge phần còn lại
+    if (headingError > RobotConfig::FAST_ROTATE_THRESHOLD_RAD) {
+        float angleDeg = headingError * (180.0f / PI);
+        float estimatedMs = (angleDeg / RobotConfig::FAST_ROTATE_SPEED_DPS) * 1000.0f;
+        estimatedMs *= RobotConfig::FAST_ROTATE_UNDERSHOOT; // 75% tránh trượt quá
+        _fastRotateDir = (headingErrorRaw > 0.0f ? 1 : -1) * RobotConfig::ROTATE_DIRECTION_SIGN;
+        _fastRotateUntilMs = millis() + (unsigned long)estimatedMs;
+        _state = State::FastRotate;
+        return;
+    }
+
+    // 10°-25°: nudge bình thường
     _nudgeBurstStartMs = millis();
     _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
     _state = State::Rotate;
@@ -164,7 +185,43 @@ void NodeNavigator::_beginDrive(Encoder& leftEncoder, Encoder& rightEncoder) {
     _state = State::Drive;
 }
 
-// Xoay nudge: burst ngắn → dừng → đo → lặp lại (mọi phép xoay)
+// Xoay nhanh: quay liên tục theo thời gian ước lượng, dừng khi gần đích
+void NodeNavigator::_handleFastRotate(const Pose& pose, MotorDriver& motors) {
+    // Timeout bảo vệ
+    if (millis() - _stateStartMs > RobotConfig::ROTATE_TIMEOUT_MS) {
+        _setFault("rotation_timeout", motors);
+        return;
+    }
+
+    // Đã gần đích (trong ngưỡng nudge) → dừng sớm, chuyển settle
+    float error = fabsf(_normalizeAngle(_targetHeading - pose.theta));
+    if (error <= RobotConfig::NUDGE_DONE_TOL_RAD) {
+        motors.stop();
+        _state = State::RotateSettle;
+        _pauseUntilMs = millis() + RobotConfig::NUDGE_SETTLE_MS;
+        return;
+    }
+
+    // Hết thời gian ước lượng → dừng, chờ ổn định rồi nudge phần còn lại
+    if (millis() >= _fastRotateUntilMs) {
+        motors.stop();
+        _state = State::RotateSettle;
+        _pauseUntilMs = millis() + RobotConfig::NUDGE_SETTLE_MS;
+        return;
+    }
+
+    // Quay liên tục ở PWM cố định
+    int pwm = RobotConfig::FAST_ROTATE_PWM;
+    if (_fastRotateDir > 0) {
+        motors.setLeft(-pwm);
+        motors.setRight(pwm);
+    } else {
+        motors.setLeft(pwm);
+        motors.setRight(-pwm);
+    }
+}
+
+// Xoay nudge: burst ngắn → dừng → đo → lặp lại (tinh chỉnh góc nhỏ)
 void NodeNavigator::_handleRotate(const Pose& pose, MotorDriver& motors) {
     float error = _normalizeAngle(_targetHeading - pose.theta);
     float absError = fabsf(error);

@@ -39,8 +39,9 @@ public:
 private:
     enum class State {
         Idle,
-        Rotate,
-        RotateSettle,
+        FastRotate,   // Xoay nhanh liên tục (ước lượng thời gian)
+        Rotate,       // Xoay nudge (burst ngắn → đo → lặp)
+        RotateSettle, // Chờ ổn định sau burst/xoay nhanh
         Drive,
         NodePause,
         Arrived,
@@ -64,6 +65,8 @@ private:
     unsigned long _nudgeBurstStartMs = 0;
     int _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
     float _headingBeforeNudge = 0.0f;
+    unsigned long _fastRotateUntilMs = 0;
+    int _fastRotateDir = 0;
 
     bool _snapPending = false;
     float _snapX = 0.0f;
@@ -78,6 +81,7 @@ private:
     void _beginRotateOrDrive(const Pose& pose,
                              Encoder& leftEncoder, Encoder& rightEncoder);
     void _beginDrive(Encoder& leftEncoder, Encoder& rightEncoder);
+    void _handleFastRotate(const Pose& pose, MotorDriver& motors);
     void _handleRotate(const Pose& pose, MotorDriver& motors);
     void _handleRotateSettle(const Pose& pose, MotorDriver& motors,
                              Encoder& leftEncoder, Encoder& rightEncoder);
