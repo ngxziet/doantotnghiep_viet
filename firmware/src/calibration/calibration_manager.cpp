@@ -76,8 +76,9 @@ void CalibrationManager::recordStraightSegment(long leftPulses, long rightPulses
         return;
     }
 
-    _leftTrim = _clampTrim(_leftTrim + error * 0.018f);
-    _rightTrim = _clampTrim(_rightTrim - error * 0.018f);
+    // Tốc độ học: 5% mỗi đoạn thẳng (trước đây 1.8%, quá chậm)
+    _leftTrim = _clampTrim(_leftTrim + error * 0.05f);
+    _rightTrim = _clampTrim(_rightTrim - error * 0.05f);
 
     float observedScale = RobotConfig::PULSES_PER_NODE / average;
     if (observedScale > 0.80f && observedScale < 1.20f) {
