@@ -409,14 +409,15 @@ Mạch điều khiển motor DC. ESP32 gửi tín hiệu PWM (0-255) → L298N k
 
 <div class="box box-info">
 <strong>State Machine là gì?</strong>
-Xe luôn ở 1 trong 7 trạng thái. Mỗi loop, code kiểm tra trạng thái hiện tại và thực hiện hành động tương ứng. Trạng thái chuyển đổi khi điều kiện thỏa.
+Xe luôn ở 1 trong 8 trạng thái. Mỗi loop, code kiểm tra trạng thái hiện tại và thực hiện hành động tương ứng. Trạng thái chuyển đổi khi điều kiện thỏa.
 </div>
 
-<h3>7 trạng thái</h3>
+<h3>8 trạng thái</h3>
 <table>
 <tr><th>State</th><th>Mô tả</th><th>Motor</th></tr>
 <tr><td><code>Idle</code></td><td>Chờ lệnh, không làm gì</td><td>Dừng</td></tr>
-<tr><td><code>Rotate</code></td><td>Đang xoay (nudge burst)</td><td>Trái/phải ngược nhau</td></tr>
+<tr><td><code>FastRotate</code></td><td>Xoay nhanh liên tục (ước lượng thời gian)</td><td>Trái/phải ngược nhau, PWM 180</td></tr>
+<tr><td><code>Rotate</code></td><td>Xoay nudge (burst ngắn tinh chỉnh)</td><td>Trái/phải ngược nhau</td></tr>
 <tr><td><code>RotateSettle</code></td><td>Dừng motor, chờ ổn định rồi đo heading</td><td>Dừng</td></tr>
 <tr><td><code>Drive</code></td><td>Đi thẳng đến node tiếp theo</td><td>2 bánh cùng chiều</td></tr>
 <tr><td><code>NodePause</code></td><td>Đã đến node, dừng 180ms</td><td>Dừng</td></tr>
@@ -431,39 +432,95 @@ Xe luôn ở 1 trong 7 trạng thái. Mỗi loop, code kiểm tra trạng thái 
     ▼
 <span class="state">_beginRotateOrDrive()</span> ─── heading error &lt; 10° ──▶ <span class="state">Drive</span>
     │                                                    │
-    │ heading error ≥ 10°                                │
-    ▼                                                    │
-<span class="state">Rotate</span> ──burst 50ms──▶ <span class="state">RotateSettle</span>                   │
-    ▲                       │                            │
-    │     error &gt; 4°        │ error ≤ 4°                 │
-    └───────────────────────┘                            │
-                            │                            │
-                            ▼                            │
-                      <span class="state">Drive</span> ◀─────────────────────────┘
-                        │
-                        │ encoder đếm đủ xung
-                        ▼
-              ┌── next node thẳng hàng? ──┐
-              │ CÓ (&lt;10°)        KHÔNG (≥10°)
-              ▼                          ▼
-    <span class="state">Drive</span> (tiếp tục)            <span class="state">NodePause</span> (180ms)
-                                         │
-                                         ▼
-                               <span class="state">_beginRotateOrDrive()</span>
-                                         │
-                                    ... lặp lại ...
-                                         │
-                                         ▼
-                                   <span class="state">Arrived</span> (beep ×3)
+    ├── error 10°-25° ──▶ <span class="state">Rotate</span> (nudge)                │
+    │                        │                           │
+    │                  burst 50ms                        │
+    │                        ▼                           │
+    │                  <span class="state">RotateSettle</span>                     │
+    │                   │         │                      │
+    │            error&gt;4°    error≤4°                    │
+    │                   │         │                      │
+    │                   ▼         ▼                      │
+    │              <span class="state">Rotate</span>    <span class="state">Drive</span> ◀────────────────┘
+    │                                │
+    └── error &gt; 25° ──▶ <span class="state">FastRotate</span>   │
+                           │         │
+                     hết thời gian   │
+                     ước lượng       │
+                           ▼         │
+                     <span class="state">RotateSettle</span>   │
+                      │        │     │
+                error&gt;4°  error≤4°   │
+                      ▼        ▼     │
+                 <span class="state">Rotate</span>   <span class="state">Drive</span> ──┘
+                 (nudge       │
+                 phần         │ encoder đếm đủ xung
+                 còn lại)     ▼
+                    ┌── next node thẳng hàng? ──┐
+                    │ CÓ (&lt;10°)        KHÔNG (≥10°)
+                    ▼                          ▼
+          <span class="state">Drive</span> (tiếp tục)            <span class="state">NodePause</span> (180ms)
+                                               │
+                                               ▼
+                                     <span class="state">_beginRotateOrDrive()</span>
+                                               │
+                                          ... lặp lại ...
+                                               │
+                                               ▼
+                                         <span class="state">Arrived</span> (beep ×3)
 </div>
 
 <!-- ================================================================ -->
 <hr>
-<h2 id="nav-rotate"><span class="step">STEP 7</span> Navigation — Thuật toán xoay (Nudge)</h2>
+<h2 id="nav-rotate"><span class="step">STEP 7</span> Navigation — Thuật toán xoay 2 pha</h2>
+
+<div class="box box-info">
+<strong>Xoay 2 pha: nhanh trước, tinh chỉnh sau</strong>
+Với góc lớn (>25°), xe xoay liên tục theo thời gian ước lượng để gần đích nhanh (pha 1), rồi dùng nudge burst để tinh chỉnh phần còn lại (pha 2). Với góc nhỏ (10°-25°), chỉ dùng nudge.
+</div>
+
+<h3>Pha 1 — Xoay nhanh (FastRotate) cho góc &gt; 25°</h3>
+<pre><span class="filename">node_navigator.cpp — _beginRotateOrDrive()</span>
+<span class="cmt">// Ước lượng thời gian xoay dựa trên tốc độ đã biết</span>
+<span class="kw">float</span> angleDeg = headingError * (<span class="num">180</span> / π);
+<span class="kw">float</span> estimatedMs = (angleDeg / <span class="num">130.0</span>) * <span class="num">1000</span>;
+<span class="cmt">//                               ↑ FAST_ROTATE_SPEED_DPS = 130°/s</span>
+
+estimatedMs *= <span class="num">0.75</span>;  <span class="cmt">// chỉ xoay 75% thời gian → tránh trượt quá</span>
+
+<span class="cmt">// Ví dụ xoay 90°:</span>
+<span class="cmt">//   estimatedMs = (90 / 130) × 1000 × 0.75 = 519ms</span>
+<span class="cmt">//   → quay liên tục PWM 180 trong 519ms</span>
+<span class="cmt">//   → đạt khoảng 67° (75% của 90°)</span>
+<span class="cmt">//   → còn lại ~23° → nudge xử lý tiếp</span></pre>
+
+<pre><span class="filename">node_navigator.cpp — _handleFastRotate()</span>
+<span class="cmt">// Trong pha xoay nhanh, motor quay liên tục ở PWM 180</span>
+<span class="cmt">// Kiểm tra 3 điều kiện dừng:</span>
+
+<span class="cmt">// 1. Timeout bảo vệ 9 giây → fault</span>
+<span class="cmt">// 2. Đã gần đích (≤ 4°) → dừng sớm, không cần nudge</span>
+<span class="cmt">// 3. Hết thời gian ước lượng → dừng, chuyển settle</span>
+
+<span class="cmt">// Sau khi dừng → RotateSettle → đo heading</span>
+<span class="cmt">// → nếu còn lệch > 4° → chuyển sang Rotate (nudge)</span>
+<span class="cmt">// → nếu ≤ 4° → xoay xong, chuyển sang Drive</span></pre>
+
+<div class="box box-tip">
+<strong>So sánh tốc độ xoay</strong>
+<table style="margin-top:8px">
+<tr><th>Góc</th><th>Chỉ Nudge (trước)</th><th>FastRotate + Nudge (sau)</th></tr>
+<tr><td>45°</td><td>~2 giây</td><td>~0.8 giây</td></tr>
+<tr><td>90°</td><td>~4 giây</td><td>~1.5 giây</td></tr>
+<tr><td>180°</td><td>~6 giây</td><td>~2.5 giây</td></tr>
+</table>
+</div>
+
+<h3>Pha 2 — Nudge tinh chỉnh (góc nhỏ hoặc phần còn lại)</h3>
 
 <div class="box box-info">
 <strong>Nudge rotation là gì?</strong>
-Thay vì xoay liên tục rồi dừng (dễ trượt quá), thuật toán <strong>xoay từng burst ngắn → dừng → đo → lặp lại</strong>. Giống như bạn vặn ốc từng cái nhẹ, kiểm tra sau mỗi lần vặn.
+Thuật toán <strong>xoay từng burst ngắn → dừng → đo → lặp lại</strong>. Giống như vặn ốc từng cái nhẹ, kiểm tra sau mỗi lần vặn. Dùng cho góc 10°-25° hoặc phần dư sau FastRotate.
 </div>
 
 <h3>Vòng lặp Nudge</h3>
@@ -699,12 +756,14 @@ A ───────────<span class="state">đi thẳng liên tục</
 <span class="cmt">// error > 0: phải quay nhiều hơn → phải nhanh hơn → cần giảm phải</span>
 <span class="cmt">// error < 0: trái quay nhiều hơn → trái nhanh hơn → cần giảm trái</span>
 
-<span class="cmt">// Điều chỉnh nhẹ: 1.8% mỗi lần (tránh dao động)</span>
-_leftTrim  += error * <span class="num">0.018</span>;   <span class="cmt">// tăng trim trái</span>
-_rightTrim -= error * <span class="num">0.018</span>;   <span class="cmt">// giảm trim phải</span>
+<span class="cmt">// Tốc độ học: 5% mỗi đoạn thẳng → hội tụ sau ~5 đoạn</span>
+_leftTrim  += error * <span class="num">0.05</span>;   <span class="cmt">// tăng trim trái</span>
+_rightTrim -= error * <span class="num">0.05</span>;   <span class="cmt">// giảm trim phải</span>
 
 <span class="cmt">// Trim nằm trong [0.72, 1.28] → max ±28% bù</span>
-<span class="cmt">// Lưu vào NVS (flash) → giữ lại sau khi tắt nguồn</span></pre>
+<span class="cmt">// Lưu vào NVS (flash) → giữ lại sau khi tắt nguồn</span>
+<span class="cmt">// Lần chạy đầu: lệch 3-4 đoạn rồi hội tụ</span>
+<span class="cmt">// Lần chạy sau: trim đã nhớ từ flash → thẳng ngay từ đoạn đầu</span></pre>
 
 <h3>Áp dụng trim</h3>
 <pre><span class="filename">calibration_manager.cpp — applyMotorTrim()</span>
@@ -879,7 +938,17 @@ Có snap: sai số reset về 0 tại mỗi node → chỉ sai trong 1 đoạn.
 <tr><td><code>SKIP_ROTATE_THRESHOLD</code></td><td>10°</td><td>Lệch &lt; 10° → đi thẳng, không xoay</td></tr>
 </table>
 
-<h3>Xoay (Nudge)</h3>
+<h3>Xoay nhanh (FastRotate)</h3>
+<table>
+<tr><th>Tham số</th><th>Giá trị</th><th>Ý nghĩa</th></tr>
+<tr><td><code>FAST_ROTATE_THRESHOLD</code></td><td>25°</td><td>Lệch &gt; 25° → dùng xoay nhanh trước</td></tr>
+<tr><td><code>FAST_ROTATE_SPEED_DPS</code></td><td>130°/s</td><td>Tốc độ ước lượng khi xoay nhanh</td></tr>
+<tr><td><code>FAST_ROTATE_PWM</code></td><td>180</td><td>PWM cho pha xoay nhanh</td></tr>
+<tr><td><code>FAST_ROTATE_UNDERSHOOT</code></td><td>0.75</td><td>Xoay 75% thời gian ước lượng (tránh trượt quá)</td></tr>
+<tr><td><code>ROTATE_TIMEOUT_MS</code></td><td>9000ms</td><td>Timeout xoay → fault</td></tr>
+</table>
+
+<h3>Xoay tinh chỉnh (Nudge)</h3>
 <table>
 <tr><th>Tham số</th><th>Giá trị</th><th>Ý nghĩa</th></tr>
 <tr><td><code>NUDGE_DONE_TOL</code></td><td>4°</td><td>Sai số chấp nhận khi xoay xong</td></tr>
@@ -889,7 +958,6 @@ Có snap: sai số reset về 0 tại mỗi node → chỉ sai trong 1 đoạn.
 <tr><td><code>NUDGE_BURST_MS</code></td><td>50ms</td><td>Thời gian mỗi burst xoay</td></tr>
 <tr><td><code>NUDGE_SETTLE_MS</code></td><td>150ms</td><td>Chờ ổn định sau burst</td></tr>
 <tr><td><code>NUDGE_MIN_PROGRESS</code></td><td>1°</td><td>Dưới 1° tiến bộ → tăng PWM</td></tr>
-<tr><td><code>ROTATE_TIMEOUT_MS</code></td><td>9000ms</td><td>Timeout xoay → fault</td></tr>
 </table>
 
 <h3>Hardware</h3>
@@ -906,7 +974,7 @@ Có snap: sai số reset về 0 tại mỗi node → chỉ sai trong 1 đoạn.
 <!-- ================================================================ -->
 <hr>
 <p style="color:var(--muted); text-align:center; margin-top:40px;">
-  RobotCar Firmware Algorithm Guide — Generated 2026-06-03
+  RobotCar Firmware Algorithm Guide — Cập nhật 2026-06-05
 </p>
 
 </div>
