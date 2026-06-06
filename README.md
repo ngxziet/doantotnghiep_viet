@@ -269,12 +269,12 @@ flutter test
 ## Current Status
 
 - Firmware modules are implemented for motor control, UDP command parsing, odometry, calibration and node-based navigation.
-- Rotation uses nudge step-stop-measure algorithm: fixed PWM burst, stop, read IMU when stationary, repeat until within 4 degree tolerance. Works consistently across different surfaces.
-- Straight driving uses proportional heading correction (IMU gain=149, ~13 PWM at 5 degree error) with encoder balance and slew rate limiting.
+- Three-tier rotation: fast rotate for large angles (PWM 200 for <120°, PWM 190 for >120° with cross-target overshoot detection), nudge step-stop-measure for fine adjustment (PWM 175, 35ms burst, adaptive cooldown), skip for <10° error.
+- Straight driving uses proportional heading correction (IMU gain=175, 1° deadband) with encoder balance and slew rate limiting.
 - Collinear node optimization: heading error below 10 degrees skips rotation; consecutive straight nodes are driven without stopping.
+- Auto-calibration: motor trim learns 5% per segment, encoder scale tracked, persisted to NVS flash.
 - Flutter app is implemented for map navigation, connection testing, manual control and telemetry.
 - Simulator service is available for app testing without hardware.
-- Remaining real-world work: hardware calibration, nudge parameter tuning, experimental error measurement and demo recording.
 
 ## Documentation
 
