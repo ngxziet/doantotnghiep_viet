@@ -78,7 +78,7 @@ static constexpr unsigned long NUDGE_BURST_MS = 35;
 static constexpr float NUDGE_OVER_PROGRESS_RAD = 3.0f * PI_F / 180.0f;  // ngưỡng xoay quá nhiều → giảm PWM
 static constexpr int NUDGE_PWM_DOWN_STEP = 15;  // giảm nhanh hơn tăng (10 lên, 15 xuống)
 static constexpr unsigned long NUDGE_SETTLE_MS = 150;
-static constexpr unsigned long ROTATE_TIMEOUT_MS = 9000;
+static constexpr unsigned long ROTATE_TIMEOUT_MS = 12000;
 
 // Bước test: điều khiển motor trực tiếp, không qua navigator/IMU
 static constexpr int TEST_STEP_DRIVE_PWM = 160;
