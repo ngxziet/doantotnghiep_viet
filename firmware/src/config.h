@@ -52,7 +52,7 @@ static constexpr int DRIVE_MAX_PWM = 220;
 static constexpr int DRIVE_SLEW_STEP = 18;
 static constexpr int DRIVE_SLOWDOWN_PULSES = 12;
 static constexpr int DRIVE_STEER_MAX = 50;
-static constexpr float DRIVE_HEADING_GAIN = 149.0f;
+static constexpr float DRIVE_HEADING_GAIN = 175.0f;
 static constexpr float DRIVE_ENCODER_BALANCE_GAIN = 1.2f;
 static constexpr float DRIVE_HEADING_DEADBAND_RAD = 1.0f * PI_F / 180.0f;
 
