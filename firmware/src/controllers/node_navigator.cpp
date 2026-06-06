@@ -163,6 +163,12 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
 
     // Lệch > 25°: xoay nhanh liên tục trước, rồi nudge phần còn lại
     if (headingError > RobotConfig::FAST_ROTATE_THRESHOLD_RAD) {
+        // Góc lớn (>120°, quay đầu): PWM thấp hơn tránh trượt quá 180°
+        // Góc nhỏ (trái/phải): PWM cao hơn để xoay đủ nhanh
+        _fastRotatePwm = (headingError > RobotConfig::FAST_ROTATE_REVERSE_RAD)
+            ? RobotConfig::FAST_ROTATE_REVERSE_PWM
+            : RobotConfig::FAST_ROTATE_PWM;
+
         float angleDeg = headingError * (180.0f / PI);
         float estimatedMs = (angleDeg / RobotConfig::FAST_ROTATE_SPEED_DPS) * 1000.0f;
         estimatedMs *= RobotConfig::FAST_ROTATE_UNDERSHOOT; // 75% tránh trượt quá
@@ -193,9 +199,24 @@ void NodeNavigator::_handleFastRotate(const Pose& pose, MotorDriver& motors) {
         return;
     }
 
+    float errorRaw = _normalizeAngle(_targetHeading - pose.theta);
+    float error = fabsf(errorRaw);
+
     // Đã gần đích (trong ngưỡng nudge) → dừng sớm, chuyển settle
-    float error = fabsf(_normalizeAngle(_targetHeading - pose.theta));
     if (error <= RobotConfig::NUDGE_DONE_TOL_RAD) {
+        motors.stop();
+        _state = State::RotateSettle;
+        _pauseUntilMs = millis() + RobotConfig::NUDGE_SETTLE_MS;
+        return;
+    }
+
+    // Phát hiện đã vượt qua target (error đổi dấu so với ban đầu)
+    // Fix bug 180°: sau khi vượt 180°, fabsf(error) tăng lại do angle wrapping
+    // → điều kiện error <= 4° không bao giờ thỏa → robot quay mãi
+    int initialSign = _fastRotateDir * RobotConfig::ROTATE_DIRECTION_SIGN;
+    bool crossedTarget = (initialSign > 0 && errorRaw < 0) ||
+                         (initialSign < 0 && errorRaw > 0);
+    if (crossedTarget) {
         motors.stop();
         _state = State::RotateSettle;
         _pauseUntilMs = millis() + RobotConfig::NUDGE_SETTLE_MS;
@@ -210,8 +231,8 @@ void NodeNavigator::_handleFastRotate(const Pose& pose, MotorDriver& motors) {
         return;
     }
 
-    // Quay liên tục ở PWM cố định
-    int pwm = RobotConfig::FAST_ROTATE_PWM;
+    // Quay liên tục ở PWM tùy theo góc xoay
+    int pwm = _fastRotatePwm;
     if (_fastRotateDir > 0) {
         motors.setLeft(-pwm);
         motors.setRight(pwm);

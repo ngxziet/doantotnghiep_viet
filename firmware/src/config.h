@@ -38,7 +38,7 @@ static constexpr float CM_PER_PULSE = WHEEL_CIRCUMFERENCE_CM / ENCODER_PULSES_PE
 
 static constexpr float WHEEL_BASE_CM = 10.5f;
 static constexpr float NODE_DISTANCE_M = 0.50f;
-static constexpr int PULSES_PER_NODE = 49;
+static constexpr int PULSES_PER_NODE = 59;  // tăng từ 49: bù sai số ~10cm/đoạn (bánh nén nhỏ hơn danh nghĩa)
 
 static constexpr unsigned long LOOP_INTERVAL_MS = 20;
 static constexpr unsigned long TELEMETRY_INTERVAL_MS = 100;
@@ -62,7 +62,9 @@ static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 // Xoay nhanh: ước lượng thời gian xoay liên tục cho góc lớn, rồi nudge phần còn lại
 static constexpr float FAST_ROTATE_THRESHOLD_RAD = 25.0f * PI_F / 180.0f;  // >25° dùng xoay nhanh
 static constexpr float FAST_ROTATE_SPEED_DPS = 150.0f;  // tốc độ ước lượng (°/s) ở PWM xoay nhanh
-static constexpr int FAST_ROTATE_PWM = 200;              // PWM cho pha xoay nhanh
+static constexpr int FAST_ROTATE_PWM = 220;              // PWM cho xoay trái/phải (góc nhỏ)
+static constexpr int FAST_ROTATE_REVERSE_PWM = 170;      // PWM cho quay đầu (góc lớn, tránh trượt quá)
+static constexpr float FAST_ROTATE_REVERSE_RAD = 120.0f * PI_F / 180.0f;  // ngưỡng chuyển sang PWM thấp
 static constexpr float FAST_ROTATE_UNDERSHOOT = 0.75f;   // xoay 75% thời gian ước lượng (tránh trượt quá)
 
 // Xoay nudge: burst cố định → dừng → đo → lặp lại cho tinh chỉnh góc nhỏ

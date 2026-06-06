@@ -67,6 +67,7 @@ private:
     float _headingBeforeNudge = 0.0f;
     unsigned long _fastRotateUntilMs = 0;
     int _fastRotateDir = 0;
+    int _fastRotatePwm = 0;
 
     bool _snapPending = false;
     float _snapX = 0.0f;
