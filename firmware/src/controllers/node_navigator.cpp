@@ -289,11 +289,16 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
         return;
     }
 
-    // PWM thích ứng: nếu heading gần như không đổi → tăng công suất
+    // PWM thích ứng: tăng khi không xoay đủ, giảm khi xoay quá nhiều
     float progress = fabsf(_normalizeAngle(pose.theta - _headingBeforeNudge));
     if (progress < RobotConfig::NUDGE_MIN_PROGRESS_RAD) {
+        // Không xoay đủ → tăng PWM (thắng ma sát tĩnh)
         _nudgePwm = min(_nudgePwm + RobotConfig::NUDGE_PWM_STEP,
                         (int)RobotConfig::NUDGE_MAX_PWM);
+    } else if (progress > RobotConfig::NUDGE_OVER_PROGRESS_RAD) {
+        // Xoay quá nhiều trong 1 burst → giảm PWM để tránh mất kiểm soát
+        _nudgePwm = max(_nudgePwm - RobotConfig::NUDGE_PWM_DOWN_STEP,
+                        (int)RobotConfig::NUDGE_ROTATE_PWM);
     }
 
     // Vẫn còn lệch — thử burst tiếp

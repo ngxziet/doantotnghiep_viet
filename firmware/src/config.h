@@ -54,25 +54,27 @@ static constexpr int DRIVE_SLOWDOWN_PULSES = 12;
 static constexpr int DRIVE_STEER_MAX = 50;
 static constexpr float DRIVE_HEADING_GAIN = 149.0f;
 static constexpr float DRIVE_ENCODER_BALANCE_GAIN = 1.2f;
-static constexpr float DRIVE_HEADING_DEADBAND_RAD = 2.0f * PI_F / 180.0f;
+static constexpr float DRIVE_HEADING_DEADBAND_RAD = 1.0f * PI_F / 180.0f;
 
 // Ngưỡng bỏ qua xoay: heading error < 10° thì đi thẳng luôn
 static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 
 // Xoay nhanh: ước lượng thời gian xoay liên tục cho góc lớn, rồi nudge phần còn lại
 static constexpr float FAST_ROTATE_THRESHOLD_RAD = 25.0f * PI_F / 180.0f;  // >25° dùng xoay nhanh
-static constexpr float FAST_ROTATE_SPEED_DPS = 130.0f;  // tốc độ ước lượng (°/s) ở PWM xoay nhanh
-static constexpr int FAST_ROTATE_PWM = 180;              // PWM cho pha xoay nhanh
+static constexpr float FAST_ROTATE_SPEED_DPS = 150.0f;  // tốc độ ước lượng (°/s) ở PWM xoay nhanh
+static constexpr int FAST_ROTATE_PWM = 200;              // PWM cho pha xoay nhanh
 static constexpr float FAST_ROTATE_UNDERSHOOT = 0.75f;   // xoay 75% thời gian ước lượng (tránh trượt quá)
 
 // Xoay nudge: burst cố định → dừng → đo → lặp lại cho tinh chỉnh góc nhỏ
 static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;
 static constexpr int ROTATE_DIRECTION_SIGN = 1;
-static constexpr int NUDGE_ROTATE_PWM = 160;
+static constexpr int NUDGE_ROTATE_PWM = 175;
 static constexpr int NUDGE_MAX_PWM = 220;
 static constexpr int NUDGE_PWM_STEP = 10;
 static constexpr float NUDGE_MIN_PROGRESS_RAD = 1.0f * PI_F / 180.0f;
-static constexpr unsigned long NUDGE_BURST_MS = 50;
+static constexpr unsigned long NUDGE_BURST_MS = 35;
+static constexpr float NUDGE_OVER_PROGRESS_RAD = 3.0f * PI_F / 180.0f;  // ngưỡng xoay quá nhiều → giảm PWM
+static constexpr int NUDGE_PWM_DOWN_STEP = 15;  // giảm nhanh hơn tăng (10 lên, 15 xuống)
 static constexpr unsigned long NUDGE_SETTLE_MS = 150;
 static constexpr unsigned long ROTATE_TIMEOUT_MS = 9000;
 
