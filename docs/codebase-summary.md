@@ -150,23 +150,36 @@ y      -= d × sin(θ_mid)          ← Y-down coordinate system
 - Vị trí (x, y): 100% từ encoder, IMU không tham gia
 - Cập nhật mỗi 20ms trong vòng lặp chính (50Hz)
 
-## Thuật toán xoay — Nudge rotation
+## Thuật toán xoay — 3 tầng
 
-Tất cả xoay (cua trong route + step turn từ user) dùng nudge step-stop-measure:
+### Tầng 1: Skip (<10°)
+Heading error dưới 10° → bỏ qua xoay, đi thẳng luôn, heading correction tự chỉnh.
+
+### Tầng 2: Fast Rotate (>25°)
+Xoay liên tục ở PWM cố định theo thời gian ước lượng (150°/s × 75% undershoot):
+- Góc nhỏ (<120°, trái/phải): PWM 200
+- Góc lớn (>120°, quay đầu): PWM 190 — giảm tốc tránh trượt quá
+- Cross-target detection: dừng ngay khi error đổi dấu (fix bug 180° angle wrapping)
+- Sau khi dừng → chuyển sang nudge để tinh chỉnh phần còn lại
+
+### Tầng 3: Nudge (tinh chỉnh)
+Step-stop-measure cho góc nhỏ (10°-25°) hoặc phần còn lại sau fast rotate:
 
 ```
 loop:
-  Cấp PWM 160 trong 50ms → dừng motor
+  Cấp PWM 175 trong 35ms → dừng motor
   Chờ 150ms (IMU ổn định, xe đứng yên)
   Đo heading thực tế từ IMU
   if |error| ≤ 4° → xong, chuyển sang Drive hoặc Arrived
-  else           → nhích tiếp (lặp lại)
+  if tiến bộ < 1° → tăng PWM +10 (thắng ma sát tĩnh)
+  if tiến bộ > 3° → giảm PWM -15 (tránh mất kiểm soát)
+  else            → giữ nguyên PWM, nhích tiếp
 ```
 
-- Mỗi nudge cycle ~200ms, cua 90° mất ~4-8 cycle
+- Mỗi nudge cycle ~185ms, cua 90° mất ~4-8 cycle
+- PWM thích ứng: tự tăng khi lực không đủ, tự giảm khi xoay quá nhanh
 - Robot luôn đứng yên khi đo → data IMU sạch, không bị ảnh hưởng rung
-- Không phụ thuộc bề mặt: cùng logic hoạt động trên gạch, xi măng, thảm
-- Timeout 9 giây nếu xoay quá lâu → báo fault dừng
+- Timeout 12 giây nếu xoay quá lâu → báo fault dừng
 
 ---
 
@@ -220,9 +233,9 @@ flutter run --dart-define=USE_SIMULATOR=true     # chạy với simulator
 
 | Phase | Mô tả | Trạng thái |
 |---|---|---|
-| 00 | Mua linh kiện, lắp ráp phần cứng | Chờ thực hiện |
-| 01 | Firmware: Encoder, IMU, Motor, Node Navigator | Code đã viết |
-| 02 | Firmware: Odometry, UDP, Calibration, Flutter models | Code đã viết |
-| 03 | Flutter UI: MapScreen, A*, tap→navigate | Code đã viết |
+| 00 | Mua linh kiện, lắp ráp phần cứng | Hoàn thành |
+| 01 | Firmware: Encoder, IMU, Motor, Node Navigator | Hoàn thành |
+| 02 | Firmware: Odometry, UDP, Calibration, Flutter models | Hoàn thành |
+| 03 | Flutter UI: MapScreen, A*, tap→navigate | Hoàn thành |
 | 04 | Obstacle avoidance: HC-SR04, replan | Code đã viết (ultrasonic tắt mặc định) |
-| 05 | Finalization: đo sai số, tune nudge params, báo cáo | Chưa bắt đầu |
+| 05 | Finalization: tune params, đo sai số, demo | Đang thực hiện — tuning encoder + rotation |
