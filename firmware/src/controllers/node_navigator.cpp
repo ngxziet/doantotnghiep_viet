@@ -181,9 +181,9 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
         return;
     }
 
-    // 10°-25°: nudge, burst time tỉ lệ với góc còn lại
-    float r = (headingError - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) /
-              (RobotConfig::FAST_ROTATE_THRESHOLD_RAD - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD);
+    // 10°-25°: nudge, burst time tỉ lệ với góc còn lại (mốc dưới = 4° done tolerance)
+    float r = (headingError - RobotConfig::NUDGE_DONE_TOL_RAD) /
+              (RobotConfig::FAST_ROTATE_THRESHOLD_RAD - RobotConfig::NUDGE_DONE_TOL_RAD);
     if (r < 0.0f) r = 0.0f; if (r > 1.0f) r = 1.0f;
     _currentBurstMs = RobotConfig::NUDGE_BURST_MIN_MS +
         (unsigned long)(r * (float)(RobotConfig::NUDGE_BURST_MAX_MS - RobotConfig::NUDGE_BURST_MIN_MS));
@@ -341,8 +341,8 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
     }
 
     // Burst time tỉ lệ với góc còn lại: nhỏ → burst ngắn (chính xác), lớn → burst dài (nhanh)
-    float r = (error - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) /
-              (RobotConfig::FAST_ROTATE_THRESHOLD_RAD - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD);
+    float r = (error - RobotConfig::NUDGE_DONE_TOL_RAD) /
+              (RobotConfig::FAST_ROTATE_THRESHOLD_RAD - RobotConfig::NUDGE_DONE_TOL_RAD);
     if (r < 0.0f) r = 0.0f; if (r > 1.0f) r = 1.0f;
     _currentBurstMs = RobotConfig::NUDGE_BURST_MIN_MS +
         (unsigned long)(r * (float)(RobotConfig::NUDGE_BURST_MAX_MS - RobotConfig::NUDGE_BURST_MIN_MS));
