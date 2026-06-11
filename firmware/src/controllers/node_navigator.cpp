@@ -160,6 +160,9 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
     }
 
     _stateStartMs = millis();
+    _initialRotateError = headingError;
+    _totalRotationAccum = 0.0f;
+    _headingBeforeNudge = pose.theta;
 
     // Lệch > 25°: xoay nhanh liên tục trước, rồi nudge phần còn lại
     if (headingError > RobotConfig::FAST_ROTATE_THRESHOLD_RAD) {
@@ -178,7 +181,12 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
         return;
     }
 
-    // 10°-25°: nudge bình thường
+    // 10°-25°: nudge, burst time tỉ lệ với góc còn lại
+    float r = (headingError - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) /
+              (RobotConfig::FAST_ROTATE_THRESHOLD_RAD - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD);
+    if (r < 0.0f) r = 0.0f; if (r > 1.0f) r = 1.0f;
+    _currentBurstMs = RobotConfig::NUDGE_BURST_MIN_MS +
+        (unsigned long)(r * (float)(RobotConfig::NUDGE_BURST_MAX_MS - RobotConfig::NUDGE_BURST_MIN_MS));
     _nudgeBurstStartMs = millis();
     _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
     _state = State::Rotate;
@@ -262,7 +270,7 @@ void NodeNavigator::_handleRotate(const Pose& pose, MotorDriver& motors) {
     }
 
     // Burst đã hết thời gian → dừng motor, chờ ổn định rồi đo heading
-    if (millis() - _nudgeBurstStartMs >= RobotConfig::NUDGE_BURST_MS) {
+    if (millis() - _nudgeBurstStartMs >= _currentBurstMs) {
         motors.stop();
         _state = State::RotateSettle;
         _pauseUntilMs = millis() + RobotConfig::NUDGE_SETTLE_MS;
@@ -291,7 +299,9 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
     motors.stop();
     if (millis() < _pauseUntilMs) return;
 
-    // Đã ổn định — đo sai lệch heading
+    // Đã ổn định — đo tiến bộ và sai lệch heading
+    float progress = fabsf(_normalizeAngle(pose.theta - _headingBeforeNudge));
+    _totalRotationAccum += progress;
     float error = fabsf(_normalizeAngle(_targetHeading - pose.theta));
 
     if (error <= RobotConfig::NUDGE_DONE_TOL_RAD) {
@@ -310,17 +320,32 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
         return;
     }
 
+    // Guard: tổng xoay vượt quá góc ban đầu + 60° → dừng (chống xoay vòng vòng 360°)
+    if (_totalRotationAccum > _initialRotateError + RobotConfig::ROTATE_MAX_OVERSHOOT_RAD) {
+        if (_rotateOnly) {
+            _state = State::Arrived;
+            _scheduleBeeps(1);
+        } else {
+            _beginDrive(leftEncoder, rightEncoder);
+        }
+        return;
+    }
+
     // PWM thích ứng: tăng khi không xoay đủ, giảm khi xoay quá nhiều
-    float progress = fabsf(_normalizeAngle(pose.theta - _headingBeforeNudge));
     if (progress < RobotConfig::NUDGE_MIN_PROGRESS_RAD) {
-        // Không xoay đủ → tăng PWM (thắng ma sát tĩnh)
         _nudgePwm = min(_nudgePwm + RobotConfig::NUDGE_PWM_STEP,
                         (int)RobotConfig::NUDGE_MAX_PWM);
     } else if (progress > RobotConfig::NUDGE_OVER_PROGRESS_RAD) {
-        // Xoay quá nhiều trong 1 burst → giảm PWM để tránh mất kiểm soát
         _nudgePwm = max(_nudgePwm - RobotConfig::NUDGE_PWM_DOWN_STEP,
                         (int)RobotConfig::NUDGE_ROTATE_PWM);
     }
+
+    // Burst time tỉ lệ với góc còn lại: nhỏ → burst ngắn (chính xác), lớn → burst dài (nhanh)
+    float r = (error - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) /
+              (RobotConfig::FAST_ROTATE_THRESHOLD_RAD - RobotConfig::SKIP_ROTATE_THRESHOLD_RAD);
+    if (r < 0.0f) r = 0.0f; if (r > 1.0f) r = 1.0f;
+    _currentBurstMs = RobotConfig::NUDGE_BURST_MIN_MS +
+        (unsigned long)(r * (float)(RobotConfig::NUDGE_BURST_MAX_MS - RobotConfig::NUDGE_BURST_MIN_MS));
 
     // Vẫn còn lệch — thử burst tiếp
     _nudgeBurstStartMs = millis();

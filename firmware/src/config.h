@@ -74,11 +74,13 @@ static constexpr int NUDGE_ROTATE_PWM = 175;
 static constexpr int NUDGE_MAX_PWM = 220;
 static constexpr int NUDGE_PWM_STEP = 10;
 static constexpr float NUDGE_MIN_PROGRESS_RAD = 1.0f * PI_F / 180.0f;
-static constexpr unsigned long NUDGE_BURST_MS = 35;
+static constexpr unsigned long NUDGE_BURST_MIN_MS = 20;   // burst ngắn khi gần đích
+static constexpr unsigned long NUDGE_BURST_MAX_MS = 55;    // burst dài khi còn xa
 static constexpr float NUDGE_OVER_PROGRESS_RAD = 3.0f * PI_F / 180.0f;  // ngưỡng xoay quá nhiều → giảm PWM
 static constexpr int NUDGE_PWM_DOWN_STEP = 15;  // giảm nhanh hơn tăng (10 lên, 15 xuống)
 static constexpr unsigned long NUDGE_SETTLE_MS = 220;
-static constexpr unsigned long ROTATE_TIMEOUT_MS = 12000;
+static constexpr unsigned long ROTATE_TIMEOUT_MS = 20000;
+static constexpr float ROTATE_MAX_OVERSHOOT_RAD = 60.0f * PI_F / 180.0f;  // tổng xoay vượt error+60° → dừng (chống xoay vòng)
 
 // Bước test: điều khiển motor trực tiếp, không qua navigator/IMU
 static constexpr int TEST_STEP_DRIVE_PWM = 160;
