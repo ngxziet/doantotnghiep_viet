@@ -137,15 +137,17 @@ bool UdpServer::receiveCommand(float waypointXs[], float waypointYs[], UdpComman
 
     int packetSize = 0;
     while ((packetSize = _udpRx.parsePacket()) > 0) {
-        int len = _udpRx.read(_rxBuf, sizeof(_rxBuf) - 1);
-        if (len <= 0) continue;
-        _rxBuf[len] = '\0';
-
+        // Check size TRƯỚC khi đọc — tránh cắt data rồi parse sai
         if (packetSize >= (int)sizeof(_rxBuf)) {
+            _udpRx.flush();
             Serial.printf("UDP command too large: %d bytes, max=%u\n",
                           packetSize, (unsigned)(sizeof(_rxBuf) - 1));
             continue;
         }
+
+        int len = _udpRx.read(_rxBuf, sizeof(_rxBuf) - 1);
+        if (len <= 0) continue;
+        _rxBuf[len] = '\0';
 
         gotCommand = _parseCommandBuffer(waypointXs, waypointYs, command) || gotCommand;
     }

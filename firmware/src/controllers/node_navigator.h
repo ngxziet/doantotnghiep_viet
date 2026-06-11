@@ -65,6 +65,9 @@ private:
     unsigned long _nudgeBurstStartMs = 0;
     int _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
     float _headingBeforeNudge = 0.0f;
+    unsigned long _currentBurstMs = 35;
+    float _initialRotateError = 0.0f;
+    float _totalRotationAccum = 0.0f;
     unsigned long _fastRotateUntilMs = 0;
     int _fastRotateDir = 0;
     int _fastRotatePwm = 0;
