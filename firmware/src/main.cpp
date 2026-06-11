@@ -361,6 +361,11 @@ void loop() {
             } else {
                 odometry.setPose(navigator.snapX(), navigator.snapY(), navigator.snapTheta());
             }
+            // Đồng bộ IMU reference với heading vừa snap
+            // → getAbsoluteYawRad() trả về snapTheta, tránh bị ghi đè bởi IMU lệch
+            if (imuConnected) {
+                imu.setAbsoluteYaw(navigator.snapTheta());
+            }
             navigator.acknowledgeSnap();
         }
     }

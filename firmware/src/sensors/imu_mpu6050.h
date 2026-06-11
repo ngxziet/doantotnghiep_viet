@@ -24,6 +24,9 @@ public:
 
     void setReferenceAngle();
 
+    // Đồng bộ IMU: sau snap, getAbsoluteYawRad() trả về targetRad
+    void setAbsoluteYaw(float targetRad);
+
     // Reset yaw tích lũy về 0
     void resetYaw();
 
