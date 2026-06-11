@@ -195,6 +195,10 @@ void ImuMpu6050::setReferenceAngle() {
     _referenceYawRad = _yawRad;
 }
 
+void ImuMpu6050::setAbsoluteYaw(float targetRad) {
+    _referenceYawRad = _yawRad - targetRad;
+}
+
 void ImuMpu6050::resetYaw() {
     _yawRad = 0.0f;
     _referenceYawRad = 0.0f;
