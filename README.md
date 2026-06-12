@@ -269,8 +269,8 @@ flutter test
 ## Current Status
 
 - Firmware modules are implemented for motor control, UDP command parsing, odometry, calibration and node-based navigation.
-- Three-tier rotation: fast rotate for large angles (PWM 200 for <120°, PWM 190 for >120° with cross-target overshoot detection), proportional nudge burst (20-55ms scaled by remaining angle, adaptive PWM), skip for <10° error. Rotation overshoot guard stops nudging if total rotation exceeds initial error + 60°.
-- MPU6050 gyro configured at ±500°/s range to prevent saturation during fast rotation.
+- Three-tier rotation: fast rotate for large angles (PWM 200 for <120°, PWM 220 for >120° with cross-target overshoot detection), proportional nudge burst (30-55ms scaled by remaining angle, adaptive PWM), skip for <10° error. Rotation overshoot guard stops nudging if total rotation exceeds initial error + 60°.
+- Heading snap + IMU reference sync after each rotation and at each waypoint, preventing heading error accumulation across segments.
 - Straight driving uses proportional heading correction (IMU gain=175, 1° deadband) with encoder balance and slew rate limiting.
 - Collinear node optimization: heading error below 10 degrees skips rotation; consecutive straight nodes are driven without stopping.
 - Auto-calibration: motor trim learns 5% per segment, encoder scale tracked, persisted to NVS flash.
