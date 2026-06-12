@@ -306,11 +306,13 @@ void NodeNavigator::_handleRotateSettle(const Pose& pose, MotorDriver& motors,
 
     if (error <= RobotConfig::NUDGE_DONE_TOL_RAD) {
         // Trong ngưỡng cho phép — xoay hoàn tất
+        // Snap heading về đúng target (giữ vị trí) → sync IMU trong main loop
+        _snapX = pose.x;
+        _snapY = pose.y;
+        _snapTheta = _targetHeading;
+        _snapPending = true;
+
         if (_rotateOnly) {
-            _snapX = pose.x;
-            _snapY = pose.y;
-            _snapTheta = _targetHeading;
-            _snapPending = true;
             _currentIndex = 1;
             _state = State::Arrived;
             _scheduleBeeps(1);
