@@ -47,9 +47,9 @@ private:
     bool _readMotion6(int16_t* ax, int16_t* ay, int16_t* az,
                       int16_t* gx, int16_t* gy, int16_t* gz);
 
-    // Hệ số chuyển đổi: gyro raw LSB → rad/s (±500°/s range)
-    // 65.5 LSB mỗi °/s → 65.5 × (180/π) LSB mỗi rad/s
-    static constexpr float GYRO_SCALE_RAD_S = 1.0f / (65.5f * (180.0f / PI));
+    // Hệ số chuyển đổi: gyro raw LSB → rad/s (±250°/s range)
+    // 131 LSB mỗi °/s → 131 × (180/π) LSB mỗi rad/s
+    static constexpr float GYRO_SCALE_RAD_S = 1.0f / (131.0f * (180.0f / PI));
     static constexpr int MAX_READ_ERRORS = 5;
     static constexpr unsigned long RETRY_INTERVAL_MS = 1000;
     static constexpr float MAX_DT_S = 0.2f;

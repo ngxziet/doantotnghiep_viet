@@ -102,7 +102,7 @@ bool ImuMpu6050::begin() {
             delay(100);
             _writeByte(REG_SMPLRT_DIV, 0x09);  // 100 Hz sample rate
             _writeByte(REG_CONFIG, 0x03);      // DLPF ~44 Hz gyro bandwidth
-            _writeByte(REG_GYRO_CONFIG, 0x08); // +/-500 deg/s (tránh saturation khi FastRotate)
+            _writeByte(REG_GYRO_CONFIG, 0x00); // +/-250 deg/s
             _lastUpdateMs = millis();
             _consecutiveReadErrors = 0;
             _healthy = true;
