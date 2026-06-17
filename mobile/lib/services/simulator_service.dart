@@ -113,6 +113,15 @@ class SimulatorService implements ITransportService {
   }
 
   @override
+  Future<void> sendAutonomousCommand(String command, int seq) async {
+    if (command == 'start') {
+      _status = RobotState.statusExploring;
+    } else {
+      _status = RobotState.statusIdle;
+    }
+  }
+
+  @override
   Future<void> sendStepCommand(String action, int seq) async {
     _waypoints.clear();
     _waypointIndex = 0;

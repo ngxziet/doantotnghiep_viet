@@ -16,6 +16,7 @@ enum class UdpCommandType {
     Step,
     ResetPose,
     Calibrate,
+    Autonomous,
     Ping
 };
 
@@ -27,6 +28,7 @@ struct UdpCommand {
     int manualSpeed = 0;
     char stepAction[24] = {};
     char calibrateMode[24] = {};
+    char autoCommand[16] = {};
 };
 
 class UdpServer {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../services/udp_service.dart';
+import 'autonomous_screen.dart';
 import 'connection_test_screen.dart';
 import 'manual_control_screen.dart';
 import 'map_screen.dart';
-import 'telemetry_screen.dart';
 
 class MainShell extends StatefulWidget {
   final ITransportService transport;
@@ -22,7 +22,7 @@ class _MainShellState extends State<MainShell> {
     'Map',
     'ESP32 Test',
     'Manual Control',
-    'Wheel Test',
+    'Tu hanh',
   ];
 
   @override
@@ -31,7 +31,7 @@ class _MainShellState extends State<MainShell> {
       MapScreen(transport: widget.transport),
       ConnectionTestScreen(transport: widget.transport),
       ManualControlScreen(transport: widget.transport),
-      TelemetryScreen(transport: widget.transport),
+      AutonomousScreen(transport: widget.transport),
     ];
 
     return Scaffold(
@@ -45,7 +45,7 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(
               icon: Icon(Icons.wifi_tethering), label: 'Test'),
           NavigationDestination(icon: Icon(Icons.gamepad), label: 'Control'),
-          NavigationDestination(icon: Icon(Icons.build), label: 'Wheels'),
+          NavigationDestination(icon: Icon(Icons.smart_toy), label: 'Tu hanh'),
         ],
       ),
     );

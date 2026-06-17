@@ -11,7 +11,7 @@ void main() {
     expect(find.text('Map'), findsWidgets);
     expect(find.text('Test'), findsOneWidget);
     expect(find.text('Control'), findsOneWidget);
-    expect(find.text('Wheels'), findsOneWidget);
+    expect(find.text('Tu hanh'), findsWidgets);
 
     transport.dispose();
   });

@@ -24,6 +24,10 @@ abstract class ITransportService {
   /// Sends direct wheel-control command for setup/manual testing.
   Future<void> sendManualCommand(String command, int speed, int seq);
 
+  /// Starts/stops the firmware autonomous obstacle-avoidance mode.
+  /// [command] is 'start' or 'stop'.
+  Future<void> sendAutonomousCommand(String command, int seq);
+
   /// Sends one discrete movement test step to the firmware.
   Future<void> sendStepCommand(String action, int seq);
 
@@ -165,6 +169,16 @@ class UdpService implements ITransportService {
       'speed': speed,
     });
     await _sendReliable(payload, retries: 1);
+  }
+
+  @override
+  Future<void> sendAutonomousCommand(String command, int seq) async {
+    final payload = jsonEncode({
+      'seq': seq,
+      'type': 'autonomous',
+      'command': command,
+    });
+    await _sendReliable(payload, retries: 2);
   }
 
   @override

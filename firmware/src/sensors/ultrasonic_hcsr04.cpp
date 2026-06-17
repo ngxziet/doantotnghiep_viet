@@ -54,6 +54,11 @@ float UltrasonicHcsr04::readDistanceCm() {
     return _lastDistCm;
 }
 
+float UltrasonicHcsr04::readQuickCm() {
+    _lastDistCm = _singleReadCm();
+    return _lastDistCm;
+}
+
 bool UltrasonicHcsr04::isObstacleNear() {
     return _lastDistCm < WARN_THRESHOLD_CM;
 }

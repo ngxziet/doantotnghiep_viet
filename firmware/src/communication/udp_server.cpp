@@ -191,6 +191,11 @@ bool UdpServer::_parseCommandBuffer(float waypointXs[], float waypointYs[],
         _extractString(_rxBuf, "\"mode\"", command->calibrateMode,
                        sizeof(command->calibrateMode));
         return true;
+    } else if (strcmp(type, "autonomous") == 0) {
+        command->type = UdpCommandType::Autonomous;
+        _extractString(_rxBuf, "\"command\"", command->autoCommand,
+                       sizeof(command->autoCommand));
+        return true;
     } else if (strcmp(type, "route_chunk") == 0) {
         int routeSeq = 0, chunkIndex = 0, chunkCount = 0, start = 0, total = 0;
         if (!_extractInt(_rxBuf, "\"route_seq\"", &routeSeq) ||

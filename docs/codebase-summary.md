@@ -25,11 +25,12 @@ doantotnghiep/
 │       ├── sensors/
 │       │   ├── encoder.h/.cpp             # Đọc xung encoder, tính vận tốc bánh xe
 │       │   ├── imu_mpu6050.h/.cpp         # Tích phân gyro Z → yaw (MPU-6050)
-│       │   └── ultrasonic_hcsr04.h/.cpp   # HC-SR04, median filter 5 mẫu
+│       │   ├── ultrasonic_hcsr04.h/.cpp   # HC-SR04, đọc kỹ (median 5) + đọc nhanh
+│       │   └── sensor_pan_servo.h/.cpp    # Servo SG90 quét cảm biến (LEDC ch2, 50Hz)
 │       ├── controllers/
 │       │   ├── motor_driver.h/.cpp        # LEDC PWM 2 bánh (ch 0/1, 5kHz, 8-bit)
-│       │   ├── pid_controller.h/.cpp      # PID generic với anti-windup (chưa sử dụng)
-│       │   └── node_navigator.h/.cpp      # State machine xoay + đi thẳng giữa các node
+│       │   ├── node_navigator.h/.cpp      # State machine xoay + đi thẳng giữa các node
+│       │   └── autonomous_explorer.h/.cpp # State machine tự hành né vật cản (HC-SR04+servo)
 │       ├── calibration/
 │       │   └── calibration_manager.h/.cpp # Auto-tune motor trim, lưu NVS
 │       └── localization/
@@ -54,7 +55,7 @@ doantotnghiep/
 │   │   │   ├── map_screen.dart            # Map: tap node → A* → navigate
 │   │   │   ├── connection_test_screen.dart # Test telemetry/UDP ESP32
 │   │   │   ├── manual_control_screen.dart # Điều khiển tay
-│   │   │   ├── telemetry_screen.dart      # Telemetry + checklist calibration
+│   │   │   ├── autonomous_screen.dart     # Tự hành: nút Start/Stop + telemetry trực tiếp
 │   │   │   ├── map_painter.dart           # CustomPainter: vẽ graph + robot + trail
 │   │   │   └── map_status_widgets.dart    # Status bar, obstacle warning, pose info
 │   │   └── services/
@@ -100,7 +101,9 @@ ESP32 phát WiFi AP: **SSID `RobotCar`** | **pass `12345678`** | **IP `192.168.4
 
 Lệnh waypoints gửi **3 lần** cùng `seq`, ESP32 dedup bằng `last_seq`.
 
-**Status values:** `idle` | `moving` | `obstacle_detected` | `emergency_stop` | `arrived` | `imu_missing` | `calibrating`
+**Lệnh tự hành:** `{"seq":N,"type":"autonomous","command":"start"|"stop"}` — bật/tắt chế độ tự hành né vật cản. Các loại lệnh khác: `manual`, `step`, `reset_pose`, `calibrate`, `ping`.
+
+**Status values:** `idle` | `moving` | `arrived` | `exploring` | `scanning` | `avoiding` | `stuck` | `obstacle_detected` | `emergency_stop` | `imu_missing` | `calibrating`
 
 ---
 
@@ -124,14 +127,24 @@ telemetryStream.listen → RobotState → setState() → repaint
 
 ---
 
-## Xử lý vật cản
+## Chế độ tự hành né vật cản (autonomous_explorer.cpp)
+
+Máy trạng thái phản ứng (reactive) chạy lồng trong vòng lặp 50Hz, bật/tắt bằng nút Start/Stop trên màn hình Tự hành. Mượn lại cơ chế xoay của Node Navigator (`setStepTurn`) cho pha né.
 
 ```
-dist < 20cm → Flutter: disable edge hiện tại → A* replan → gửi waypoints mới
-dist < 10cm → ESP32: emergency stop ngay (< 200ms)
-dist ≥ 20cm (ổn định 3s) → Flutter: re-enable edge → replan về đích gốc
-Không có đường thay thế → hiển thị "No alternative path", đứng yên
+DRIVE      → servo giữa(90°), chạy thẳng PWM160 + giữ hướng IMU
+             mỗi 50ms đọc nhanh phía trước; <30cm (xác nhận 2 lần) → dừng → SCAN
+SCAN LEFT  → servo 150°, chờ 350ms, đọc kỹ (median 5) → khoảng cách trái
+SCAN RIGHT → servo 30°,  chờ 350ms, đọc kỹ → khoảng cách phải → quyết định:
+   • ≥1 bên ≥30cm        → rẽ 90° về bên LỚN hơn (bằng nhau → ưu tiên TRÁI)
+   • cả 2 bên <30 nhưng ≥25cm → quay đầu 180°
+   • còn lại (<25cm)     → STUCK (dừng hẳn)
+TURN       → giao góc cho Node Navigator xoay; xong → đồng bộ IMU → về DRIVE
 ```
+
+Ngưỡng (config.h): `AUTO_STOP_DISTANCE_CM=30`, `AUTO_TURN_CLEARANCE_CM=25`, `AUTO_DRIVE_PWM=160`, servo `SERVO_PIN=19` (LEDC ch2, 50Hz, 16-bit), góc 90/150/30°, chờ ổn định 350ms.
+
+*(Lưu ý: né vật cản hiện là phản ứng cục bộ; cờ `USE_ULTRASONIC` cho emergency-stop chế độ bám lộ trình vẫn tắt mặc định. Hướng phát triển: chặn cạnh bản đồ + A\* replan toàn cục.)*
 
 ---
 
@@ -237,5 +250,5 @@ flutter run --dart-define=USE_SIMULATOR=true     # chạy với simulator
 | 01 | Firmware: Encoder, IMU, Motor, Node Navigator | Hoàn thành |
 | 02 | Firmware: Odometry, UDP, Calibration, Flutter models | Hoàn thành |
 | 03 | Flutter UI: MapScreen, A*, tap→navigate | Hoàn thành |
-| 04 | Obstacle avoidance: HC-SR04, replan | Code đã viết (ultrasonic tắt mặc định) |
+| 04 | Obstacle avoidance: HC-SR04 + servo quét, chế độ tự hành | Hoàn thành (né phản ứng cục bộ; replan toàn cục là hướng phát triển) |
 | 05 | Finalization: tune params, đo sai số, demo | Đang thực hiện — tuning encoder + rotation |

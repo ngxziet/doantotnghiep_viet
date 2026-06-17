@@ -7,8 +7,9 @@ Firmware ESP32 va ung dung Flutter dieu khien xe tu hanh nho. He thong cho phep 
 - Tap-to-navigate tren ban do waypoint.
 - A* path planning voi kha nang block/unblock edge de mo phong vat can.
 - ESP32 WiFi Access Point, giao tiep UDP truc tiep voi app.
-- Firmware module hoa: motor driver, node navigator (nudge rotation), odometry, encoder, IMU, calibration, ultrasonic.
-- Flutter app co 4 man hinh: Map, Test, Control, Wheels/Telemetry.
+- Firmware module hoa: motor driver, node navigator (nudge rotation), autonomous explorer (obstacle avoidance), odometry, encoder, IMU, calibration, ultrasonic, pan servo.
+- Che do tu hanh ne vat can: HC-SR04 tren servo quet trai/phai, tu dung va chon huong thong thoang.
+- Flutter app co 4 man hinh: Map, Test, Control, Autonomous (Start/Stop tu hanh + telemetry).
 - Simulator mode de test app khi chua co hardware.
 - Unit tests cho A*, map model, waypoint builder, robot state va odometry math.
 
@@ -83,6 +84,7 @@ Core hardware target:
 - 2 DC motors with LM393 encoders
 - MPU-6050 IMU
 - HC-SR04 ultrasonic sensor
+- SG90 servo panning the HC-SR04 (GPIO19) for the autonomous mode
 - Robot chassis, battery, wiring and common ground
 
 Default ESP32 pin mapping is documented in `firmware/src/config.h`.
@@ -193,6 +195,18 @@ Supported manual commands:
 - `right_backward`
 - `stop`
 
+### Autonomous Mode
+
+```json
+{
+  "seq": 4,
+  "type": "autonomous",
+  "command": "start"
+}
+```
+
+`command` is `start` (enable obstacle-avoidance autopilot) or `stop`. While active the robot drives straight, stops at obstacles under 30 cm, pans the HC-SR04 servo left/right and picks the clearer side (90 deg turn), does a 180 deg U-turn when both sides are blocked but >=25 cm clear, or stops when boxed in.
+
 ### Reset Pose
 
 ```json
@@ -206,9 +220,13 @@ Supported status values:
 
 - `idle`
 - `moving`
+- `arrived`
+- `exploring` (autonomous: driving straight)
+- `scanning` (autonomous: panning servo to measure sides)
+- `avoiding` (autonomous: turning to avoid)
+- `stuck` (autonomous: boxed in, stopped)
 - `obstacle_detected`
 - `emergency_stop`
-- `arrived`
 - `imu_missing`
 - `calibrating`
 - `calibrated`
@@ -274,7 +292,8 @@ flutter test
 - Straight driving uses proportional heading correction (IMU gain=175, 1° deadband) with encoder balance and slew rate limiting.
 - Collinear node optimization: heading error below 10 degrees skips rotation; consecutive straight nodes are driven without stopping.
 - Auto-calibration: motor trim learns 5% per segment, encoder scale tracked, persisted to NVS flash.
-- Flutter app is implemented for map navigation, connection testing, manual control and telemetry.
+- Autonomous obstacle-avoidance mode (autonomous_explorer): drive straight, stop under 30 cm, servo-scan both sides, turn 90 deg toward the clearer side (tie -> left), 180 deg U-turn when both sides blocked but >=25 cm clear, stop when boxed in. Pan servo on GPIO19 (raw LEDC channel 2, 50 Hz).
+- Flutter app is implemented for map navigation, connection testing, manual control and an Autonomous tab (Start/Stop + live telemetry). The old Wheels test tab was replaced by it.
 - Simulator service is available for app testing without hardware.
 
 ## Documentation

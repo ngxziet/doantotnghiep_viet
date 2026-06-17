@@ -22,6 +22,9 @@ static constexpr int MPU6050_SCL_PIN = 22;
 static constexpr int ULTRASONIC_TRIG_PIN = 5;
 static constexpr int ULTRASONIC_ECHO_PIN = 18;
 
+// Servo quét cảm biến HC-SR04 trái/phải (LEDC thô, kênh riêng — không đụng kênh motor 0/1)
+static constexpr int SERVO_PIN = 19;
+
 static constexpr int BUZZER_PIN = 4;
 
 // Tăng số này khi thay đổi chân hoặc phần cứng để tự động reset calibration
@@ -92,5 +95,23 @@ static constexpr int ROUTE_MAX_WAYPOINTS = 64;
 
 static constexpr unsigned long BUZZER_ON_MS = 75;
 static constexpr unsigned long BUZZER_GAP_MS = 95;
+
+// --- Servo quét cảm biến (điều khiển LEDC thô 50Hz) ---
+static constexpr int SERVO_PWM_CH = 2;          // kênh LEDC riêng (motor dùng 0,1 → timer khác)
+static constexpr int SERVO_PWM_FREQ = 50;       // tần số chuẩn servo (chu kỳ 20ms)
+static constexpr int SERVO_PWM_BITS = 16;       // độ phân giải duty 0..65535
+static constexpr int SERVO_MIN_PULSE_US = 500;  // xung ứng với 0°
+static constexpr int SERVO_MAX_PULSE_US = 2500; // xung ứng với 180°
+static constexpr int SERVO_CENTER_DEG = 90;     // nhìn thẳng phía trước
+static constexpr int SERVO_LEFT_DEG = 150;      // nhìn sang trái  (kiểm tra theo cách lắp)
+static constexpr int SERVO_RIGHT_DEG = 30;      // nhìn sang phải (kiểm tra theo cách lắp)
+static constexpr unsigned long SERVO_SETTLE_MS = 350;  // chờ servo quay xong mới đo
+
+// --- Chế độ tự hành né vật cản ---
+static constexpr float AUTO_STOP_DISTANCE_CM = 30.0f;    // <30cm phía trước → dừng + quét
+static constexpr float AUTO_TURN_CLEARANCE_CM = 25.0f;   // cần ≥25cm cả 2 bên mới quay đầu 180°
+static constexpr int AUTO_DRIVE_PWM = 160;               // tốc độ chạy thẳng tự hành (chậm hơn cruise)
+static constexpr float AUTO_AVOID_TURN_DEG = 90.0f;      // góc né trái/phải
+static constexpr unsigned long AUTO_DRIVE_SAMPLE_MS = 50; // chu kỳ đo sonar khi đang chạy thẳng
 
 }

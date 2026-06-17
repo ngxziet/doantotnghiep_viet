@@ -37,6 +37,12 @@ class RobotState {
   static const String statusEmergencyStop = 'emergency_stop';
   static const String statusImuMissing = 'imu_missing';
 
+  // Chế độ tự hành né vật cản
+  static const String statusExploring = 'exploring';
+  static const String statusScanning = 'scanning';
+  static const String statusAvoiding = 'avoiding';
+  static const String statusStuck = 'stuck';
+
   final Pose pose;
   final double obstacleDistCm;
   final String status;

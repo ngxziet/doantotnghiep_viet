@@ -10,10 +10,12 @@
 #include "communication/udp_server.h"
 #include "controllers/motor_driver.h"
 #include "controllers/node_navigator.h"
+#include "controllers/autonomous_explorer.h"
 #include "localization/odometry.h"
 #include "sensors/encoder.h"
 #include "sensors/imu_mpu6050.h"
 #include "sensors/ultrasonic_hcsr04.h"
+#include "sensors/sensor_pan_servo.h"
 
 MotorDriver motors(RobotConfig::MOTOR_LEFT_IN1,
                    RobotConfig::MOTOR_LEFT_IN2,
@@ -26,10 +28,12 @@ Encoder encRight(RobotConfig::ENCODER_RIGHT_PIN);
 ImuMpu6050 imu;
 UltrasonicHcsr04 ultrasonic(RobotConfig::ULTRASONIC_TRIG_PIN,
                             RobotConfig::ULTRASONIC_ECHO_PIN);
+SensorPanServo scanServo(RobotConfig::SERVO_PIN);
 Odometry odometry(RobotConfig::WHEEL_BASE_CM);
 UdpServer udpServer;
 NodeNavigator navigator;
 CalibrationManager calibration;
+AutonomousExplorer explorer(motors, ultrasonic, scanServo, navigator);
 
 static constexpr bool USE_ULTRASONIC = false;
 
@@ -196,22 +200,26 @@ static void calibrateImu() {
 static void handleCommand(const UdpCommand& command) {
     switch (command.type) {
         case UdpCommandType::ResetPose:
+            explorer.stop();
             resetPose();
             Serial.printf("Pose reset: seq=%d\n", command.seq);
             break;
         case UdpCommandType::Manual:
+            explorer.stop();
             applyManualCommand(command);
             Serial.printf("Manual: seq=%d cmd=%s speed=%d left=%d right=%d\n",
                           command.seq, command.manualCommand, command.manualSpeed,
                           manualLeftSpeed, manualRightSpeed);
             break;
         case UdpCommandType::Step:
+            explorer.stop();
             applyStepCommand(command);
             Serial.printf("Step: seq=%d action=%s heading=%.1f\n",
                           command.seq, command.stepAction,
                           odometry.getPose().theta * 180.0f / PI);
             break;
         case UdpCommandType::Route: {
+            explorer.stop();
             stopManual();
             Pose pose = odometry.getPose();
             navigator.setRoute(routeXs, routeYs, command.waypointCount, pose,
@@ -233,6 +241,16 @@ static void handleCommand(const UdpCommand& command) {
             }
             Serial.printf("Calibrate: seq=%d mode=%s\n", command.seq, command.calibrateMode);
             break;
+        case UdpCommandType::Autonomous:
+            if (strcmp(command.autoCommand, "start") == 0) {
+                stopManual();
+                motors.stop();
+                explorer.start();
+            } else {
+                explorer.stop();
+            }
+            Serial.printf("Autonomous: seq=%d cmd=%s\n", command.seq, command.autoCommand);
+            break;
         case UdpCommandType::Ping:
             setTemporaryStatus("idle", 700);
             break;
@@ -252,10 +270,10 @@ void setup() {
     encRight.setDirection(0);
     navigator.begin();
     calibration.begin();
+    scanServo.begin();
 
-    if (USE_ULTRASONIC) {
-        ultrasonic.begin();
-    }
+    // HC-SR04 luôn khởi tạo: chế độ tự hành dùng cảm biến dù USE_ULTRASONIC tắt
+    ultrasonic.begin();
 
     udpServer.begin(RobotConfig::WIFI_SSID, RobotConfig::WIFI_PASS);
     Serial.println("WiFi AP ready: RobotCar  IP: 192.168.4.1");
@@ -334,9 +352,10 @@ void loop() {
         odometry.setPose(p.x, p.y, imuHeading);
     }
 
-    float obstacleDist = MAX_RANGE_CM;
+    bool explorerActive = explorer.isActive();
+    float obstacleDist = explorerActive ? explorer.lastFrontCm() : MAX_RANGE_CM;
     bool emergency = false;
-    if (USE_ULTRASONIC) {
+    if (USE_ULTRASONIC && !explorerActive) {
         obstacleDist = ultrasonic.readDistanceCm();
         emergency = ultrasonic.isEmergency();
     }
@@ -346,6 +365,20 @@ void loop() {
         navigator.clear();
         stopManual();
         setTemporaryStatus("emergency_stop", 1000);
+    } else if (explorerActive) {
+        stopManual();
+        Pose pose = odometry.getPose();
+        explorer.update(pose, encLeft, encRight, calibration, imuConnected, imuHeading);
+
+        // Sau khi né (step turn) hoàn tất, navigator phát snap → đồng bộ heading
+        if (navigator.hasSnap()) {
+            Pose current = odometry.getPose();
+            odometry.setPose(current.x, current.y, navigator.snapTheta());
+            if (imuConnected) {
+                imu.setAbsoluteYaw(navigator.snapTheta());
+            }
+            navigator.acknowledgeSnap();
+        }
     } else if (manualDurationMs > 0 && (now - manualStartMs) < manualDurationMs) {
         motors.setLeft(manualLeftSpeed);
         motors.setRight(manualRightSpeed);
@@ -375,6 +408,9 @@ void loop() {
     calibration.update();
 
     const char* status = navigator.status();
+    if (explorer.isActive()) {
+        status = explorer.status();
+    }
     bool manualActive = manualDurationMs > 0 && (now - manualStartMs) < manualDurationMs;
     if (manualActive) {
         status = (manualLeftSpeed == 0 && manualRightSpeed == 0) ? "idle" : "moving";

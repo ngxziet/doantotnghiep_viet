@@ -14,7 +14,12 @@ public:
     void begin();
 
     // Trả về trung vị của 5 lần đo (cm). Giới hạn tại MAX_RANGE_CM.
+    // Chậm (~50ms+ do delay giữa các mẫu) — chỉ dùng khi xe đứng yên.
     float readDistanceCm();
+
+    // Một lần đo nhanh (không lấy trung vị, không delay) — dùng khi đang chạy
+    // để vòng lặp không bị nghẽn. Cập nhật _lastDistCm như readDistanceCm.
+    float readQuickCm();
 
     // true nếu khoảng cách đo gần nhất < ngưỡng cảnh báo (20cm)
     bool isObstacleNear();
