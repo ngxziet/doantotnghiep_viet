@@ -113,6 +113,6 @@ static constexpr float AUTO_TURN_CLEARANCE_CM = 25.0f;   // cần ≥25cm cả 2
 static constexpr int AUTO_DRIVE_PWM = 160;               // tốc độ chạy thẳng tự hành (chậm hơn cruise)
 static constexpr float AUTO_AVOID_TURN_DEG = 90.0f;      // góc né trái/phải
 static constexpr unsigned long AUTO_DRIVE_SAMPLE_MS = 50; // chu kỳ đo sonar khi đang chạy thẳng
-static constexpr unsigned long AUTO_STOP_SETTLE_MS = 100;// chờ L298N inductive spike tan trước khi quét servo
+static constexpr unsigned long AUTO_STOP_SETTLE_MS = 500;// chờ L298N inductive spike tan trước khi quét servo
 
 }
