@@ -51,18 +51,23 @@ void NodeNavigator::setStepDrive(const Pose& currentPose,
     _beginDrive(leftEncoder, rightEncoder);
 }
 
-void NodeNavigator::setStepTurn(float targetHeading) {
+void NodeNavigator::setStepTurn(float targetHeading, float currentHeading) {
     clear();
     _rotateOnly = true;
     _isStep = true;
     _count = 1;
     _currentIndex = 0;
-    _targetHeading = _normalizeAngle(targetHeading);
     _targetPulses = 0;
-    _stateStartMs = millis();
-    _nudgeBurstStartMs = millis();
-    _nudgePwm = RobotConfig::NUDGE_ROTATE_PWM;
-    _state = State::Rotate;
+
+    float error = fabsf(_normalizeAngle(targetHeading - currentHeading));
+    if (error < RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) {
+        // Đã thẳng hướng — bỏ qua xoay, báo arrived
+        _state = State::Arrived;
+        _scheduleBeeps(1);
+        return;
+    }
+
+    _beginRotateTo(targetHeading, currentHeading);
 }
 
 void NodeNavigator::clear() {
@@ -150,8 +155,7 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
     _targetPulses = _segmentPulses(pose.x, pose.y,
                                    _xs[_currentIndex], _ys[_currentIndex]);
 
-    float headingErrorRaw = _normalizeAngle(_targetHeading - pose.theta);
-    float headingError = fabsf(headingErrorRaw);
+    float headingError = fabsf(_normalizeAngle(_targetHeading - pose.theta));
 
     // Lệch < 10°: đi thẳng luôn, heading correction tự điều chỉnh
     if (headingError < RobotConfig::SKIP_ROTATE_THRESHOLD_RAD) {
@@ -159,12 +163,23 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
         return;
     }
 
+    _beginRotateTo(_targetHeading, pose.theta);
+}
+
+void NodeNavigator::_beginRotateTo(float targetHeading, float currentHeading) {
+    // Routing chung cho cả route leg và step turn:
+    //   error > 25°  → FastRotate (xoay nhanh liên tục, rồi nudge phần còn lại)
+    //   error 10-25° → Nudge (burst ngắn, lặp lại)
+    // Caller phải tự xử lý trường hợp error < 10° trước khi gọi.
+    _targetHeading = _normalizeAngle(targetHeading);
+    float headingErrorRaw = _normalizeAngle(_targetHeading - currentHeading);
+    float headingError = fabsf(headingErrorRaw);
+
     _stateStartMs = millis();
     _initialRotateError = headingError;
     _totalRotationAccum = 0.0f;
-    _headingBeforeNudge = pose.theta;
+    _headingBeforeNudge = currentHeading;
 
-    // Lệch > 25°: xoay nhanh liên tục trước, rồi nudge phần còn lại
     if (headingError > RobotConfig::FAST_ROTATE_THRESHOLD_RAD) {
         // Góc lớn (>120°, quay đầu): PWM thấp hơn tránh trượt quá 180°
         // Góc nhỏ (trái/phải): PWM cao hơn để xoay đủ nhanh
@@ -174,7 +189,7 @@ void NodeNavigator::_beginRotateOrDrive(const Pose& pose,
 
         float angleDeg = headingError * (180.0f / PI);
         float estimatedMs = (angleDeg / RobotConfig::FAST_ROTATE_SPEED_DPS) * 1000.0f;
-        estimatedMs *= RobotConfig::FAST_ROTATE_UNDERSHOOT; // 75% tránh trượt quá
+        estimatedMs *= RobotConfig::FAST_ROTATE_UNDERSHOOT; // 90% tránh trượt quá
         _fastRotateDir = (headingErrorRaw > 0.0f ? 1 : -1) * RobotConfig::ROTATE_DIRECTION_SIGN;
         _fastRotateUntilMs = millis() + (unsigned long)estimatedMs;
         _state = State::FastRotate;

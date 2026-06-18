@@ -13,7 +13,7 @@ public:
     void setRoute(const float xs[], const float ys[], int count, const Pose& currentPose,
                   Encoder& leftEncoder, Encoder& rightEncoder);
     void setStepDrive(const Pose& currentPose, Encoder& leftEncoder, Encoder& rightEncoder);
-    void setStepTurn(float targetHeading);
+    void setStepTurn(float targetHeading, float currentHeading);
     void clear();
 
     void update(const Pose& pose, MotorDriver& motors,
@@ -84,6 +84,7 @@ private:
 
     void _beginRotateOrDrive(const Pose& pose,
                              Encoder& leftEncoder, Encoder& rightEncoder);
+    void _beginRotateTo(float targetHeading, float currentHeading);
     void _beginDrive(Encoder& leftEncoder, Encoder& rightEncoder);
     void _handleFastRotate(const Pose& pose, MotorDriver& motors);
     void _handleRotate(const Pose& pose, MotorDriver& motors);

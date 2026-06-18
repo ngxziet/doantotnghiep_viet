@@ -39,6 +39,7 @@ private:
     enum class State {
         Off,        // tắt
         Drive,      // chạy thẳng
+        StopSettle, // vừa dừng vì vật cản, chờ L298N spike tan rồi mới quét servo
         ScanLeft,   // servo nhìn trái, chờ ổn định rồi đo
         ScanRight,  // servo nhìn phải, chờ ổn định rồi đo
         Turn,       // đang xoay (giao cho navigator)
@@ -55,15 +56,17 @@ private:
     float _leftCm = 0.0f;
     float _rightCm = 0.0f;
     unsigned long _scanTs = 0;        // mốc thời gian bắt đầu chờ servo ổn định
+    unsigned long _stopSettleUntilMs = 0;  // mốc thời gian chờ spike L298N tan
     unsigned long _lastSampleMs = 0;  // lần đo sonar gần nhất khi chạy thẳng
     bool _driveHeadingValid = false;  // đã chốt hướng giữ thẳng chưa
     float _driveHeading = 0.0f;       // hướng cần giữ khi chạy thẳng
 
     void _handleDrive(bool imuConnected, float imuHeadingRad);
+    void _handleStopSettle();
     void _handleScanLeft();
     void _handleScanRight(float imuHeadingRad);
     void _decideAfterScan(float imuHeadingRad);
-    void _startTurn(float targetHeading);
+    void _startTurn(float targetHeading, float currentHeading);
 
     static float _normalize(float a);
 };

@@ -66,7 +66,7 @@ static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 static constexpr float FAST_ROTATE_THRESHOLD_RAD = 25.0f * PI_F / 180.0f;  // >25° dùng xoay nhanh
 static constexpr float FAST_ROTATE_SPEED_DPS = 150.0f;  // tốc độ ước lượng (°/s) ở PWM xoay nhanh
 static constexpr int FAST_ROTATE_PWM = 200;              // PWM cho xoay trái/phải (góc nhỏ)
-static constexpr int FAST_ROTATE_REVERSE_PWM = 220;      // PWM cho quay đầu (góc lớn, tránh trượt quá)
+static constexpr int FAST_ROTATE_REVERSE_PWM = 200;      // PWM cho quay đầu (góc lớn, tránh trượt quá)
 static constexpr float FAST_ROTATE_REVERSE_RAD = 120.0f * PI_F / 180.0f;  // ngưỡng chuyển sang PWM thấp
 static constexpr float FAST_ROTATE_UNDERSHOOT = 0.9f;   // xoay 90% thời gian ước lượng (tránh trượt quá)
 
@@ -113,5 +113,6 @@ static constexpr float AUTO_TURN_CLEARANCE_CM = 25.0f;   // cần ≥25cm cả 2
 static constexpr int AUTO_DRIVE_PWM = 160;               // tốc độ chạy thẳng tự hành (chậm hơn cruise)
 static constexpr float AUTO_AVOID_TURN_DEG = 90.0f;      // góc né trái/phải
 static constexpr unsigned long AUTO_DRIVE_SAMPLE_MS = 50; // chu kỳ đo sonar khi đang chạy thẳng
+static constexpr unsigned long AUTO_STOP_SETTLE_MS = 100;// chờ L298N inductive spike tan trước khi quét servo
 
 }

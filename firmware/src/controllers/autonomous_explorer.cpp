@@ -35,6 +35,10 @@ void AutonomousExplorer::update(const Pose& pose, Encoder& leftEnc, Encoder& rig
             _handleDrive(imuConnected, imuHeadingRad);
             return;
 
+        case State::StopSettle:
+            _handleStopSettle();
+            return;
+
         case State::ScanLeft:
             _handleScanLeft();
             return;
@@ -81,9 +85,10 @@ void AutonomousExplorer::_handleDrive(bool imuConnected, float imuHeadingRad) {
             _frontCm = m;
             if (m < RobotConfig::AUTO_STOP_DISTANCE_CM) {
                 _motors.stop();
-                _servo.lookLeft();
-                _scanTs = now;
-                _state = State::ScanLeft;
+                // Chờ L298N inductive spike tan trước khi quay servo —
+                // tránh cộng dồn dòng với servo inrush gây sụt áp/WiFi crash.
+                _stopSettleUntilMs = now + RobotConfig::AUTO_STOP_SETTLE_MS;
+                _state = State::StopSettle;
                 return;
             }
         } else {
@@ -106,6 +111,15 @@ void AutonomousExplorer::_handleDrive(bool imuConnected, float imuHeadingRad) {
     int r = constrain(base + corr, RobotConfig::DRIVE_MIN_PWM, RobotConfig::DRIVE_MAX_PWM);
     _motors.setLeftSlew(l, RobotConfig::DRIVE_SLEW_STEP);
     _motors.setRightSlew(r, RobotConfig::DRIVE_SLEW_STEP);
+}
+
+void AutonomousExplorer::_handleStopSettle() {
+    // Motor đã dừng ở _handleDrive; chờ spike tan rồi mới quay servo + đo sonar.
+    if (millis() < _stopSettleUntilMs) return;
+
+    _servo.lookLeft();
+    _scanTs = millis();
+    _state = State::ScanLeft;
 }
 
 void AutonomousExplorer::_handleScanLeft() {
@@ -137,11 +151,11 @@ void AutonomousExplorer::_decideAfterScan(float imuHeadingRad) {
         // Quay trái = +90° (yaw tăng, CCW); quay phải = -90°
         float deltaDeg = goRight ? -RobotConfig::AUTO_AVOID_TURN_DEG
                                  :  RobotConfig::AUTO_AVOID_TURN_DEG;
-        _startTurn(imuHeadingRad + deltaDeg * PI / 180.0f);
+        _startTurn(imuHeadingRad + deltaDeg * PI / 180.0f, imuHeadingRad);
     } else if (_leftCm >= RobotConfig::AUTO_TURN_CLEARANCE_CM &&
                _rightCm >= RobotConfig::AUTO_TURN_CLEARANCE_CM) {
         // 2 bên đều <30cm nhưng đủ ≥25cm để xoay → quay đầu 180°
-        _startTurn(imuHeadingRad + PI);
+        _startTurn(imuHeadingRad + PI, imuHeadingRad);
     } else {
         // 2 bên quá hẹp → dừng hẳn
         _motors.stop();
@@ -149,8 +163,8 @@ void AutonomousExplorer::_decideAfterScan(float imuHeadingRad) {
     }
 }
 
-void AutonomousExplorer::_startTurn(float targetHeading) {
-    _navigator.setStepTurn(_normalize(targetHeading));
+void AutonomousExplorer::_startTurn(float targetHeading, float currentHeading) {
+    _navigator.setStepTurn(_normalize(targetHeading), currentHeading);
     _state = State::Turn;
 }
 
@@ -158,6 +172,7 @@ const char* AutonomousExplorer::status() const {
     switch (_state) {
         case State::Off:       return "idle";
         case State::Drive:     return "exploring";
+        case State::StopSettle:
         case State::ScanLeft:
         case State::ScanRight: return "scanning";
         case State::Turn:      return "avoiding";
