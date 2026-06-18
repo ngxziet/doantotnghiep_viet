@@ -70,7 +70,7 @@ class _AutonomousScreenState extends State<AutonomousScreen> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  _running ? 'Tu hanh: DANG CHAY' : 'Tu hanh: DA DUNG',
+                  _running ? 'Autonomous: RUNNING' : 'Autonomous: STOPPED',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
@@ -95,7 +95,7 @@ class _AutonomousScreenState extends State<AutonomousScreen> {
             ),
             onPressed: _running ? null : _start,
             icon: const Icon(Icons.play_arrow),
-            label: const Text('Start tu hanh'),
+            label: const Text('Start Autonomous'),
           ),
         ),
         const SizedBox(height: 12),
