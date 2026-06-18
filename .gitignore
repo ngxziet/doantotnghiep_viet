@@ -119,6 +119,8 @@ claude/skills/ai-multimodal/assets/demo-*.claude/session-state/*.tmp
 .gemini/settings.json
 # External repos for study/reference
 external/
+agent-skills/
+awesome-agent-skills/
 
 # Git worktrees (local development only)
 worktrees/
