@@ -477,7 +477,8 @@ void NodeNavigator::_updateBuzzer() {
 
 void NodeNavigator::_setBuzzer(bool on) {
     _buzzerOn = on;
-    digitalWrite(RobotConfig::BUZZER_PIN, on ? HIGH : LOW);
+    // Module buzzer active LOW: on → LOW (kêu), off → HIGH (im).
+    digitalWrite(RobotConfig::BUZZER_PIN, on ? LOW : HIGH);
 }
 
 void NodeNavigator::_setFault(const char* status, MotorDriver& motors) {
