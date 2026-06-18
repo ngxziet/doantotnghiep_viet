@@ -66,7 +66,7 @@ static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 static constexpr float FAST_ROTATE_THRESHOLD_RAD = 25.0f * PI_F / 180.0f;  // >25° dùng xoay nhanh
 static constexpr float FAST_ROTATE_SPEED_DPS = 150.0f;  // tốc độ ước lượng (°/s) ở PWM xoay nhanh
 static constexpr int FAST_ROTATE_PWM = 200;              // PWM cho xoay trái/phải (góc nhỏ)
-static constexpr int FAST_ROTATE_REVERSE_PWM = 200;      // PWM cho quay đầu (góc lớn, tránh trượt quá)
+static constexpr int FAST_ROTATE_REVERSE_PWM = 220;      // PWM cho quay đầu (góc lớn, cần torque cao hơn)
 static constexpr float FAST_ROTATE_REVERSE_RAD = 120.0f * PI_F / 180.0f;  // ngưỡng chuyển sang PWM thấp
 static constexpr float FAST_ROTATE_UNDERSHOOT = 0.85f;  // xoay 85% thời gian ước lượng (tránh trượt quá 180°)
 
