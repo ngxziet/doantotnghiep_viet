@@ -78,6 +78,7 @@ void NodeNavigator::clear() {
     _isStep = false;
     _snapPending = false;
     _nudgeBurstStartMs = 0;
+    _preRotateUntilMs = 0;
     _faultStatus[0] = '\0';
 }
 
@@ -179,6 +180,10 @@ void NodeNavigator::_beginRotateTo(float targetHeading, float currentHeading) {
     _initialRotateError = headingError;
     _totalRotationAccum = 0.0f;
     _headingBeforeNudge = currentHeading;
+    // Chờ robot dừng hẳn + IMU ổn định trước khi đo heading lần đầu
+    // (sau motor stop còn drift/rumble → heading đọc lệch → xoay trật góc).
+    // _handleFastRotate / _handleRotate sẽ giữ motor.stop() cho đến khi mốc này.
+    _preRotateUntilMs = millis() + RobotConfig::PRE_ROTATE_SETTLE_MS;
 
     if (headingError > RobotConfig::FAST_ROTATE_THRESHOLD_RAD) {
         // Góc lớn (>120°, quay đầu): PWM thấp hơn tránh trượt quá 180°
@@ -216,6 +221,14 @@ void NodeNavigator::_beginDrive(Encoder& leftEncoder, Encoder& rightEncoder) {
 
 // Xoay nhanh: quay liên tục theo thời gian ước lượng, dừng khi gần đích
 void NodeNavigator::_handleFastRotate(const Pose& pose, MotorDriver& motors) {
+    // Pre-rotate settle: giữ motor dừng + chờ IMU ổn định trước khi đo heading lần đầu
+    if (_preRotateUntilMs != 0) {
+        motors.stop();
+        if (millis() < _preRotateUntilMs) return;
+        _preRotateUntilMs = 0;
+        _stateStartMs = millis();  // reset timeout đếm từ lúc bắt đầu xoay thực sự
+    }
+
     // Timeout bảo vệ
     if (millis() - _stateStartMs > RobotConfig::ROTATE_TIMEOUT_MS) {
         _setFault("rotation_timeout", motors);
@@ -267,6 +280,15 @@ void NodeNavigator::_handleFastRotate(const Pose& pose, MotorDriver& motors) {
 
 // Xoay nudge: burst ngắn → dừng → đo → lặp lại (tinh chỉnh góc nhỏ)
 void NodeNavigator::_handleRotate(const Pose& pose, MotorDriver& motors) {
+    // Pre-rotate settle: giữ motor dừng + chờ IMU ổn định trước khi đo heading lần đầu
+    if (_preRotateUntilMs != 0) {
+        motors.stop();
+        if (millis() < _preRotateUntilMs) return;
+        _preRotateUntilMs = 0;
+        _stateStartMs = millis();  // reset timeout đếm từ lúc bắt đầu xoay thực sự
+        _nudgeBurstStartMs = millis();  // burst cũng chỉ tính từ sau settle
+    }
+
     float error = _normalizeAngle(_targetHeading - pose.theta);
     float absError = fabsf(error);
 

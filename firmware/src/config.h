@@ -100,11 +100,11 @@ static constexpr unsigned long BUZZER_GAP_MS = 95;
 static constexpr int SERVO_PWM_CH = 2;          // kênh LEDC riêng (motor dùng 0,1 → timer khác)
 static constexpr int SERVO_PWM_FREQ = 50;       // tần số chuẩn servo (chu kỳ 20ms)
 static constexpr int SERVO_PWM_BITS = 16;       // độ phân giải duty 0..65535
-static constexpr int SERVO_MIN_PULSE_US = 1000; // xung ứng với 0° (chuẩn hobby SG90)
+static constexpr int SERVO_MIN_PULSE_US = 1000; // xung ứng với 0° (chuẩn hobby SG90)voi
 static constexpr int SERVO_MAX_PULSE_US = 2000; // xung ứng với 180° (chuẩn hobby SG90)
 static constexpr int SERVO_CENTER_DEG = 90;     // nhìn thẳng phía trước
-static constexpr int SERVO_LEFT_DEG = 150;      // nhìn sang trái  (kiểm tra theo cách lắp)
-static constexpr int SERVO_RIGHT_DEG = 30;      // nhìn sang phải (kiểm tra theo cách lắp)
+static constexpr int SERVO_LEFT_DEG = 180;      // nhìn sang trái  — 90° từ center 
+static constexpr int SERVO_RIGHT_DEG = 0;       // nhìn sang phải — 90° từ center 
 static constexpr unsigned long SERVO_SETTLE_MS = 350;  // chờ servo quay xong mới đo
 
 // --- Chế độ tự hành né vật cản ---

@@ -71,6 +71,7 @@ private:
     unsigned long _fastRotateUntilMs = 0;
     int _fastRotateDir = 0;
     int _fastRotatePwm = 0;
+    unsigned long _preRotateUntilMs = 0;  // mốc chờ settle trước khi bắt đầu xoay (0 = không chờ)
 
     bool _snapPending = false;
     float _snapX = 0.0f;

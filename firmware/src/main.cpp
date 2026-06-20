@@ -248,6 +248,12 @@ static void handleCommand(const UdpCommand& command) {
                 explorer.start();
             } else {
                 explorer.stop();
+                // Re-anchor IMU heading reference về hướng hiện tại
+                // → sau khi robot tự hành né vật cản (xoay nhiều), reset ref
+                //   để start lần sau có heading sạch, không mang drift cũ.
+                if (imuReady) {
+                    imu.setReferenceAngle();
+                }
             }
             Serial.printf("Autonomous: seq=%d cmd=%s\n", command.seq, command.autoCommand);
             break;

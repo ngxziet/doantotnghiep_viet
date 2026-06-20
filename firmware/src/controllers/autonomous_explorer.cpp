@@ -10,8 +10,13 @@ void AutonomousExplorer::start() {
     _navigator.clear();
     _servo.center();
     _frontCm = MAX_RANGE_CM;
-    _driveHeadingValid = false;  // chốt hướng giữ thẳng ở tick đầu tiên
+    _leftCm = 0.0f;
+    _rightCm = 0.0f;
+    _scanTs = 0;
     _lastSampleMs = 0;
+    _stopSettleUntilMs = 0;
+    _driveHeadingValid = false;  // chốt hướng giữ thẳng ở tick đầu tiên
+    _driveHeading = 0.0f;
     _state = State::Drive;
 }
 
@@ -19,6 +24,16 @@ void AutonomousExplorer::stop() {
     _navigator.clear();
     _motors.stop();
     _servo.center();
+    // Reset toàn bộ state nội bộ → lần start() sau là khởi đầu sạch
+    // (tránh carry-over _leftCm/_rightCm cũ làm quyết định sai ở tick đầu)
+    _frontCm = MAX_RANGE_CM;
+    _leftCm = 0.0f;
+    _rightCm = 0.0f;
+    _scanTs = 0;
+    _lastSampleMs = 0;
+    _stopSettleUntilMs = 0;
+    _driveHeadingValid = false;
+    _driveHeading = 0.0f;
     _state = State::Off;
 }
 
