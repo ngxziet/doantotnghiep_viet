@@ -419,6 +419,32 @@ void loop() {
     encRight.setDirection(motors.getRightSpeed());
     calibration.update();
 
+    // --- Chẩn đoán cú quay: phân định bão hòa gyro (A) vs nhiễu I2C (B) ---
+    // Mở cửa sổ đo lúc bắt đầu quay, in kết quả lúc kết thúc.
+    static bool diagWasRotating = false;
+    static float diagStartHeadingDeg = 0.0f;
+    static unsigned long diagStartMs = 0;
+    bool diagRotating = navigator.isRotating();
+    if (diagRotating && !diagWasRotating) {
+        imu.beginDiagWindow();
+        diagStartHeadingDeg = imuConnected ? imu.getAbsoluteYawDeg()
+                                           : odometry.getPose().theta * 180.0f / PI;
+        diagStartMs = now;
+    } else if (!diagRotating && diagWasRotating) {
+        float endHeadingDeg = imuConnected ? imu.getAbsoluteYawDeg()
+                                           : odometry.getPose().theta * 180.0f / PI;
+        float rotatedDeg = normalizeAngle((endHeadingDeg - diagStartHeadingDeg) * PI / 180.0f)
+                           * 180.0f / PI;
+        int peakGz = imu.peakAbsGzRaw();
+        Serial.printf("[ROT] turned=%.1fdeg dur=%lums peakGz=%d (~%.0fdeg/s)%s readErr=%lu healthyDrop=%d\n",
+                      rotatedDeg, now - diagStartMs,
+                      peakGz, peakGz / 131.0f,
+                      peakGz >= 32000 ? " <<SATURATED" : "",
+                      imu.readErrorsInWindow(),
+                      imu.healthyDroppedInWindow() ? 1 : 0);
+    }
+    diagWasRotating = diagRotating;
+
     const char* status = navigator.status();
     if (explorer.isActive()) {
         status = explorer.status();
