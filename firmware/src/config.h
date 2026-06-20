@@ -66,7 +66,7 @@ static constexpr float SKIP_ROTATE_THRESHOLD_RAD = 10.0f * PI_F / 180.0f;
 static constexpr float FAST_ROTATE_THRESHOLD_RAD = 25.0f * PI_F / 180.0f;  // >25° dùng xoay nhanh
 static constexpr float FAST_ROTATE_SPEED_DPS = 150.0f;  // tốc độ ước lượng (°/s) ở PWM xoay nhanh
 static constexpr int FAST_ROTATE_PWM = 200;              // PWM cho xoay trái/phải (góc nhỏ)
-static constexpr int FAST_ROTATE_REVERSE_PWM = 220;      // PWM cho quay đầu (góc lớn, cần torque cao hơn)
+static constexpr int FAST_ROTATE_REVERSE_PWM = 210;      // PWM cho quay đầu (giảm 220→210 tránh trượt quá 180°)
 static constexpr float FAST_ROTATE_REVERSE_RAD = 120.0f * PI_F / 180.0f;  // ngưỡng chuyển sang PWM thấp
 static constexpr float FAST_ROTATE_UNDERSHOOT = 0.85f;  // xoay 85% thời gian ước lượng (tránh trượt quá 180°)
 
@@ -86,8 +86,9 @@ static constexpr unsigned long NUDGE_BURST_MAX_MS = 55;    // burst dài khi cò
 static constexpr float NUDGE_OVER_PROGRESS_RAD = 3.0f * PI_F / 180.0f;  // ngưỡng xoay quá nhiều → giảm PWM
 static constexpr int NUDGE_PWM_DOWN_STEP = 15;  // giảm nhanh hơn tăng (10 lên, 15 xuống)
 static constexpr unsigned long NUDGE_SETTLE_MS = 220;
-static constexpr unsigned long ROTATE_TIMEOUT_MS = 30000;
+static constexpr unsigned long ROTATE_TIMEOUT_MS = 60000;  // tăng 30s→60s: đủ buffer cho 180° khi I2C retry hoặc motor yếu
 static constexpr float ROTATE_MAX_OVERSHOOT_RAD = 60.0f * PI_F / 180.0f;  // tổng xoay vượt error+60° → dừng (chống xoay vòng)
+static constexpr unsigned long PRE_ROTATE_SETTLE_MS = 300; // chờ robot dừng hẳn + IMU ổn định trước khi đo heading (tránh drift đầu xoay)
 
 // Bước test: điều khiển motor trực tiếp, không qua navigator/IMU
 static constexpr int TEST_STEP_DRIVE_PWM = 160;
