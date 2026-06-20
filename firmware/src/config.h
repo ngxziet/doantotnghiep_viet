@@ -70,9 +70,9 @@ static constexpr int FAST_ROTATE_REVERSE_PWM = 210;      // PWM cho quay đầu 
 static constexpr float FAST_ROTATE_REVERSE_RAD = 120.0f * PI_F / 180.0f;  // ngưỡng chuyển sang PWM thấp
 static constexpr float FAST_ROTATE_UNDERSHOOT = 0.85f;  // xoay 85% thời gian ước lượng (tránh trượt quá 180°)
 
-// Chờ robot dừng hẳn + IMU hết rung sau motor.stop() trước khi đo heading lần đầu.
+// Chờ robot dừng hẳn + IMU hết rung sau motor.stop() trước khi đo heading lần đầu (tránh drift đầu xoay).
 // Fast-rotate RE-ANCHOR _fastRotateUntilMs sau mốc này → settle KHÔNG ăn vào thời gian ước lượng.
-static constexpr unsigned long PRE_ROTATE_SETTLE_MS = 150;
+static constexpr unsigned long PRE_ROTATE_SETTLE_MS = 300;
 
 // Xoay nudge: burst cố định → dừng → đo → lặp lại cho tinh chỉnh góc nhỏ
 static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;
@@ -88,7 +88,6 @@ static constexpr int NUDGE_PWM_DOWN_STEP = 15;  // giảm nhanh hơn tăng (10 l
 static constexpr unsigned long NUDGE_SETTLE_MS = 220;
 static constexpr unsigned long ROTATE_TIMEOUT_MS = 60000;  // tăng 30s→60s: đủ buffer cho 180° khi I2C retry hoặc motor yếu
 static constexpr float ROTATE_MAX_OVERSHOOT_RAD = 60.0f * PI_F / 180.0f;  // tổng xoay vượt error+60° → dừng (chống xoay vòng)
-static constexpr unsigned long PRE_ROTATE_SETTLE_MS = 300; // chờ robot dừng hẳn + IMU ổn định trước khi đo heading (tránh drift đầu xoay)
 
 // Bước test: điều khiển motor trực tiếp, không qua navigator/IMU
 static constexpr int TEST_STEP_DRIVE_PWM = 160;
