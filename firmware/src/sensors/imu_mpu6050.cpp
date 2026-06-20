@@ -165,9 +165,11 @@ bool ImuMpu6050::update() {
 
     int16_t ax, ay, az, gx, gy, gz;
     if (!_readMotion6(&ax, &ay, &az, &gx, &gy, &gz)) {
+        _totalReadErrors++;
         _consecutiveReadErrors++;
         if (_consecutiveReadErrors >= MAX_READ_ERRORS) {
             _healthy = false;
+            _healthyDroppedInWindow = true;
             _nextRetryMs = now + RETRY_INTERVAL_MS;
         }
         return false;
@@ -176,6 +178,12 @@ bool ImuMpu6050::update() {
     _consecutiveReadErrors = 0;
     _healthy = true;
     _nextRetryMs = 0;
+
+    // Theo dõi |gz| raw đỉnh để phát hiện bão hòa gyro
+    // (≥ ~32000 LSB = chạm trần int16 ở dải ±250°/s → đếm thiếu vận tốc).
+    int rawGz = (int)gz;
+    if (rawGz < 0) rawGz = -rawGz;
+    if (rawGz > _peakAbsGzRaw) _peakAbsGzRaw = rawGz;
 
     float gyroZ_rads = (gz - _gyroBiasZ) * GYRO_SCALE_RAD_S;
     if (fabsf(gyroZ_rads) < GYRO_DEADBAND_RAD_S) {
@@ -207,4 +215,10 @@ void ImuMpu6050::resetYaw() {
         _consecutiveReadErrors = 0;
         _nextRetryMs = 0;
     }
+}
+
+void ImuMpu6050::beginDiagWindow() {
+    _peakAbsGzRaw = 0;
+    _readErrAtWindowStart = _totalReadErrors;
+    _healthyDroppedInWindow = false;
 }

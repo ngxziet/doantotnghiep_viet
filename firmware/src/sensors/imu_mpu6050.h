@@ -30,6 +30,16 @@ public:
     // Reset yaw tích lũy về 0
     void resetYaw();
 
+    // --- Chẩn đoán nhiễu/bão hòa (debug) ---
+    // Gọi lúc bắt đầu một cú quay để mở cửa sổ đo.
+    void beginDiagWindow();
+    // |gz| raw đỉnh trong cửa sổ (≥ ~32000 LSB = chạm trần ±250°/s → bão hòa).
+    int peakAbsGzRaw() const { return _peakAbsGzRaw; }
+    // Số lần đọc I2C lỗi kể từ beginDiagWindow().
+    unsigned long readErrorsInWindow() const { return _totalReadErrors - _readErrAtWindowStart; }
+    // IMU có tụt khỏi trạng thái healthy trong cửa sổ không.
+    bool healthyDroppedInWindow() const { return _healthyDroppedInWindow; }
+
 private:
     uint8_t _address = 0x68;
 
@@ -41,6 +51,12 @@ private:
     unsigned long _nextRetryMs = 0;
     int _consecutiveReadErrors = 0;
     bool _healthy = false;
+
+    // --- Bộ đếm chẩn đoán (debug) ---
+    int _peakAbsGzRaw = 0;                  // |gz| raw đỉnh trong cửa sổ đo
+    unsigned long _totalReadErrors = 0;     // tổng số lần đọc I2C lỗi (tích lũy)
+    unsigned long _readErrAtWindowStart = 0;
+    bool _healthyDroppedInWindow = false;
 
     bool _writeByte(uint8_t reg, uint8_t value);
     bool _readBytes(uint8_t reg, uint8_t* data, uint8_t len);
