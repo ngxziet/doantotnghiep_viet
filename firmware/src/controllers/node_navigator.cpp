@@ -196,7 +196,10 @@ void NodeNavigator::_beginRotateTo(float targetHeading, float currentHeading) {
         float estimatedMs = (angleDeg / RobotConfig::FAST_ROTATE_SPEED_DPS) * 1000.0f;
         estimatedMs *= RobotConfig::FAST_ROTATE_UNDERSHOOT; // 90% tránh trượt quá
         _fastRotateDir = (headingErrorRaw > 0.0f ? 1 : -1) * RobotConfig::ROTATE_DIRECTION_SIGN;
-        _fastRotateUntilMs = millis() + (unsigned long)estimatedMs;
+        // Lưu thời gian ước lượng; _fastRotateUntilMs sẽ được re-anchor lại sau pre-rotate settle
+        // (nếu không, settle ăn vào thời gian xoay → xoay thiếu góc → nudge nhiều → giật giật).
+        _fastRotateDurationMs = (unsigned long)estimatedMs;
+        _fastRotateUntilMs = millis() + _fastRotateDurationMs;
         _state = State::FastRotate;
         return;
     }
@@ -227,6 +230,8 @@ void NodeNavigator::_handleFastRotate(const Pose& pose, MotorDriver& motors) {
         if (millis() < _preRotateUntilMs) return;
         _preRotateUntilMs = 0;
         _stateStartMs = millis();  // reset timeout đếm từ lúc bắt đầu xoay thực sự
+        // Re-anchor ước lượng từ lúc bắt đầu xoay THẬT → settle không ăn vào thời gian xoay
+        _fastRotateUntilMs = millis() + _fastRotateDurationMs;
     }
 
     // Timeout bảo vệ

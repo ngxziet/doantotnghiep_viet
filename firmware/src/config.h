@@ -70,6 +70,10 @@ static constexpr int FAST_ROTATE_REVERSE_PWM = 220;      // PWM cho quay đầu 
 static constexpr float FAST_ROTATE_REVERSE_RAD = 120.0f * PI_F / 180.0f;  // ngưỡng chuyển sang PWM thấp
 static constexpr float FAST_ROTATE_UNDERSHOOT = 0.85f;  // xoay 85% thời gian ước lượng (tránh trượt quá 180°)
 
+// Chờ robot dừng hẳn + IMU hết rung sau motor.stop() trước khi đo heading lần đầu.
+// Fast-rotate RE-ANCHOR _fastRotateUntilMs sau mốc này → settle KHÔNG ăn vào thời gian ước lượng.
+static constexpr unsigned long PRE_ROTATE_SETTLE_MS = 150;
+
 // Xoay nudge: burst cố định → dừng → đo → lặp lại cho tinh chỉnh góc nhỏ
 static constexpr float NUDGE_DONE_TOL_RAD = 4.0f * PI_F / 180.0f;
 static constexpr int ROTATE_DIRECTION_SIGN = 1;

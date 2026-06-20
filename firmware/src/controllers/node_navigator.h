@@ -69,6 +69,7 @@ private:
     float _initialRotateError = 0.0f;
     float _totalRotationAccum = 0.0f;
     unsigned long _fastRotateUntilMs = 0;
+    unsigned long _fastRotateDurationMs = 0;  // thời gian ước lượng xoay nhanh — re-anchor sau pre-rotate settle
     int _fastRotateDir = 0;
     int _fastRotatePwm = 0;
     unsigned long _preRotateUntilMs = 0;  // mốc chờ settle trước khi bắt đầu xoay (0 = không chờ)
