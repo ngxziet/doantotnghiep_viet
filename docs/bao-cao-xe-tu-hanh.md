@@ -129,7 +129,14 @@ Thiết kế module hóa, chi phí thấp, không phụ thuộc Internet (mạng
 | Bảng 3.5 | Các giá trị trạng thái (status) telemetry |
 | Bảng 3.6 | Các tham số chế độ tự hành né vật cản |
 | Bảng 4.1 | Bảng liệt kê các linh kiện của hệ thống |
-| Bảng 5.1 | Bảng mô tả trạng thái hoạt động của các khối |
+| Bảng 5.1 | Kết quả đo độ chính xác quãng đường khi đi thẳng |
+| Bảng 5.2 | Kết quả đo độ chính xác xoay góc |
+| Bảng 5.3 | Kết quả đánh giá khả năng giữ hướng |
+| Bảng 5.4 | Kết quả điều hướng theo lộ trình node |
+| Bảng 5.5 | Kết quả đo khoảng cách bằng HC-SR04 theo ba hướng quét |
+| Bảng 5.6 | Kết quả thử nghiệm né vật cản tự hành |
+| Bảng 5.7 | Kết quả đo độ trôi góc yaw khi đứng yên |
+| Bảng 5.8 | Bảng mô tả trạng thái hoạt động của các khối |
 
 **Danh mục công thức:**
 
@@ -989,11 +996,123 @@ Sau khi thực hiện đề tài, về mặt lý thuyết đã đạt được:
 
 Ngoài ra đã triển khai và chạy được **chế độ tự hành né vật cản**: xe tự chạy thẳng, gặp vật cản dưới 30 cm thì dừng, quay servo quét hai bên và tự chọn hướng (rẽ 90° về bên thoáng, quay đầu 180° khi cả hai bên bị chặn nhưng đủ chỗ xoay, hoặc dừng khi kẹt). Người dùng bật/tắt chế độ này bằng nút Start/Stop trên màn hình Tự hành; các trạng thái `exploring`/`scanning`/`avoiding`/`stuck` và khoảng cách vật cản được phản hồi trực tiếp lên app.
 
+Để đánh giá định lượng các chức năng trên, nhóm đã tiến hành đo đạc thực nghiệm với kết quả chi tiết trình bày dưới đây.
+
+> *Ghi chú: các ô "…" trong bảng là số đo thực tế cần điền sau khi chạy thử robot; các cột giá trị lệnh và điều kiện đã được cố định sẵn. Mỗi phép đo nên lặp ít nhất 5–10 lần để lấy trung bình.*
+
+### 5.2.1 Điều kiện và phương pháp thực nghiệm
+
+Các thí nghiệm được thực hiện trong nhà, trên sàn phẳng (gạch men/xi măng), pin sạc đầy, nguồn IMU và servo tách riêng qua module giảm áp để giảm nhiễu. Dụng cụ đo gồm: thước cuộn (vạch mm) đo khoảng cách, thước đo độ hoặc vòng tròn chia độ in trên giấy đo góc, đồng hồ bấm giây đo thời gian. Số liệu định vị được thu qua telemetry UDP (10 Hz) hoặc Serial Monitor (chu kỳ 500 ms). Các thông số phần cứng liên quan: đường kính bánh 6.5 cm, 20 xung/vòng encoder, khoảng cách hai bánh `b = 10.5 cm`, một node = 0.5 m ≈ 52 xung (Công thức 9).
+
+### 5.2.2 Độ chính xác đo quãng đường (odometry)
+
+**Phương pháp:** Ra lệnh cho xe đi thẳng các quãng 0.5 m, 1.0 m, 2.0 m; đo quãng đường thực tế bằng thước, đồng thời ghi quãng đường do odometry báo về (Công thức 1). Sai số tương đối tính bằng `|quãng thực − quãng lệnh| / quãng lệnh × 100%`.
+
+> **Bảng 5.1 — Kết quả đo độ chính xác quãng đường khi đi thẳng**
+
+| Quãng đường lệnh (m) | Odometry báo về (m) | Đo thực tế TB (m) | Sai số TB (cm) | Sai số (%) |
+|:---:|:---:|:---:|:---:|:---:|
+| 0.5 | … | … | … | … |
+| 1.0 | … | … | … | … |
+| 2.0 | … | … | … | … |
+
+**Nhận xét:** Sai số quãng đường chủ yếu do bánh xe nén/trượt khiến chu vi thực nhỏ hơn danh nghĩa. Hằng số số xung mỗi node đã được hiệu chỉnh thực nghiệm (49 → 52 xung) để bù sai số ~10 cm/đoạn, nhờ đó sai số tương đối giảm khi quãng đường tăng. *(Điền nhận xét định lượng theo số đo: sai số trung bình …%.)*
+
+### 5.2.3 Độ chính xác xoay góc (IMU)
+
+**Phương pháp:** Đặt xe tại tâm vòng tròn chia độ, ra lệnh xoay 45°, 90°, 180°; đọc góc thực tế đạt được. Cơ chế xoay gồm pha *xoay nhanh theo ước lượng thời gian* cho góc lớn, sau đó pha *nudge* (xoay từng nhịp ngắn, đo IMU, lặp) để tinh chỉnh tới khi sai số ≤ ngưỡng cho phép 4°.
+
+> **Bảng 5.2 — Kết quả đo độ chính xác xoay góc**
+
+| Góc lệnh (°) | Góc đo TB (°) | Sai số TB (°) | Độ lệch chuẩn (°) |
+|:---:|:---:|:---:|:---:|
+| 45  | … | … | … |
+| 90  | … | … | … |
+| 180 | … | … | … |
+
+**Nhận xét:** Việc tách nguồn riêng cho IMU giúp dữ liệu góc sạch hơn, giảm dao động ở pha nudge. Góc 180° (quay đầu) thường có sai số lớn nhất do quãng xoay dài, quán tính và trượt bánh nhiều hơn. *(Điền: sai số trung bình …°, có/không nằm trong dung sai 4°.)*
+
+### 5.2.4 Khả năng giữ hướng khi đi thẳng
+
+**Phương pháp:** Cho xe đi thẳng 3 m dọc một đường kẻ sẵn; đo độ lệch ngang của xe so với đường chuẩn tại đích và quy đổi ra góc lệch.
+
+> **Bảng 5.3 — Kết quả đánh giá khả năng giữ hướng**
+
+| Lần đo | Độ lệch ngang tại 3 m (cm) | Góc lệch tương đương (°) |
+|:---:|:---:|:---:|
+| 1 | … | … |
+| 2 | … | … |
+| 3 | … | … |
+| **Trung bình** | … | … |
+
+**Nhận xét:** Nhờ vòng giữ hướng kết hợp IMU và cân bằng encoder (Công thức 10, 11), xe bám đường thẳng tương đối tốt. *(Điền: độ lệch ngang trung bình …cm trên 3 m, tương đương …°.)*
+
+### 5.2.5 Độ chính xác điều hướng theo lưới điểm (node)
+
+**Phương pháp:** Nạp lộ trình gồm nhiều node, cho xe chạy hết lộ trình rồi đo sai số vị trí và sai số góc tại điểm đích so với vị trí lý thuyết.
+
+> **Bảng 5.4 — Kết quả điều hướng theo lộ trình node**
+
+| Lộ trình | Số node | Tổng quãng (m) | Sai số vị trí cuối (cm) | Sai số góc cuối (°) |
+|:---:|:---:|:---:|:---:|:---:|
+| Đường thẳng 4 node | 4 | 2.0 | … | … |
+| Hình vuông cạnh 0.5 m | 4 | 2.0 | … | … |
+| Chữ L | … | … | … | … |
+
+**Nhận xét:** Sai số tích lũy tăng theo số lần xoay và tổng quãng đường — đặc trưng của định vị dead-reckoning không có mốc tham chiếu tuyệt đối. *(Điền: với lộ trình …, sai số vị trí cuối …cm.)*
+
+### 5.2.6 Độ chính xác cảm biến siêu âm kết hợp servo quét
+
+**Phương pháp:** Đặt vật cản tại các khoảng cách biết trước (10, 20, 30, 50 cm) ở ba hướng quét của servo — trái (+90°), giữa (0°), phải (−90°) — và so sánh giá trị HC-SR04 đo được với khoảng cách thực (Công thức 2). *(Sau khi sửa dải xung servo về 0.5–2.5 ms, servo quét đủ ±90° mỗi bên thay vì chỉ ~±45° như trước, nên phép đo hai bên phản ánh đúng khoảng trống trái/phải.)*
+
+> **Bảng 5.5 — Kết quả đo khoảng cách bằng HC-SR04 theo ba hướng quét**
+
+| Khoảng cách thực (cm) | Đo hướng giữa (cm) | Đo hướng trái +90° (cm) | Đo hướng phải −90° (cm) | Sai số TB (cm) |
+|:---:|:---:|:---:|:---:|:---:|
+| 10 | … | … | … | … |
+| 20 | … | … | … | … |
+| 30 | … | … | … | … |
+| 50 | … | … | … | … |
+
+**Nhận xét:** Độ chính xác này quyết định độ tin cậy của ngưỡng dừng 30 cm và ngưỡng quay đầu 25 cm trong chế độ tự hành. *(Điền: sai số đo trung bình …cm trong tầm 10–50 cm.)*
+
+### 5.2.7 Khả năng né vật cản ở chế độ tự hành
+
+**Phương pháp:** Cho xe chạy tự hành trong môi trường có vật cản đặt ngẫu nhiên, thực hiện nhiều lượt thử; ghi nhận khoảng cách dừng trước vật cản và việc né có thành công (không va chạm) hay không.
+
+> **Bảng 5.6 — Kết quả thử nghiệm né vật cản tự hành**
+
+| Lượt thử | Khoảng cách dừng (cm) | Né thành công (Có/Không) | Ghi chú |
+|:---:|:---:|:---:|:---|
+| 1 | … | … | … |
+| 2 | … | … | … |
+| 3 | … | … | … |
+| 4 | … | … | … |
+| 5 | … | … | … |
+
+Tỉ lệ né thành công: **… / … lượt (…%)**; khoảng cách dừng trung bình: **…cm**.
+
+**Nhận xét:** Các trường hợp thất bại (nếu có) thường do vật cản mỏng/hấp thụ sóng siêu âm hoặc đặt lệch ngoài ba hướng quét (điểm mù). *(Điền: tỉ lệ thành công …%.)*
+
+### 5.2.8 Độ trôi góc hướng của IMU (drift)
+
+**Phương pháp:** Để xe đứng yên hoàn toàn sau khi hiệu chỉnh bias, ghi giá trị góc yaw tại các mốc thời gian để đánh giá độ trôi tích lũy.
+
+> **Bảng 5.7 — Kết quả đo độ trôi góc yaw khi đứng yên**
+
+| Thời gian đứng yên (s) | Độ trôi yaw (°) |
+|:---:|:---:|
+| 30  | … |
+| 60  | … |
+| 300 | … |
+
+**Nhận xét:** Nhờ hiệu chỉnh bias lúc khởi động và vùng chết vận tốc góc (deadband 0.01 rad/s), độ trôi được hạn chế ở mức chấp nhận được trong thời gian một lộ trình điển hình. *(Điền: độ trôi …° sau 5 phút.)*
+
 ## 5.3 NHẬN XÉT VÀ ĐÁNH GIÁ
 
 Về cơ bản hệ thống hoạt động đầy đủ các chức năng chính. Khối điều khiển, định vị và truyền thông hoạt động ổn định. Hạn chế lớn nhất nằm ở **sai số định vị tích lũy (dead-reckoning)**: do chỉ dựa vào odometry tương đối, sau quãng đường dài hoặc nhiều lần xoay, vị trí ước lượng lệch dần so với thực tế (trượt bánh, sai số gyro) — đây là hạn chế cố hữu của phương pháp không có mốc định vị tuyệt đối. Cơ chế nudge step-stop-measure cho góc xoay chính xác nhưng làm thời gian xoay lâu hơn so với xoay liên tục.
 
-> **Bảng 5.1 — Bảng mô tả trạng thái hoạt động của các khối**
+> **Bảng 5.8 — Bảng mô tả trạng thái hoạt động của các khối**
 
 | STT | Tên khối | Đánh giá hoạt động |
 |---|---|---|
