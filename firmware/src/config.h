@@ -28,20 +28,29 @@ static constexpr int SERVO_PIN = 19;
 static constexpr int BUZZER_PIN = 4;
 
 // Tăng số này khi thay đổi chân hoặc phần cứng để tự động reset calibration
-static constexpr int CONFIG_VERSION = 2;
+static constexpr int CONFIG_VERSION = 3;  // v3: ENCODER_PULSES_PER_REV 20→40 (đĩa 40 khe) → reset encoderScale cũ
 
 static constexpr const char* WIFI_SSID = "RobotCar";
 static constexpr const char* WIFI_PASS = "12345678";
 static constexpr int WIFI_CHANNEL = 6;
 
-static constexpr int ENCODER_PULSES_PER_REV = 20;
+// SỐ XUNG MCU ĐẾM ĐƯỢC mỗi vòng bánh — KHÔNG phải số khe vật lý.
+// Đĩa vật lý chỉ có 20 KHE, nhưng comparator LM393 thiếu hysteresis nên mỗi mép khe
+// sinh cạnh kép → MCU bắt cạnh ở mức µs đếm thành ~40 xung/vòng (doubling).
+// Đo thực tế (quay tay đúng 1 vòng): DEB 70→108 = 38 xung ≈ 40.
+// Hằng số này là MẪU SỐ quy đổi xung→cm (CM_PER_PULSE = chu_vi / hằng_số), nên PHẢI
+// khớp với cái MCU đếm (40), không phải cái mắt thấy (20). Ghi 20 → quãng đường sai gấp 2x.
+// Muốn ghi 20 (đúng vật lý): cần Schmitt trigger/lọc RC làm sắc cạnh để MCU chỉ đếm 20.
+static constexpr int ENCODER_PULSES_PER_REV = 40;
 static constexpr float WHEEL_DIAM_CM = 6.5f;
 static constexpr float WHEEL_CIRCUMFERENCE_CM = PI_F * WHEEL_DIAM_CM;
-static constexpr float CM_PER_PULSE = WHEEL_CIRCUMFERENCE_CM / ENCODER_PULSES_PER_REV;
+static constexpr float CM_PER_PULSE = WHEEL_CIRCUMFERENCE_CM / ENCODER_PULSES_PER_REV; // ~0.51 cm/xung
 
 static constexpr float WHEEL_BASE_CM = 10.5f;
 static constexpr float NODE_DISTANCE_M = 0.50f;
-static constexpr int PULSES_PER_NODE = 52;  // 50cm/node @ 20 xung/vòng, bánh 6.5cm (~1.02 cm/xung); doubling xử lý bằng debounce encoder
+// Tự suy từ CM_PER_PULSE → 1 nguồn sự thật, không lệch khi đổi PULSES_PER_REV.
+// 50cm / 0.51 ≈ 98 xung. Fine-tune: chạy thật 50cm, đo X cm → chỉnh ENCODER_PULSES_PER_REV.
+static constexpr int PULSES_PER_NODE = (int)(NODE_DISTANCE_M * 100.0f / CM_PER_PULSE + 0.5f);
 
 static constexpr unsigned long LOOP_INTERVAL_MS = 20;
 static constexpr unsigned long TELEMETRY_INTERVAL_MS = 100;

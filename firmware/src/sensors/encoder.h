@@ -40,10 +40,12 @@ private:
     volatile int  _direction;
     volatile unsigned long _lastPulseMicros;
 
-    // Thời gian tối thiểu giữa 2 xung hợp lệ (lọc nhiễu EMI motor + cạnh giả comparator)
-    // Triệu chứng cũ: mỗi khe sinh ~2 cạnh (comparator/EMI) → đếm gấp ~2x → đi 20cm/52 xung.
-    // Tốc độ chạy thực ~20-40 cm/s → xung thật cách ~20-34ms (20000-34000µs), không bị lọc nhầm.
-    // 6000µs đủ lớn loại cạnh giả thứ 2 trong mỗi khe, cho phép tối đa ~166 xung/s (~170 cm/s) — dư biên.
+    // Thời gian tối thiểu giữa 2 xung hợp lệ — CHỈ lọc glitch nhiễu cỡ µs (minGap≈2µs do
+    // comparator dao động + EMI motor), KHÔNG xử lý doubling.
+    // Lưu ý: doubling (đĩa 20 khe nhưng đọc ~40 xung/vòng) là cạnh THẬT, cách nhau hàng ms,
+    // debounce không (và không nên) lọc — nó được bù bằng ENCODER_PULSES_PER_REV=40 ở config.h.
+    // Với 40 xung/vòng, tốc độ chạy ~20-40 cm/s → xung thật cách ~13-26ms ≫ 6ms, không bị lọc nhầm.
+    // 6000µs cho tối đa ~166 xung/s (~85 cm/s @0.51cm/xung) — dư biên.
     static constexpr unsigned long MIN_PULSE_INTERVAL_US = 6000;
 
     // Theo dõi vận tốc
