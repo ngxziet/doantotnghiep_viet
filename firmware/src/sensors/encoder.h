@@ -41,11 +41,10 @@ private:
     volatile unsigned long _lastPulseMicros;
 
     // Thời gian tối thiểu giữa 2 xung hợp lệ — CHỈ lọc glitch nhiễu cỡ µs (minGap≈2µs do
-    // comparator dao động + EMI motor), KHÔNG xử lý doubling.
-    // Lưu ý: doubling (đĩa 20 khe nhưng đọc ~40 xung/vòng) là cạnh THẬT, cách nhau hàng ms,
-    // debounce không (và không nên) lọc — nó được bù bằng ENCODER_PULSES_PER_REV=40 ở config.h.
-    // Với 40 xung/vòng, tốc độ chạy ~20-40 cm/s → xung thật cách ~13-26ms ≫ 6ms, không bị lọc nhầm.
-    // 6000µs cho tối đa ~166 xung/s (~85 cm/s @0.51cm/xung) — dư biên.
+    // comparator dao động + EMI motor). Doubling LM393 phụ thuộc tốc độ (chậm→2x, nhanh→1x);
+    // khi xe chạy nhanh tín hiệu sạch ~20 xung/vòng nên dùng ENCODER_PULSES_PER_REV=20 (config.h).
+    // Với 20 xung/vòng, tốc độ chạy ~20-40 cm/s → xung thật cách ~26-51ms ≫ 6ms, không bị lọc nhầm.
+    // 6000µs cho tối đa ~166 xung/s (~170 cm/s @1.02cm/xung) — dư biên.
     static constexpr unsigned long MIN_PULSE_INTERVAL_US = 6000;
 
     // Theo dõi vận tốc
