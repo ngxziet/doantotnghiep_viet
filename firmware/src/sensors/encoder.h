@@ -40,10 +40,11 @@ private:
     volatile int  _direction;
     volatile unsigned long _lastPulseMicros;
 
-    // Thời gian tối thiểu giữa 2 xung hợp lệ (lọc nhiễu EMI motor)
-    // Tốc độ max ~10 vòng/s × 20 xung/vòng = 200 Hz → 5000µs giữa 2 xung
-    // Debounce 1500µs lọc nhiễu, cho phép tối đa 666 xung/s
-    static constexpr unsigned long MIN_PULSE_INTERVAL_US = 1500;
+    // Thời gian tối thiểu giữa 2 xung hợp lệ (lọc nhiễu EMI motor + cạnh giả comparator)
+    // Triệu chứng cũ: mỗi khe sinh ~2 cạnh (comparator/EMI) → đếm gấp ~2x → đi 20cm/52 xung.
+    // Tốc độ chạy thực ~20-40 cm/s → xung thật cách ~20-34ms (20000-34000µs), không bị lọc nhầm.
+    // 6000µs đủ lớn loại cạnh giả thứ 2 trong mỗi khe, cho phép tối đa ~166 xung/s (~170 cm/s) — dư biên.
+    static constexpr unsigned long MIN_PULSE_INTERVAL_US = 6000;
 
     // Theo dõi vận tốc
     long  _lastPulseSnapshot;

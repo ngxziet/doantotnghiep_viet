@@ -41,7 +41,7 @@ static constexpr float CM_PER_PULSE = WHEEL_CIRCUMFERENCE_CM / ENCODER_PULSES_PE
 
 static constexpr float WHEEL_BASE_CM = 10.5f;
 static constexpr float NODE_DISTANCE_M = 0.50f;
-static constexpr int PULSES_PER_NODE = 107;  // recalibrate cho 50cm (encoder đếm dư ~2.5x); chỉnh trong dải 104-110 nếu lệch
+static constexpr int PULSES_PER_NODE = 52;  // 50cm/node @ 20 xung/vòng, bánh 6.5cm (~1.02 cm/xung); doubling xử lý bằng debounce encoder
 
 static constexpr unsigned long LOOP_INTERVAL_MS = 20;
 static constexpr unsigned long TELEMETRY_INTERVAL_MS = 100;
