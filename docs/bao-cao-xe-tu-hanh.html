@@ -98,7 +98,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <li>DANH MỤC HÌNH</li>
 <li>DANH MỤC BẢNG BIỂU</li>
 <li>DANH MỤC CÁC TỪ VIẾT TẮT</li>
-<li><strong>CHƯƠNG 1: TỔNG QUAN</strong>
+<li><strong>CHƯƠNG 1: GIỚI THIỆU</strong>
 <ul>
 <li>1.1 Giới thiệu</li>
 <li>1.2 Tính cấp thiết của đề tài</li>
@@ -117,7 +117,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <li>2.4 Các thư viện sử dụng</li>
 </ul>
 </li>
-<li><strong>CHƯƠNG 3: THIẾT KẾ VÀ XÂY DỰNG HỆ THỐNG</strong>
+<li><strong>CHƯƠNG 3: THIẾT KẾ VÀ THI CÔNG HỆ THỐNG</strong>
 <ul>
 <li>3.1 Yêu cầu và sơ đồ khối của hệ thống</li>
 <li>3.2 Thiết kế phần cứng</li>
@@ -125,17 +125,24 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <li>3.4 Giao thức truyền thông UDP</li>
 <li>3.5 Sơ đồ nối dây của hệ thống</li>
 <li>3.6 Lưu đồ giải thuật</li>
+<li>3.7 Danh sách linh kiện</li>
+<li>3.8 Thi công phần cứng và nối dây</li>
+<li>3.9 Lập trình firmware và ứng dụng</li>
 </ul>
 </li>
-<li><strong>CHƯƠNG 4: THI CÔNG HỆ THỐNG</strong>
+<li><strong>CHƯƠNG 4: KẾT QUẢ VÀ THẢO LUẬN</strong>
 <ul>
-<li>4.1 Danh sách linh kiện</li>
-<li>4.2 Thi công phần cứng và nối dây</li>
-<li>4.3 Lập trình firmware và ứng dụng</li>
+<li>4.1 Kết quả lý thuyết</li>
+<li>4.2 Kết quả thực hành</li>
+<li>4.3 Nhận xét và đánh giá</li>
 </ul>
 </li>
-<li><strong>CHƯƠNG 5: KẾT QUẢ - NHẬN XÉT - ĐÁNH GIÁ</strong></li>
-<li><strong>CHƯƠNG 6: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN</strong></li>
+<li><strong>CHƯƠNG 5: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN</strong>
+<ul>
+<li>5.1 Kết luận</li>
+<li>5.2 Hướng phát triển</li>
+</ul>
+</li>
 <li>TÀI LIỆU THAM KHẢO</li>
 <li>PHỤ LỤC</li>
 </ul>
@@ -246,11 +253,11 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <td>Lưu đồ giải thuật chế độ tự hành né vật cản</td>
 </tr>
 <tr>
-<td>Hình 4.1</td>
+<td>Hình 3.18</td>
 <td>Xe robot sau khi lắp ráp hoàn chỉnh</td>
 </tr>
 <tr>
-<td>Hình 4.2</td>
+<td>Hình 3.19</td>
 <td>Màn hình bản đồ khi xe đang di chuyển</td>
 </tr>
 </tbody>
@@ -293,11 +300,11 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <td>Các tham số chế độ tự hành né vật cản</td>
 </tr>
 <tr>
-<td>Bảng 4.1</td>
+<td>Bảng 3.7</td>
 <td>Bảng liệt kê các linh kiện của hệ thống</td>
 </tr>
 <tr>
-<td>Bảng 5.1</td>
+<td>Bảng 4.1</td>
 <td>Bảng mô tả trạng thái hoạt động của các khối</td>
 </tr>
 </tbody>
@@ -506,7 +513,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 </table>
 <hr>
 <hr>
-<h1>CHƯƠNG 1<br>TỔNG QUAN</h1>
+<h1>CHƯƠNG 1<br>GIỚI THIỆU</h1>
 <h2>1.1 GIỚI THIỆU</h2>
 <p>Trong thời đại hiện nay, robot di động tự hành đang dần trở thành một thành phần quan trọng trong nhiều lĩnh vực: vận chuyển hàng hóa trong kho (AGV/AMR), robot dịch vụ, robot dò đường, cho tới các nền tảng nghiên cứu định vị và dẫn đường. Bài toán cốt lõi của một robot tự hành là: <strong>biết mình đang ở đâu</strong> (định vị), <strong>biết phải đi tới đâu</strong> (lập kế hoạch đường đi), và <strong>đi tới đó một cách chính xác</strong> (điều khiển bám lộ trình).</p>
 <p>Các hệ thống robot công nghiệp thường sử dụng cảm biến đắt tiền (LiDAR, camera độ phân giải cao, GPS-RTK) và máy tính mạnh. Tuy nhiên, ở quy mô học thuật và sản phẩm chi phí thấp, hoàn toàn có thể xây dựng một robot tự hành cơ bản chỉ với vi điều khiển ESP32, encoder bánh xe, cảm biến quán tính giá rẻ và một điện thoại làm giao diện. Đề tài <strong>&quot;Xe robot tự hành định vị bằng odometry và tìm đường A*&quot;</strong> ra đời nhằm nghiên cứu và triển khai một giải pháp robot tự hành như vậy: dùng ESP32 làm bộ điều khiển trung tâm, kết hợp odometry (encoder + IMU) để định vị, thuật toán A* trên ứng dụng di động để tìm đường, và giao thức UDP để liên lạc thời gian thực giữa app và xe.</p>
@@ -531,13 +538,12 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <h2>1.6 PHƯƠNG PHÁP NGHIÊN CỨU</h2>
 <p>Đề tài sử dụng kết hợp các phương pháp: <strong>phân tích - tổng hợp tài liệu</strong> từ các nguồn học thuật và datasheet linh kiện; <strong>mô phỏng - thực nghiệm</strong> (chế độ simulator của ứng dụng cho phép kiểm thử phần mềm trước khi có phần cứng); <strong>tính toán kỹ thuật điện tử</strong> (lựa chọn linh kiện, tính toán quãng đường/góc quay, hiệu chỉnh sai số); và <strong>lập trình nhúng</strong> trên ESP32 (C++ với PlatformIO) song song với <strong>lập trình ứng dụng</strong> (Dart/Flutter). Hệ thống được phát triển theo từng giai đoạn (phase) và kiểm thử đơn vị (unit test) cho các module thuật toán quan trọng.</p>
 <h2>1.7 BỐ CỤC ĐỀ TÀI</h2>
-<p>Đồ án được chia làm 6 chương như sau:</p>
-<p><strong>Chương 1: Tổng quan</strong> – Giới thiệu chung, nêu tính cấp thiết, xác định mục tiêu, đối tượng, phạm vi và phương pháp nghiên cứu.</p>
+<p>Đồ án được chia làm 5 chương như sau:</p>
+<p><strong>Chương 1: Giới thiệu</strong> – Giới thiệu chung, nêu tính cấp thiết, xác định mục tiêu, đối tượng, phạm vi và phương pháp nghiên cứu.</p>
 <p><strong>Chương 2: Cơ sở lý thuyết</strong> – Trình bày các chuẩn giao tiếp (GPIO, I2C, PWM, Trigger-Echo, ngắt, WiFi/UDP), các thuật toán nền tảng (odometry vi sai, bộ lọc bù, A*), các phần mềm và thư viện sử dụng.</p>
-<p><strong>Chương 3: Thiết kế và xây dựng hệ thống</strong> – Từ yêu cầu, đưa ra sơ đồ khối, thiết kế phần cứng từng khối, kiến trúc phần mềm ứng dụng, giao thức UDP, sơ đồ nối dây và các lưu đồ giải thuật.</p>
-<p><strong>Chương 4: Thi công hệ thống</strong> – Liệt kê linh kiện, lắp ráp phần cứng, nối dây, lập trình firmware và ứng dụng.</p>
-<p><strong>Chương 5: Kết quả - Nhận xét - Đánh giá</strong> – Trình bày kết quả lý thuyết và thực hành, đánh giá hoạt động của từng khối.</p>
-<p><strong>Chương 6: Kết luận và hướng phát triển</strong> – Tổng kết ưu/nhược điểm và đề xuất hướng cải thiện, phát triển hệ thống.</p>
+<p><strong>Chương 3: Thiết kế và thi công hệ thống</strong> – Từ yêu cầu, đưa ra sơ đồ khối, thiết kế phần cứng từng khối, kiến trúc phần mềm ứng dụng, giao thức UDP, sơ đồ nối dây, các lưu đồ giải thuật; liệt kê linh kiện, lắp ráp phần cứng, nối dây và lập trình firmware/ứng dụng.</p>
+<p><strong>Chương 4: Kết quả và thảo luận</strong> – Trình bày kết quả lý thuyết và thực hành, nhận xét và đánh giá hoạt động của từng khối.</p>
+<p><strong>Chương 5: Kết luận và hướng phát triển</strong> – Tổng kết ưu/nhược điểm và đề xuất hướng cải thiện, phát triển hệ thống.</p>
 <hr>
 <hr>
 <h1>CHƯƠNG 2<br>CƠ SỞ LÝ THUYẾT</h1>
@@ -685,7 +691,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p>Đáng chú ý: việc giao tiếp MPU-6050 được viết <strong>thủ công ở mức thanh ghi</strong> (đọc trực tiếp 14 byte từ thanh ghi <code>0x3B</code>, tự đánh thức chip, đặt dải đo ±250°/s, lọc DLPF ~44 Hz) thay vì dùng thư viện DMP, giúp hiểu sâu nguyên lý và chủ động xử lý lỗi đọc/mất kết nối.</p>
 <hr>
 <hr>
-<h1>CHƯƠNG 3<br>THIẾT KẾ VÀ XÂY DỰNG HỆ THỐNG</h1>
+<h1>CHƯƠNG 3<br>THIẾT KẾ VÀ THI CÔNG HỆ THỐNG</h1>
 <h2>3.1 YÊU CẦU VÀ SƠ ĐỒ KHỐI CỦA HỆ THỐNG</h2>
 <h3>3.1.1 Yêu cầu của hệ thống</h3>
 <p>Hệ thống cung cấp các chức năng sau:</p>
@@ -1316,12 +1322,9 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <li>Pha <strong>Turn</strong> tái sử dụng toàn bộ cơ chế xoay 3 tầng (xoay nhanh + nudge) của Node Navigator nên góc 90°/180° đạt độ chính xác như khi bám lộ trình; sau khi xoay, hướng IMU được đồng bộ lại để các đoạn chạy thẳng kế tiếp không tích lũy sai số.</li>
 <li>Quy ước hướng: rẽ trái = +90° (quay ngược chiều kim đồng hồ, yaw tăng), rẽ phải = −90°; có thể đảo dấu bằng tham số nếu cách lắp cơ khí ngược chiều.</li>
 </ul>
-<hr>
-<hr>
-<h1>CHƯƠNG 4<br>THI CÔNG HỆ THỐNG</h1>
-<h2>4.1 DANH SÁCH LINH KIỆN</h2>
+<h2>3.7 DANH SÁCH LINH KIỆN</h2>
 <blockquote>
-<p><strong>Bảng 4.1 — Bảng liệt kê các linh kiện của hệ thống</strong></p>
+<p><strong>Bảng 3.7 — Bảng liệt kê các linh kiện của hệ thống</strong></p>
 </blockquote>
 <table>
 <thead>
@@ -1389,7 +1392,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 </tr>
 </tbody>
 </table>
-<h2>4.2 THI CÔNG PHẦN CỨNG VÀ NỐI DÂY</h2>
+<h2>3.8 THI CÔNG PHẦN CỨNG VÀ NỐI DÂY</h2>
 <p>Quá trình thi công phần cứng gồm các bước:</p>
 <ol>
 <li><strong>Lắp khung xe:</strong> gắn hai động cơ DC giảm tốc và bánh chủ động vào khung, gắn bánh đa hướng đỡ phía sau, lắp đĩa encoder vào trục bánh.</li>
@@ -1401,7 +1404,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <blockquote>
 <p><strong>[CHÈN HÌNH 4.1 — Ảnh xe robot sau khi lắp ráp hoàn chỉnh]</strong></p>
 </blockquote>
-<h2>4.3 LẬP TRÌNH FIRMWARE VÀ ỨNG DỤNG</h2>
+<h2>3.9 LẬP TRÌNH FIRMWARE VÀ ỨNG DỤNG</h2>
 <p><strong>Firmware (PlatformIO):</strong> mã nguồn được tổ chức module hóa theo thư mục <code>communication / controllers / sensors / localization / calibration</code>, biên dịch và nạp bằng PlatformIO:</p>
 <pre><code class="language-bash">cd firmware
 pio run                  # biên dịch
@@ -1422,8 +1425,8 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 </blockquote>
 <hr>
 <hr>
-<h1>CHƯƠNG 5<br>KẾT QUẢ - NHẬN XÉT - ĐÁNH GIÁ</h1>
-<h2>5.1 KẾT QUẢ LÝ THUYẾT</h2>
+<h1>CHƯƠNG 4<br>KẾT QUẢ VÀ THẢO LUẬN</h1>
+<h2>4.1 KẾT QUẢ LÝ THUYẾT</h2>
 <p>Sau khi thực hiện đề tài, về mặt lý thuyết đã đạt được:</p>
 <ul>
 <li>Nắm vững cách sử dụng ESP32 và các chuẩn giao tiếp <strong>GPIO, I2C, PWM/LEDC, Trigger-Echo, ngắt ngoài</strong> và <strong>WiFi/UDP</strong>; biết tra cứu và áp dụng datasheet (MPU-6050, L298N, HC-SR04).</li>
@@ -1433,13 +1436,13 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 <li>Cài đặt được <strong>máy trạng thái né vật cản phản ứng (reactive obstacle avoidance)</strong> dựa trên cảm biến siêu âm + servo quét, và điều khiển servo bằng LEDC thô (PWM 50 Hz, 16-bit) — hiểu cách phối hợp nhiều thiết bị trong một vòng lặp thời gian thực mà không nghẽn.</li>
 <li>Biết tổ chức một dự án phần mềm <strong>module hóa</strong> (firmware C++ + app Flutter) kèm kiểm thử đơn vị.</li>
 </ul>
-<h2>5.2 KẾT QUẢ THỰC HÀNH</h2>
+<h2>4.2 KẾT QUẢ THỰC HÀNH</h2>
 <p>Đã hoàn thiện một xe robot tự hành chạy được end-to-end: từ thao tác <strong>chạm chọn đích trên app</strong>, xe <strong>tự tính đường, tự xoay và bám lộ trình</strong> qua các node tới đích, với <strong>vị trí hiển thị thời gian thực</strong> trên bản đồ. Đã thực hiện được quá trình lắp ráp cơ khí, đi dây, nạp firmware, build app, và <strong>tinh chỉnh thực nghiệm</strong> các tham số (số xung/node, hệ số hiệu chỉnh hướng, PWM xoay, thời gian ổn định nudge). Cơ chế <strong>tự hiệu chuẩn</strong> giúp xe đi thẳng cân bằng hơn sau vài đoạn. Chế độ <strong>giả lập</strong> cho phép demo và phát triển app độc lập với phần cứng.</p>
 <p>Ngoài ra đã triển khai và chạy được <strong>chế độ tự hành né vật cản</strong>: xe tự chạy thẳng, gặp vật cản dưới 30 cm thì dừng, quay servo quét hai bên và tự chọn hướng (rẽ 90° về bên thoáng, quay đầu 180° khi cả hai bên bị chặn nhưng đủ chỗ xoay, hoặc dừng khi kẹt). Người dùng bật/tắt chế độ này bằng nút Start/Stop trên màn hình Tự hành; các trạng thái <code>exploring</code>/<code>scanning</code>/<code>avoiding</code>/<code>stuck</code> và khoảng cách vật cản được phản hồi trực tiếp lên app.</p>
-<h2>5.3 NHẬN XÉT VÀ ĐÁNH GIÁ</h2>
+<h2>4.3 NHẬN XÉT VÀ ĐÁNH GIÁ</h2>
 <p>Về cơ bản hệ thống hoạt động đầy đủ các chức năng chính. Khối điều khiển, định vị và truyền thông hoạt động ổn định. Hạn chế lớn nhất nằm ở <strong>sai số định vị tích lũy (dead-reckoning)</strong>: do chỉ dựa vào odometry tương đối, sau quãng đường dài hoặc nhiều lần xoay, vị trí ước lượng lệch dần so với thực tế (trượt bánh, sai số gyro) — đây là hạn chế cố hữu của phương pháp không có mốc định vị tuyệt đối. Cơ chế nudge step-stop-measure cho góc xoay chính xác nhưng làm thời gian xoay lâu hơn so với xoay liên tục.</p>
 <blockquote>
-<p><strong>Bảng 5.1 — Bảng mô tả trạng thái hoạt động của các khối</strong></p>
+<p><strong>Bảng 4.1 — Bảng mô tả trạng thái hoạt động của các khối</strong></p>
 </blockquote>
 <table>
 <thead>
@@ -1505,8 +1508,8 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 <p>Hệ thống được thiết kế theo mô hình học thuật nên về cơ bản chưa đầy đủ chức năng cao cấp và còn hạn chế: chưa có định vị tuyệt đối (chỉ odometry tương đối); chế độ né vật cản hiện là <strong>phản ứng cục bộ (reactive)</strong> — tránh được vật ngay trước mặt nhưng chưa lập lại đường đi toàn cục theo bản đồ; siêu âm chỉ &quot;thấy&quot; theo ba hướng quét nên còn điểm mù; bản đồ phải biết trước, chưa tự xây bản đồ. Mức độ áp dụng thực tế còn ở quy mô phòng thí nghiệm, cần mở rộng thêm để đưa vào ứng dụng thực tế.</p>
 <hr>
 <hr>
-<h1>CHƯƠNG 6<br>KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN</h1>
-<h2>6.1 KẾT LUẬN</h2>
+<h1>CHƯƠNG 5<br>KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN</h1>
+<h2>5.1 KẾT LUẬN</h2>
 <p>Đề tài đã thiết kế và xây dựng thành công một <strong>xe robot tự hành</strong> hoàn chỉnh, chạy được toàn trình từ chọn đích đến bám lộ trình. Về cơ bản hệ thống đáp ứng đủ các chức năng:</p>
 <ul>
 <li>Người dùng chọn đích trên app, app tự <strong>tìm đường ngắn nhất bằng A*</strong>.</li>
@@ -1516,7 +1519,7 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 <li>Hỗ trợ <strong>điều khiển tay, tự hiệu chuẩn</strong> và <strong>chế độ giả lập</strong> để kiểm thử.</li>
 </ul>
 <p>Hệ thống có kiến trúc module hóa rõ ràng, chi phí thấp, hoạt động độc lập không cần Internet — là nền tảng tốt để học tập và phát triển tiếp.</p>
-<h2>6.2 HƯỚNG PHÁT TRIỂN</h2>
+<h2>5.2 HƯỚNG PHÁT TRIỂN</h2>
 <p>Để nâng cao độ chính xác và khả năng ứng dụng thực tế, đề tài có thể phát triển theo các hướng:</p>
 <ul>
 <li><strong>Bổ sung định vị tuyệt đối</strong> để khắc phục sai số tích lũy: thêm cảm biến mốc (line/landmark), camera nhận diện thẻ ArUco, hoặc UWB anchor.</li>
