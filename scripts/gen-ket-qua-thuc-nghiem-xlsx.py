@@ -1,11 +1,17 @@
 
 # -*- coding: utf-8 -*-
 """Sinh file Excel ket qua thuc nghiem (muc 5.2) voi du lieu mau + cong thuc song.
+So lan do = 10 (Lan1..Lan10) cho cac phep do lap (5.1, 5.2, 5.3, 5.6).
 CANH BAO: so lieu trong file la MAU, phai thay bang do thuc truoc khi nop.
 """
+import random
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+
+random.seed(42)  # tai lap duoc so lieu mau
+
+N_TRIALS = 10  # so lan do moi phep (Lan1..Lan10)
 
 HDR = PatternFill("solid", fgColor="305496")
 HDRF = Font(bold=True, color="FFFFFF")
@@ -41,62 +47,82 @@ def widths(ws, ws_widths):
         ws.column_dimensions[get_column_letter(i)].width = w
 
 
+def trials(mean, spread, ndigits):
+    """10 gia tri mau quanh `mean`, sai lech +/- `spread`."""
+    return [round(mean + random.uniform(-spread, spread), ndigits) for _ in range(N_TRIALS)]
+
+
+def trial_headers():
+    return [f"Lan{i}" for i in range(1, N_TRIALS + 1)]
+
+
+# Vi tri cot dung chung cho sheet dang lap: 1=lenh, 2..(1+N)=cac lan, sau do la cac cot ket qua
+FIRST = 2
+LAST = 1 + N_TRIALS                 # cot lan do cuoi
+def col(idx):                       # idx tinh tu sau cot lan cuoi: 1,2,3...
+    return LAST + idx
+def L(c):
+    return get_column_letter(c)
+
+
 wb = Workbook()
-NOTE_TXT = "SO LIEU MAU - THAY BANG DO THUC TE TRUOC KHI NOP. O xanh la = cong thuc tu tinh, dung sua."
+NOTE_TXT = ("SO LIEU MAU - THAY BANG DO THUC TE TRUOC KHI NOP. "
+            "Moi phep do 10 lan (Lan1..Lan10); o xanh la = cong thuc tu tinh, dung sua.")
 
 # ---------- 5.1 Quang duong ----------
 ws = wb.active; ws.title = "5.1 Quang duong"
-banner(ws, 9, NOTE_TXT)
-hdr = ["Quang lenh (m)", "Lan1", "Lan2", "Lan3", "Lan4", "Lan5",
-       "Do thuc TB (m)", "Sai so TB (cm)", "Sai so (%)"]
-ws.append(hdr); style_header(ws, 2, 9)
+ncol = 1 + N_TRIALS + 3
+banner(ws, ncol, NOTE_TXT)
+hdr = ["Quang duong lenh (m)"] + trial_headers() + \
+      ["Do thuc TB (m)", "Sai so TB (cm)", "Sai so (%)"]
+ws.append(hdr); style_header(ws, 2, ncol)
 data = [
-    (0.5, [0.48, 0.49, 0.47, 0.48, 0.48]),
-    (1.0, [0.97, 0.96, 0.98, 0.97, 0.97]),
-    (2.0, [1.95, 1.94, 1.96, 1.95, 1.95]),
+    (0.5, trials(0.495, 0.012, 2)),
+    (1.0, trials(0.985, 0.015, 2)),
+    (2.0, trials(1.965, 0.020, 2)),
 ]
-for cmd, trials in data:
+for cmd, tr in data:
     r = ws.max_row + 1
     ws.cell(row=r, column=1, value=cmd)
-    for i, v in enumerate(trials):
-        ws.cell(row=r, column=2 + i, value=v)
-    ws.cell(row=r, column=7, value=f"=AVERAGE(B{r}:F{r})").fill = RES
-    ws.cell(row=r, column=8, value=f"=ABS(A{r}-G{r})*100").fill = RES
-    ws.cell(row=r, column=9, value=f"=ABS(A{r}-G{r})/A{r}*100").fill = RES
-grid(ws, 3, ws.max_row, 9)
-widths(ws, [13, 8, 8, 8, 8, 8, 13, 13, 11])
+    for i, v in enumerate(tr):
+        ws.cell(row=r, column=FIRST + i, value=v)
+    cTB, cErr, cPct = col(1), col(2), col(3)
+    ws.cell(row=r, column=cTB,  value=f"=AVERAGE({L(FIRST)}{r}:{L(LAST)}{r})").fill = RES
+    ws.cell(row=r, column=cErr, value=f"=ABS(A{r}-{L(cTB)}{r})*100").fill = RES
+    ws.cell(row=r, column=cPct, value=f"=ABS(A{r}-{L(cTB)}{r})/A{r}*100").fill = RES
+grid(ws, 3, ws.max_row, ncol)
+widths(ws, [18] + [7] * N_TRIALS + [13, 13, 11])
 
 # ---------- 5.2 Xoay goc ----------
 ws = wb.create_sheet("5.2 Xoay goc")
-banner(ws, 8, NOTE_TXT)
-ws.append(["Goc lenh (do)", "Lan1", "Lan2", "Lan3", "Lan4", "Lan5",
-           "Goc do TB (do)", "Sai so TB (do)"]); style_header(ws, 2, 8)
-ws.append([]); ws.cell(row=3, column=10, value="Do lech chuan (do)").font = Font(bold=True)
+ncol = 1 + N_TRIALS + 3
+banner(ws, ncol, NOTE_TXT)
+hdr = ["Goc lenh (do)"] + trial_headers() + \
+      ["Goc do TB (do)", "Sai so TB (do)", "Do lech chuan (do)"]
+ws.append(hdr); style_header(ws, 2, ncol)
 data = [
-    (45, [44.5, 43.8, 44.0, 45.0, 43.6]),
-    (90, [88.5, 89.2, 87.6, 88.9, 88.8]),
-    (180, [177.5, 176.0, 178.2, 175.5, 177.0]),
+    (45,  trials(44.3, 0.7, 1)),
+    (90,  trials(88.6, 0.9, 1)),
+    (180, trials(177.4, 1.3, 1)),
 ]
-# header them cot do lech chuan
-ws.cell(row=2, column=9, value="Do lech chuan (do)"); style_header(ws, 2, 9)
-ws.delete_rows(3, 1)  # bo dong rong vua them
-for cmd, trials in data:
+for cmd, tr in data:
     r = ws.max_row + 1
     ws.cell(row=r, column=1, value=cmd)
-    for i, v in enumerate(trials):
-        ws.cell(row=r, column=2 + i, value=v)
-    ws.cell(row=r, column=7, value=f"=AVERAGE(B{r}:F{r})").fill = RES
-    ws.cell(row=r, column=8, value=f"=ABS(A{r}-G{r})").fill = RES
-    ws.cell(row=r, column=9, value=f"=STDEV.S(B{r}:F{r})").fill = RES
-grid(ws, 3, ws.max_row, 9)
-widths(ws, [13, 8, 8, 8, 8, 8, 14, 14, 16])
+    for i, v in enumerate(tr):
+        ws.cell(row=r, column=FIRST + i, value=v)
+    cTB, cErr, cSd = col(1), col(2), col(3)
+    ws.cell(row=r, column=cTB,  value=f"=AVERAGE({L(FIRST)}{r}:{L(LAST)}{r})").fill = RES
+    ws.cell(row=r, column=cErr, value=f"=ABS(A{r}-{L(cTB)}{r})").fill = RES
+    ws.cell(row=r, column=cSd,  value=f"=STDEV.S({L(FIRST)}{r}:{L(LAST)}{r})").fill = RES
+grid(ws, 3, ws.max_row, ncol)
+widths(ws, [13] + [7] * N_TRIALS + [14, 14, 16])
 
-# ---------- 5.3 Giu huong 3m ----------
+# ---------- 5.3 Giu huong 3m (10 lan do) ----------
 ws = wb.create_sheet("5.3 Giu huong")
 banner(ws, 3, NOTE_TXT)
 ws.append(["Lan do", "Do lech ngang tai 3m (cm)", "Goc lech tuong duong (do)"])
 style_header(ws, 2, 3)
-devs = [6, 9, 5]
+devs = [round(random.uniform(4.0, 9.0), 1) for _ in range(N_TRIALS)]
 for i, d in enumerate(devs, start=1):
     r = ws.max_row + 1
     ws.cell(row=r, column=1, value=i)
@@ -146,20 +172,19 @@ for real, g, t, p in rows:
 grid(ws, 3, ws.max_row, 5)
 widths(ws, [20, 13, 16, 16, 14])
 
-# ---------- 5.6 Ne vat can ----------
+# ---------- 5.6 Ne vat can (10 luot) ----------
 ws = wb.create_sheet("5.6 Ne vat can")
 banner(ws, 4, NOTE_TXT)
 ws.append(["Luot thu", "Khoang cach dung (cm)", "Ne thanh cong (Co/Khong)", "Ghi chu"])
 style_header(ws, 2, 4)
-rows = [
-    (1, 28.5, "Co", ""),
-    (2, 29.2, "Co", ""),
-    (3, 27.8, "Co", ""),
-    (4, 26.5, "Khong", "Vat mong (chan ghe), phat hien tre"),
-    (5, 29.0, "Co", ""),
-]
-for row in rows:
-    ws.append(list(row))
+# 10 luot: phan lon thanh cong, vai luot that bai co ghi chu
+fail_at = {4: "Vat mong (chan ghe), phat hien tre",
+           9: "Vat cham hap thu song, do gan"}
+for i in range(1, N_TRIALS + 1):
+    dist = round(random.uniform(26.0, 29.5), 1)
+    ok = "Khong" if i in fail_at else "Co"
+    note = fail_at.get(i, "")
+    ws.append([i, dist, ok, note])
 last = ws.max_row
 r = last + 1
 ws.cell(row=r, column=1, value="Ti le thanh cong").font = Font(bold=True)
@@ -170,7 +195,8 @@ r2 = r + 1
 ws.cell(row=r2, column=1, value="Kc dung TB (cm)").font = Font(bold=True)
 ws.cell(row=r2, column=2, value=f"=AVERAGE(B3:B{last})").fill = RES
 grid(ws, 3, ws.max_row, 4)
-ws.cell(row=last, column=4).alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+for rr in range(3, last + 1):
+    ws.cell(row=rr, column=4).alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
 widths(ws, [12, 22, 24, 34])
 
 # ---------- 5.7 Drift ----------
@@ -184,4 +210,4 @@ widths(ws, [22, 18])
 
 out = "docs/ket-qua-thuc-nghiem-5.2.xlsx"
 wb.save(out)
-print("Saved:", out, "| sheets:", wb.sheetnames)
+print("Saved:", out, "| sheets:", wb.sheetnames, "| N_TRIALS:", N_TRIALS)
