@@ -273,7 +273,7 @@ Hệ thống I2C gồm một master (ESP32) điều khiển bus và một hoặc
 
 PWM (Pulse Width Modulation – điều chế độ rộng xung) điều khiển công suất trung bình cấp cho tải bằng cách thay đổi tỉ lệ thời gian mức cao/thấp của tín hiệu (duty cycle). Tốc độ động cơ DC tỉ lệ với duty cycle của tín hiệu PWM cấp vào chân Enable của mạch cầu H.
 
-ESP32 có bộ ngoại vi **LEDC** chuyên tạo PWM phần cứng (không tốn CPU). Trong đề tài, hai kênh LEDC (kênh 0 cho bánh trái, kênh 1 cho bánh phải) được cấu hình **tần số 5 kHz, độ phân giải 8-bit** (duty 0–255), gắn vào hai chân Enable ENA/ENB của L298N. Giá trị PWM 0 là dừng, 255 là tốc độ tối đa.
+ESP32 có bộ ngoại vi **LEDC** [8] chuyên tạo PWM phần cứng (không tốn CPU). Trong đề tài, hai kênh LEDC (kênh 0 cho bánh trái, kênh 1 cho bánh phải) được cấu hình **tần số 5 kHz, độ phân giải 8-bit** (duty 0–255), gắn vào hai chân Enable ENA/ENB của L298N. Giá trị PWM 0 là dừng, 255 là tốc độ tối đa.
 
 Bộ LEDC còn được dùng để **điều khiển servo** quét cảm biến: một kênh LEDC riêng (kênh 2) được cấu hình **tần số 50 Hz, độ phân giải 16-bit** — đúng chuẩn tín hiệu servo RC (chu kỳ 20 ms, độ rộng xung 0,5–2,5 ms tương ứng góc 0–180°). Việc dùng kênh và bộ định thời (timer) tách biệt với hai kênh động cơ giúp servo và motor hoạt động đồng thời mà không xung đột tần số.
 
@@ -309,7 +309,7 @@ Trên mạng đó, dữ liệu được trao đổi bằng **UDP (User Datagram 
 
 ### 2.2.1 Mô hình xe vi sai và odometry
 
-Xe robot trong đề tài là loại **hai bánh vi sai (differential drive)**: hai bánh chủ động trái/phải điều khiển độc lập, hướng xe thay đổi nhờ chênh lệch tốc độ hai bánh. **Odometry** (đo hành trình) là phương pháp ước lượng vị trí robot bằng cách tích lũy quãng đường mỗi bánh đo được từ encoder.
+Xe robot trong đề tài là loại **hai bánh vi sai (differential drive)**: hai bánh chủ động trái/phải điều khiển độc lập, hướng xe thay đổi nhờ chênh lệch tốc độ hai bánh. **Odometry** (đo hành trình) [7] là phương pháp ước lượng vị trí robot bằng cách tích lũy quãng đường mỗi bánh đo được từ encoder.
 
 Gọi **dL**, **dR** là quãng đường bánh trái/phải đi được trong một chu kỳ, **L** là khoảng cách giữa hai bánh (wheel base). Khi đó:
 - Quãng đường tịnh tiến trung tâm xe: **d = (dL + dR) / 2**
@@ -333,7 +333,7 @@ Hệ số **α = 0,35** được chọn để **encoder làm chủ hướng (65%
 
 ### 2.2.3 Thuật toán tìm đường A\*
 
-A\* (A-star) là thuật toán tìm đường đi ngắn nhất trên đồ thị có trọng số, kết hợp chi phí thực tế đã đi $g(n)$ và một hàm ước lượng (heuristic) $h(n)$ tới đích:
+A\* (A-star) [6] là thuật toán tìm đường đi ngắn nhất trên đồ thị có trọng số, kết hợp chi phí thực tế đã đi $g(n)$ và một hàm ước lượng (heuristic) $h(n)$ tới đích:
 
 > **Công thức 8:**
 >
@@ -467,7 +467,7 @@ Bảng 3.1 tổng hợp toàn bộ phân bổ chân GPIO của ESP32 trong hệ 
 
 **Chức năng:** trung tâm điều khiển, chạy toàn bộ firmware ở chu kỳ vòng lặp **50 Hz (20 ms)**.
 
-**Lựa chọn linh kiện:** đề tài sử dụng board **ESP32 DevKit (ESP32-WROOM-32, 38 chân)** vì các lý do:
+**Lựa chọn linh kiện:** đề tài sử dụng board **ESP32 DevKit (ESP32-WROOM-32, 38 chân)** [1], [2] vì các lý do:
 - **Hiệu năng cao:** lõi kép Xtensa 240 MHz, đủ sức chạy đồng thời odometry, máy trạng thái điều hướng và UDP.
 - **Tích hợp WiFi:** phát được Access Point để app kết nối trực tiếp, không cần module mạng ngoài — đây là yếu tố then chốt giúp loại bỏ router.
 - **Nhiều GPIO và ngoại vi:** đủ chân cho 2 động cơ (6 chân), 2 encoder, I2C, siêu âm, buzzer; có bộ LEDC tạo PWM phần cứng và nhiều chân hỗ trợ ngắt.
@@ -480,7 +480,7 @@ Bảng 3.1 tổng hợp toàn bộ phân bổ chân GPIO của ESP32 trong hệ 
 
 **Chức năng:** chuyển tín hiệu điều khiển logic của ESP32 thành dòng đủ lớn để quay hai động cơ DC.
 
-**Lựa chọn linh kiện:** dùng module **L298N** (mạch cầu H đôi). L298N điều khiển độc lập hai động cơ, mỗi động cơ có 2 chân chiều quay (IN) và 1 chân Enable nhận PWM. So với DRV8833/TB6612, L298N có sẵn, rẻ, chịu dòng tốt, tản nhiệt tích hợp, phù hợp động cơ DC giảm tốc cỡ nhỏ.
+**Lựa chọn linh kiện:** dùng module **L298N** (mạch cầu H đôi) [4]. L298N điều khiển độc lập hai động cơ, mỗi động cơ có 2 chân chiều quay (IN) và 1 chân Enable nhận PWM. So với DRV8833/TB6612, L298N có sẵn, rẻ, chịu dòng tốt, tản nhiệt tích hợp, phù hợp động cơ DC giảm tốc cỡ nhỏ.
 
 > **Bảng 3.2 — Thông số kỹ thuật module L298N**
 
@@ -525,7 +525,7 @@ Khoảng cách giữa hai node là **0,5 m**, tương đương 0,5 m / 1,021 cm 
 
 **Chức năng:** đo hướng (yaw) của xe để hiệu chỉnh odometry và giữ hướng khi đi thẳng / xoay đúng góc.
 
-**Lựa chọn linh kiện:** dùng **MPU-6050** (6 trục: 3 gia tốc + 3 con quay hồi chuyển), giao tiếp I2C, giá rẻ, rất phổ biến. Đề tài chỉ dùng **trục gyro Z** để tính yaw.
+**Lựa chọn linh kiện:** dùng **MPU-6050** [3] (6 trục: 3 gia tốc + 3 con quay hồi chuyển), giao tiếp I2C, giá rẻ, rất phổ biến. Đề tài chỉ dùng **trục gyro Z** để tính yaw.
 
 **Nguyên lý (theo `imu_mpu6050.cpp`):**
 - Khởi động: đánh thức chip, đặt tần số lấy mẫu **100 Hz**, bộ lọc DLPF ~44 Hz, dải đo con quay **±250 °/s** (độ nhạy 131 LSB/(°/s)).
@@ -550,7 +550,7 @@ Khoảng cách giữa hai node là **0,5 m**, tương đương 0,5 m / 1,021 cm 
 
 **Chức năng:** đo khoảng cách vật cản phía trước để phục vụ **chế độ tự hành né vật cản** — phát hiện chướng ngại, dừng kịp thời và đo khoảng cách hai bên (qua servo quét) để chọn hướng đi.
 
-**Lựa chọn linh kiện:** dùng **HC-SR04** (siêu âm), giao tiếp số đơn giản (Trig/Echo), tầm đo 2–400 cm, rẻ, dễ tích hợp, không nhạy với ánh sáng môi trường (khác cảm biến hồng ngoại). So với cảm biến ToF laser (VL53L0X) đắt hơn, HC-SR04 đủ dùng cho mục tiêu phát hiện vật cản cơ bản.
+**Lựa chọn linh kiện:** dùng **HC-SR04** [5] (siêu âm), giao tiếp số đơn giản (Trig/Echo), tầm đo 2–400 cm, rẻ, dễ tích hợp, không nhạy với ánh sáng môi trường (khác cảm biến hồng ngoại). So với cảm biến ToF laser (VL53L0X) đắt hơn, HC-SR04 đủ dùng cho mục tiêu phát hiện vật cản cơ bản.
 
 **Nguyên lý (theo `ultrasonic_hcsr04.cpp`):** phát xung trigger 10 µs, đo độ rộng xung Echo bằng `pulseIn` (timeout 30 ms ≈ ngoài tầm), quy đổi sang cm theo Công thức 2 (vận tốc âm ~0,0343 cm/µs, chia 2 vì sóng đi và về). Firmware cung cấp hai cách đọc tùy ngữ cảnh:
 - **Đọc kỹ (`readDistanceCm`)** — lấy **trung vị của 5 mẫu** (median filter, có nghỉ giữa các mẫu) để khử nhiễu; dùng khi xe **đứng yên** quét hai bên, nơi cần độ chính xác cao.
@@ -618,7 +618,7 @@ Hệ thống dùng nguồn pin cấp cho cả động lực và điều khiển.
 
 ## 3.3 THIẾT KẾ PHẦN MỀM ỨNG DỤNG DI ĐỘNG (FLUTTER)
 
-Ứng dụng được tổ chức theo mô hình phân lớp rõ ràng (models – planning – services – screens), giúp dễ kiểm thử và bảo trì.
+Ứng dụng được xây dựng bằng **Flutter** [9], tổ chức theo mô hình phân lớp rõ ràng (models – planning – services – screens), giúp dễ kiểm thử và bảo trì.
 
 **Các lớp chính:**
 - **models:** `RobotState` (pose x, y, θ; khoảng cách vật cản; trạng thái — kể cả các trạng thái tự hành `exploring`/`scanning`/`avoiding`/`stuck`), `RoadMap` (Node, Edge, các cạnh bị chặn lúc chạy).

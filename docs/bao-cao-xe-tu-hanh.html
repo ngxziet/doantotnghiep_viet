@@ -85,7 +85,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <hr>
 <h2>TÓM TẮT</h2>
 <p>Trong thời đại công nghiệp 4.0, robot di động tự hành (Autonomous Mobile Robot) ngày càng được ứng dụng rộng rãi trong kho vận, dịch vụ và nghiên cứu. Nhằm củng cố kiến thức về hệ thống nhúng, điều khiển và lập trình ứng dụng, nhóm thực hiện đã xây dựng một <strong>xe robot tự hành nhỏ</strong> sử dụng vi điều khiển <strong>ESP32</strong> làm trung tâm điều khiển, kết hợp với một <strong>ứng dụng di động Flutter</strong> làm giao diện điều hành.</p>
-<p>Hệ thống cho phép người dùng chạm chọn điểm đích trên bản đồ; ứng dụng dùng thuật toán <strong>A*</strong> để tính đường đi ngắn nhất trên đồ thị waypoint, rồi gửi danh sách điểm trung gian xuống ESP32 qua giao thức <strong>UDP</strong> trên mạng WiFi do chính ESP32 phát ra. ESP32 bám theo lộ trình bằng cách kết hợp <strong>odometry</strong> từ encoder bánh xe và cảm biến góc <strong>MPU-6050</strong> (bộ lọc bù — complementary filter) để ước lượng vị trí và hướng theo thời gian thực, điều khiển hai động cơ DC qua mạch cầu <strong>L298N</strong>. Vị trí xe được phản hồi liên tục về ứng dụng (telemetry 10 Hz) để hiển thị trên bản đồ. Hệ thống còn tích hợp cơ chế <strong>tự hiệu chuẩn</strong> sai số động cơ/encoder lưu trên bộ nhớ NVS, và chế độ giả lập (simulator) để kiểm thử ứng dụng khi chưa có phần cứng. Ứng dụng được tổ chức thành <strong>nhiều màn hình chức năng</strong>: dẫn đường trên bản đồ (chạm chọn đích, <strong>chặn/mở đoạn đường</strong> để A* tự tính lại lộ trình), <strong>điều khiển tay</strong> với tốc độ tùy chỉnh, và màn hình <strong>chẩn đoán – hiệu chuẩn</strong> (kiểm tra kết nối, hiệu chuẩn IMU, đặt lại cân bằng động cơ và tỉ lệ encoder).</p>
+<p>Hệ thống cho phép người dùng chạm chọn điểm đích trên bản đồ; ứng dụng dùng thuật toán <strong>A*</strong> để tính đường đi ngắn nhất trên đồ thị waypoint, rồi gửi danh sách điểm trung gian xuống ESP32 qua giao thức <strong>UDP</strong> trên mạng WiFi do chính ESP32 phát ra. ESP32 bám theo lộ trình bằng cách kết hợp <strong>odometry</strong> từ encoder bánh xe và cảm biến góc <strong>MPU-6050</strong> (bộ lọc bù — complementary filter) để ước lượng vị trí và hướng theo thời gian thực, điều khiển hai động cơ DC qua mạch cầu <strong>L298N</strong>. Vị trí xe được phản hồi liên tục về ứng dụng (telemetry 10 Hz) để hiển thị trên bản đồ. Hệ thống còn tích hợp cơ chế <strong>tự hiệu chuẩn</strong> sai số động cơ/encoder lưu trên bộ nhớ NVS, và chế độ giả lập (simulator) để kiểm thử ứng dụng khi chưa có phần cứng.</p>
 <p>Bên cạnh chế độ bám lộ trình theo bản đồ, hệ thống còn có <strong>chế độ tự hành né vật cản (autonomous exploration)</strong>: xe tự chạy thẳng, dùng cảm biến siêu âm <strong>HC-SR04</strong> gắn trên một <strong>servo quét</strong> để liên tục đo khoảng cách phía trước; khi gặp vật cản gần (dưới 30 cm) xe dừng lại, quay servo đo khoảng cách hai bên trái/phải rồi tự quyết định hướng đi thông thoáng hơn (rẽ 90° về bên rộng hơn, hoặc quay đầu 180° khi cả hai phía đều bị chặn, hoặc dừng hẳn khi bị kẹt). Người dùng bật/tắt chế độ này bằng một nút trên ứng dụng.</p>
 <p>Thiết kế module hóa, chi phí thấp, không phụ thuộc Internet (mạng cục bộ), phù hợp làm nền tảng học thuật cho các bài toán định vị và dẫn đường robot trong quy mô phòng thí nghiệm.</p>
 <hr>
@@ -547,7 +547,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <ul>
 <li>Nghiên cứu và lựa chọn phần cứng phù hợp: vi điều khiển, mạch lái động cơ, encoder, cảm biến quán tính, cảm biến khoảng cách.</li>
 <li>Xây dựng firmware ESP32 module hóa: điều khiển động cơ, đọc encoder/IMU/siêu âm, ước lượng odometry, máy trạng thái điều hướng giữa các node.</li>
-<li>Xây dựng ứng dụng di động (Flutter) <strong>đa chức năng</strong>: hiển thị bản đồ và tính đường đi bằng A* (kèm <strong>chặn/mở đoạn đường</strong> để tính lại lộ trình), gửi lộ trình, hiển thị vị trí xe theo thời gian thực, <strong>điều khiển tay</strong>, và <strong>chẩn đoán – hiệu chuẩn</strong> (Ping, hiệu chuẩn IMU, đặt lại cân bằng động cơ/encoder).</li>
+<li>Xây dựng ứng dụng di động (Flutter) hiển thị bản đồ, tính đường đi bằng A*, gửi lộ trình và hiển thị vị trí xe theo thời gian thực.</li>
 <li>Thiết kế giao thức truyền thông UDP độ trễ thấp giữa app và ESP32.</li>
 <li>Tích hợp cơ chế tự hiệu chuẩn để giảm sai số định vị, đảm bảo hệ thống hoạt động ổn định, chính xác trong phạm vi cho phép.</li>
 </ul>
@@ -569,7 +569,6 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <hr>
 <hr>
 <h1>CHƯƠNG 2: CƠ SỞ LÝ THUYẾT</h1>
-<p>Robot di động tự hành (AMR) là lĩnh vực đã được nghiên cứu rộng rãi, với nhiều phương pháp định vị và dẫn đường được tổng hợp trong các công trình khảo sát [15]. Định vị bằng <strong>odometry</strong> (encoder kết hợp IMU) phổ biến cho robot chi phí thấp nhờ đơn giản và không cần hạ tầng ngoài; tuy nhiên odometry tích lũy sai số hệ thống theo quãng đường, và việc đo đạc – hiệu chỉnh các sai số này đã được nghiên cứu kỹ [14] — là cơ sở cho cơ chế <strong>tự hiệu chuẩn</strong> áp dụng trong đề tài. Chương này trình bày các giao thức, thuật toán và nền tảng lý thuyết mà hệ thống sử dụng.</p>
 <h2>2.1 CÁC GIAO THỨC KẾT NỐI SỬ DỤNG</h2>
 <h3>2.1.1 GPIO</h3>
 <p>GPIO (General Purpose Input/Output) là các chân tín hiệu được cấu hình bằng phần mềm để thực hiện chức năng ngõ vào (input) hoặc ngõ ra (output). Trong đề tài, GPIO của ESP32 được dùng cho hầu hết các kết nối số: điều khiển chiều quay động cơ (các chân IN1–IN4 của L298N), phát xung trigger cho cảm biến siêu âm, điều khiển còi buzzer, và đọc tín hiệu xung từ encoder.</p>
@@ -585,8 +584,8 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p><strong>[CHÈN HÌNH 2.1 — Sơ đồ giao tiếp I2C giữa master và các slave]</strong></p>
 </blockquote>
 <h3>2.1.3 PWM và bộ LEDC của ESP32</h3>
-<p>PWM (Pulse Width Modulation – điều chế độ rộng xung) điều khiển công suất trung bình cấp cho tải bằng cách thay đổi tỉ lệ thời gian mức cao/thấp của tín hiệu (duty cycle). Tốc độ động cơ DC tỉ lệ với duty cycle của tín hiệu PWM cấp vào chân Enable của mạch cầu H. ESP32 tạo PWM bằng bộ ngoại vi LEDC (16 kênh phần cứng) [8].</p>
-<p>ESP32 có bộ ngoại vi <strong>LEDC</strong> chuyên tạo PWM phần cứng (không tốn CPU). Trong đề tài, hai kênh LEDC (kênh 0 cho bánh trái, kênh 1 cho bánh phải) được cấu hình <strong>tần số 5 kHz, độ phân giải 8-bit</strong> (duty 0–255), gắn vào hai chân Enable ENA/ENB của L298N. Giá trị PWM 0 là dừng, 255 là tốc độ tối đa.</p>
+<p>PWM (Pulse Width Modulation – điều chế độ rộng xung) điều khiển công suất trung bình cấp cho tải bằng cách thay đổi tỉ lệ thời gian mức cao/thấp của tín hiệu (duty cycle). Tốc độ động cơ DC tỉ lệ với duty cycle của tín hiệu PWM cấp vào chân Enable của mạch cầu H.</p>
+<p>ESP32 có bộ ngoại vi <strong>LEDC</strong> [8] chuyên tạo PWM phần cứng (không tốn CPU). Trong đề tài, hai kênh LEDC (kênh 0 cho bánh trái, kênh 1 cho bánh phải) được cấu hình <strong>tần số 5 kHz, độ phân giải 8-bit</strong> (duty 0–255), gắn vào hai chân Enable ENA/ENB của L298N. Giá trị PWM 0 là dừng, 255 là tốc độ tối đa.</p>
 <p>Bộ LEDC còn được dùng để <strong>điều khiển servo</strong> quét cảm biến: một kênh LEDC riêng (kênh 2) được cấu hình <strong>tần số 50 Hz, độ phân giải 16-bit</strong> — đúng chuẩn tín hiệu servo RC (chu kỳ 20 ms, độ rộng xung 0,5–2,5 ms tương ứng góc 0–180°). Việc dùng kênh và bộ định thời (timer) tách biệt với hai kênh động cơ giúp servo và motor hoạt động đồng thời mà không xung đột tần số.</p>
 <blockquote>
 <p><strong>[CHÈN HÌNH 2.2 — Minh họa các mức duty cycle của tín hiệu PWM]</strong></p>
@@ -613,7 +612,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p>Trên mạng đó, dữ liệu được trao đổi bằng <strong>UDP (User Datagram Protocol)</strong> — giao thức không kết nối, không bắt tay, không đảm bảo thứ tự/độ tin cậy nhưng <strong>độ trễ rất thấp</strong>, rất phù hợp cho điều khiển robot thời gian thực: telemetry vị trí gửi 10 lần/giây có thể chấp nhận mất vài gói, còn lệnh quan trọng (lộ trình) được gửi lặp lại nhiều lần để bù.</p>
 <h2>2.2 CÁC THUẬT TOÁN VÀ LÝ THUYẾT NỀN TẢNG</h2>
 <h3>2.2.1 Mô hình xe vi sai và odometry</h3>
-<p>Xe robot trong đề tài là loại <strong>hai bánh vi sai (differential drive)</strong>: hai bánh chủ động trái/phải điều khiển độc lập, hướng xe thay đổi nhờ chênh lệch tốc độ hai bánh. <strong>Odometry</strong> (đo hành trình) là phương pháp ước lượng vị trí robot bằng cách tích lũy quãng đường mỗi bánh đo được từ encoder [7].</p>
+<p>Xe robot trong đề tài là loại <strong>hai bánh vi sai (differential drive)</strong>: hai bánh chủ động trái/phải điều khiển độc lập, hướng xe thay đổi nhờ chênh lệch tốc độ hai bánh. <strong>Odometry</strong> (đo hành trình) [7] là phương pháp ước lượng vị trí robot bằng cách tích lũy quãng đường mỗi bánh đo được từ encoder.</p>
 <p>Gọi <strong>dL</strong>, <strong>dR</strong> là quãng đường bánh trái/phải đi được trong một chu kỳ, <strong>L</strong> là khoảng cách giữa hai bánh (wheel base). Khi đó:</p>
 <ul>
 <li>Quãng đường tịnh tiến trung tâm xe: <strong>d = (dL + dR) / 2</strong></li>
@@ -629,7 +628,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p><strong>[CHÈN HÌNH 2.4 — Mô hình động học xe vi sai]</strong></p>
 </blockquote>
 <h3>2.2.2 Bộ lọc bù (Complementary Filter)</h3>
-<p>Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị <strong>trôi (drift)</strong> khi tích phân lâu dài. <strong>Bộ lọc bù</strong> [13] kết hợp hai nguồn để bù khuyết điểm của nhau:</p>
+<p>Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị <strong>trôi (drift)</strong> khi tích phân lâu dài. <strong>Bộ lọc bù</strong> kết hợp hai nguồn để bù khuyết điểm của nhau:</p>
 <blockquote>
 <p><strong>θ_fused = θ_enc + α × (θ_imu − θ_enc)</strong></p>
 </blockquote>
@@ -646,12 +645,12 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 </blockquote>
 <h2>2.3 CÁC PHẦN MỀM XÂY DỰNG VÀ HỖ TRỢ</h2>
 <h3>2.3.1 PlatformIO trên Visual Studio Code</h3>
-<p>Firmware ESP32 được phát triển bằng <strong>PlatformIO</strong> [12] — một hệ sinh thái phát triển nhúng chạy trên VS Code, hỗ trợ quản lý thư viện, biên dịch, nạp chương trình và giám sát Serial. So với Arduino IDE truyền thống, PlatformIO mạnh hơn ở quản lý dự án nhiều file (module hóa), khai báo thư viện qua <code>platformio.ini</code>, và hỗ trợ nhiều môi trường build (đề tài có 2 môi trường: <code>esp32dev</code> cho firmware chính và <code>l298n_test</code> để test riêng mạch lái động cơ). Ngôn ngữ sử dụng là <strong>C++</strong> trên framework Arduino-ESP32.</p>
+<p>Firmware ESP32 được phát triển bằng <strong>PlatformIO</strong> — một hệ sinh thái phát triển nhúng chạy trên VS Code, hỗ trợ quản lý thư viện, biên dịch, nạp chương trình và giám sát Serial. So với Arduino IDE truyền thống, PlatformIO mạnh hơn ở quản lý dự án nhiều file (module hóa), khai báo thư viện qua <code>platformio.ini</code>, và hỗ trợ nhiều môi trường build (đề tài có 2 môi trường: <code>esp32dev</code> cho firmware chính và <code>l298n_test</code> để test riêng mạch lái động cơ). Ngôn ngữ sử dụng là <strong>C++</strong> trên framework Arduino-ESP32.</p>
 <blockquote>
 <p><strong>[CHÈN HÌNH 2.6 — Giao diện PlatformIO trên VS Code]</strong></p>
 </blockquote>
 <h3>2.3.2 Flutter và ngôn ngữ Dart</h3>
-<p>Ứng dụng di động điều khiển được xây dựng bằng <strong>Flutter</strong> (ngôn ngữ <strong>Dart</strong>) của Google [9] — framework đa nền tảng, từ một mã nguồn có thể build cho Android, iOS, Windows... Flutter cho phép vẽ giao diện bản đồ tùy biến (CustomPainter), xử lý chạm, quản lý trạng thái và giao tiếp UDP. Đề tài tận dụng Flutter để dựng 4 màn hình: Bản đồ, Kiểm tra kết nối, Điều khiển tay, và Telemetry/Hiệu chuẩn.</p>
+<p>Ứng dụng di động điều khiển được xây dựng bằng <strong>Flutter</strong> (ngôn ngữ <strong>Dart</strong>) của Google — framework đa nền tảng, từ một mã nguồn có thể build cho Android, iOS, Windows... Flutter cho phép vẽ giao diện bản đồ tùy biến (CustomPainter), xử lý chạm, quản lý trạng thái và giao tiếp UDP. Đề tài tận dụng Flutter để dựng 4 màn hình: Bản đồ, Kiểm tra kết nối, Điều khiển tay, và Telemetry/Hiệu chuẩn.</p>
 <blockquote>
 <p><strong>[CHÈN HÌNH 2.7 — Giao diện ứng dụng Flutter]</strong></p>
 </blockquote>
@@ -719,7 +718,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <h3>3.1.1 Yêu cầu của hệ thống</h3>
 <p>Hệ thống cung cấp các chức năng sau:</p>
 <ul>
-<li>Người dùng <strong>chạm chọn điểm đích</strong> trên bản đồ trong ứng dụng; ứng dụng tự <strong>tính đường đi ngắn nhất</strong> (A*) và gửi lộ trình xuống xe. Có thể <strong>chặn/mở một đoạn đường</strong> trên bản đồ để A* <strong>tính lại lộ trình</strong> (mô phỏng vật cản tĩnh).</li>
+<li>Người dùng <strong>chạm chọn điểm đích</strong> trên bản đồ trong ứng dụng; ứng dụng tự <strong>tính đường đi ngắn nhất</strong> (A*) và gửi lộ trình xuống xe.</li>
 <li>Xe <strong>tự bám theo lộ trình</strong>: tự xoay đúng hướng tại mỗi node và đi thẳng đúng quãng đường giữa các node, dựa trên odometry (encoder + IMU).</li>
 <li><strong>Hiển thị vị trí xe theo thời gian thực</strong> trên bản đồ (telemetry 10 Hz), kèm trạng thái hoạt động và vệt đường đã đi.</li>
 <li><strong>Điều khiển tay</strong> (tiến/lùi/rẽ/đi chéo) và <strong>chế độ test từng bước</strong> phục vụ kiểm tra.</li>
@@ -819,8 +818,8 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 </tbody>
 </table>
 <h3>3.2.1 Khối xử lý trung tâm (ESP32)</h3>
-<p><strong>Chức năng:</strong> trung tâm điều khiển, chạy toàn bộ firmware ở chu kỳ vòng lặp <strong>50 Hz (20 ms)</strong>. Thông số kỹ thuật và sơ đồ chân theo datasheet ESP32 / ESP32-WROOM-32 [1], [2].</p>
-<p><strong>Lựa chọn linh kiện:</strong> đề tài sử dụng board <strong>ESP32 DevKit (ESP32-WROOM-32, 38 chân)</strong> vì các lý do:</p>
+<p><strong>Chức năng:</strong> trung tâm điều khiển, chạy toàn bộ firmware ở chu kỳ vòng lặp <strong>50 Hz (20 ms)</strong>.</p>
+<p><strong>Lựa chọn linh kiện:</strong> đề tài sử dụng board <strong>ESP32 DevKit (ESP32-WROOM-32, 38 chân)</strong> [1], [2] vì các lý do:</p>
 <ul>
 <li><strong>Hiệu năng cao:</strong> lõi kép Xtensa 240 MHz, đủ sức chạy đồng thời odometry, máy trạng thái điều hướng và UDP.</li>
 <li><strong>Tích hợp WiFi:</strong> phát được Access Point để app kết nối trực tiếp, không cần module mạng ngoài — đây là yếu tố then chốt giúp loại bỏ router.</li>
@@ -832,8 +831,8 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p><strong>[CHÈN HÌNH 3.3 — Sơ đồ chân ESP32-WROOM-32]</strong></p>
 </blockquote>
 <h3>3.2.2 Khối động cơ (mạch lái L298N + 2 động cơ DC)</h3>
-<p><strong>Chức năng:</strong> chuyển tín hiệu điều khiển logic của ESP32 thành dòng đủ lớn để quay hai động cơ DC. Thông số module mạch lái theo datasheet L298 [4].</p>
-<p><strong>Lựa chọn linh kiện:</strong> dùng module <strong>L298N</strong> (mạch cầu H đôi). L298N điều khiển độc lập hai động cơ, mỗi động cơ có 2 chân chiều quay (IN) và 1 chân Enable nhận PWM. So với DRV8833/TB6612, L298N có sẵn, rẻ, chịu dòng tốt, tản nhiệt tích hợp, phù hợp động cơ DC giảm tốc cỡ nhỏ.</p>
+<p><strong>Chức năng:</strong> chuyển tín hiệu điều khiển logic của ESP32 thành dòng đủ lớn để quay hai động cơ DC.</p>
+<p><strong>Lựa chọn linh kiện:</strong> dùng module <strong>L298N</strong> (mạch cầu H đôi) [4]. L298N điều khiển độc lập hai động cơ, mỗi động cơ có 2 chân chiều quay (IN) và 1 chân Enable nhận PWM. So với DRV8833/TB6612, L298N có sẵn, rẻ, chịu dòng tốt, tản nhiệt tích hợp, phù hợp động cơ DC giảm tốc cỡ nhỏ.</p>
 <blockquote>
 <p><strong>Bảng 3.2 — Thông số kỹ thuật module L298N</strong></p>
 </blockquote>
@@ -878,7 +877,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p><strong>[CHÈN HÌNH 3.4 — Sơ đồ kết nối ESP32 - L298N - hai động cơ DC]</strong></p>
 </blockquote>
 <h3>3.2.3 Khối encoder</h3>
-<p><strong>Chức năng:</strong> đo quãng đường mỗi bánh, là nguồn dữ liệu chính cho odometry. Encoder dùng module so sánh <strong>LM393</strong> [11].</p>
+<p><strong>Chức năng:</strong> đo quãng đường mỗi bánh, là nguồn dữ liệu chính cho odometry.</p>
 <p><strong>Lựa chọn linh kiện:</strong> dùng <strong>encoder quang LM393</strong> với đĩa mã hóa <strong>20 khe</strong> (20 xung/vòng), gắn trên trục mỗi bánh. Đây là loại encoder số một kênh (chỉ có ngõ D0), rẻ, dễ lắp; chiều quay được suy ra từ lệnh động cơ nên không cần kênh thứ hai.</p>
 <p><strong>Tính toán quãng đường:</strong> với đường kính bánh <strong>6,5 cm</strong>:</p>
 <blockquote>
@@ -892,8 +891,8 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p><strong>[CHÈN HÌNH 3.5 — Sơ đồ kết nối encoder LM393 với ESP32]</strong></p>
 </blockquote>
 <h3>3.2.4 Khối cảm biến góc IMU (MPU-6050)</h3>
-<p><strong>Chức năng:</strong> đo hướng (yaw) của xe để hiệu chỉnh odometry và giữ hướng khi đi thẳng / xoay đúng góc. Thanh ghi và thông số đọc theo datasheet MPU-6050 [3].</p>
-<p><strong>Lựa chọn linh kiện:</strong> dùng <strong>MPU-6050</strong> (6 trục: 3 gia tốc + 3 con quay hồi chuyển), giao tiếp I2C, giá rẻ, rất phổ biến. Đề tài chỉ dùng <strong>trục gyro Z</strong> để tính yaw.</p>
+<p><strong>Chức năng:</strong> đo hướng (yaw) của xe để hiệu chỉnh odometry và giữ hướng khi đi thẳng / xoay đúng góc.</p>
+<p><strong>Lựa chọn linh kiện:</strong> dùng <strong>MPU-6050</strong> [3] (6 trục: 3 gia tốc + 3 con quay hồi chuyển), giao tiếp I2C, giá rẻ, rất phổ biến. Đề tài chỉ dùng <strong>trục gyro Z</strong> để tính yaw.</p>
 <p><strong>Nguyên lý (theo <code>imu_mpu6050.cpp</code>):</strong></p>
 <ul>
 <li>Khởi động: đánh thức chip, đặt tần số lấy mẫu <strong>100 Hz</strong>, bộ lọc DLPF ~44 Hz, dải đo con quay <strong>±250 °/s</strong> (độ nhạy 131 LSB/(°/s)).</li>
@@ -912,8 +911,8 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p><strong>[CHÈN HÌNH 3.6 — Sơ đồ kết nối MPU-6050 qua I2C]</strong></p>
 </blockquote>
 <h3>3.2.5 Khối cảm biến khoảng cách (HC-SR04)</h3>
-<p><strong>Chức năng:</strong> đo khoảng cách vật cản phía trước để phục vụ <strong>chế độ tự hành né vật cản</strong> — phát hiện chướng ngại, dừng kịp thời và đo khoảng cách hai bên (qua servo quét) để chọn hướng đi. Nguyên lý đo (Trigger–Echo) và thông số theo datasheet HC-SR04 [5].</p>
-<p><strong>Lựa chọn linh kiện:</strong> dùng <strong>HC-SR04</strong> (siêu âm), giao tiếp số đơn giản (Trig/Echo), tầm đo 2–400 cm, rẻ, dễ tích hợp, không nhạy với ánh sáng môi trường (khác cảm biến hồng ngoại). So với cảm biến ToF laser (VL53L0X) đắt hơn, HC-SR04 đủ dùng cho mục tiêu phát hiện vật cản cơ bản.</p>
+<p><strong>Chức năng:</strong> đo khoảng cách vật cản phía trước để phục vụ <strong>chế độ tự hành né vật cản</strong> — phát hiện chướng ngại, dừng kịp thời và đo khoảng cách hai bên (qua servo quét) để chọn hướng đi.</p>
+<p><strong>Lựa chọn linh kiện:</strong> dùng <strong>HC-SR04</strong> [5] (siêu âm), giao tiếp số đơn giản (Trig/Echo), tầm đo 2–400 cm, rẻ, dễ tích hợp, không nhạy với ánh sáng môi trường (khác cảm biến hồng ngoại). So với cảm biến ToF laser (VL53L0X) đắt hơn, HC-SR04 đủ dùng cho mục tiêu phát hiện vật cản cơ bản.</p>
 <p><strong>Nguyên lý (theo <code>ultrasonic_hcsr04.cpp</code>):</strong> phát xung trigger 10 µs, đo độ rộng xung Echo bằng <code>pulseIn</code> (timeout 30 ms ≈ ngoài tầm), quy đổi sang cm theo Công thức 2 (vận tốc âm ~0,0343 cm/µs, chia 2 vì sóng đi và về). Firmware cung cấp hai cách đọc tùy ngữ cảnh:</p>
 <ul>
 <li><strong>Đọc kỹ (<code>readDistanceCm</code>)</strong> — lấy <strong>trung vị của 5 mẫu</strong> (median filter, có nghỉ giữa các mẫu) để khử nhiễu; dùng khi xe <strong>đứng yên</strong> quét hai bên, nơi cần độ chính xác cao.</li>
@@ -925,7 +924,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 </blockquote>
 <h3>3.2.6 Khối servo quét cảm biến</h3>
 <p><strong>Chức năng:</strong> xoay cảm biến HC-SR04 sang <strong>trái / giữa / phải</strong> để xe &quot;nhìn&quot; được khoảng cách ba hướng mà <strong>không cần xoay cả thân xe</strong> — giúp khâu quyết định né vật cản nhanh và ít hao pin hơn.</p>
-<p><strong>Lựa chọn linh kiện:</strong> dùng <strong>servo SG90</strong> [10] (xoay 180°), điều khiển bằng một dây tín hiệu PWM 50 Hz, giá rẻ và rất phổ biến. Thông số chính: điện áp <strong>4,8–6 V</strong>, mô-men <strong>~1,2–2,4 kg·cm</strong>, đủ để xoay nhẹ cụm cảm biến HC-SR04; trọng lượng nhỏ (~9 g) phù hợp gắn ở mũi xe.</p>
+<p><strong>Lựa chọn linh kiện:</strong> dùng <strong>servo SG90</strong> (xoay 180°), điều khiển bằng một dây tín hiệu PWM 50 Hz, giá rẻ và rất phổ biến. Thông số chính: điện áp <strong>4,8–6 V</strong>, mô-men <strong>~1,2–2,4 kg·cm</strong>, đủ để xoay nhẹ cụm cảm biến HC-SR04; trọng lượng nhỏ (~9 g) phù hợp gắn ở mũi xe.</p>
 <blockquote>
 <p><strong>Bảng 3.6 — Thông số servo SG90 và tham số chế độ tự hành</strong></p>
 <table>
@@ -1040,7 +1039,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 </table>
 <p><strong>Phương án cấp nguồn:</strong> pin (ví dụ 2 cell Li-ion 18650, ~7.4 V) cấp vào chân động lực L298N; ngõ ổn áp 5V của L298N cấp ngược cho ESP32 (qua VIN). Toàn bộ GND nối chung. ESP32 tự có các bộ ổn áp tạo mức 3.3 V cho logic và cảm biến. Lưu ý phần mềm có tắt cảnh báo sụt áp (brown-out) của ESP32 để tránh reset khi động cơ khởi động kéo dòng lớn.</p>
 <h2>3.3 THIẾT KẾ PHẦN MỀM ỨNG DỤNG DI ĐỘNG (FLUTTER)</h2>
-<p>Ứng dụng được tổ chức theo mô hình phân lớp rõ ràng (models – planning – services – screens), giúp dễ kiểm thử và bảo trì.</p>
+<p>Ứng dụng được xây dựng bằng <strong>Flutter</strong> [9], tổ chức theo mô hình phân lớp rõ ràng (models – planning – services – screens), giúp dễ kiểm thử và bảo trì.</p>
 <p><strong>Các lớp chính:</strong></p>
 <ul>
 <li><strong>models:</strong> <code>RobotState</code> (pose x, y, θ; khoảng cách vật cản; trạng thái — kể cả các trạng thái tự hành <code>exploring</code>/<code>scanning</code>/<code>avoiding</code>/<code>stuck</code>), <code>RoadMap</code> (Node, Edge, các cạnh bị chặn lúc chạy).</li>
@@ -1050,10 +1049,10 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 </ul>
 <p><strong>Bốn màn hình ứng dụng (Hình 3.9):</strong></p>
 <ol>
-<li><strong>Bản đồ (Map):</strong> vẽ đồ thị waypoint, vị trí xe thời gian thực + vệt đường đã đi; <strong>chạm chọn đích → A* → gửi lộ trình</strong>. Có <strong>chế độ chặn đường (Block/unblock):</strong> chạm một cạnh để chặn/mở lại, A* <strong>tính lại lộ trình</strong> tránh đoạn bị chặn (mô phỏng vật cản trên bản đồ); kèm hai nút <strong>Reset map</strong> (xóa các cạnh đã chặn) và <strong>Reset pose</strong> (đưa xe về gốc tọa độ).</li>
-<li><strong>Kiểm tra &amp; hiệu chuẩn (ESP32 Test):</strong> màn hình chẩn đoán kết nối và hiệu chuẩn. Hiển thị địa chỉ AP, cổng telemetry/command, số gói nhận được, gói cuối, trạng thái, <strong>MPU-6050</strong>, hướng, tiến trình node và tình trạng hiệu chuẩn. Các nút: <strong>Send Ping</strong>, <strong>Calibrate IMU</strong> (hiệu chuẩn cảm biến góc), <strong>Reset Motor Auto-Tune</strong> (đặt lại hệ số cân bằng động cơ) và <strong>Reset Encoder Scale</strong> (đặt lại tỉ lệ encoder).</li>
-<li><strong>Điều khiển tay (Manual Control):</strong> <strong>thanh trượt chỉnh tốc độ (PWM)</strong> cùng các nút <strong>tiến / lùi / rẽ trái / rẽ phải / dừng</strong>; hiển thị lệnh vừa gửi.</li>
-<li><strong>Tự hành (Autonomous):</strong> nút <strong>Start/Stop</strong> bật/tắt chế độ tự hành né vật cản, kèm bảng telemetry trực tiếp (trạng thái, khoảng cách vật cản, hướng, tọa độ X/Y, tình trạng IMU). Màn hình này thay cho màn hình test bánh xe (Wheels) ở phiên bản trước.</li>
+<li><strong>Bản đồ (Map):</strong> vẽ đồ thị waypoint, vị trí xe thời gian thực + vệt đường đã đi; chạm để chọn đích → A* → gửi lộ trình.</li>
+<li><strong>Kiểm tra kết nối (Connection Test):</strong> kiểm tra luồng telemetry/UDP với ESP32.</li>
+<li><strong>Điều khiển tay (Manual Control):</strong> nút tiến/lùi/rẽ/đi chéo/dừng.</li>
+<li><strong>Tự hành (Autonomous):</strong> nút <strong>Start/Stop</strong> bật/tắt chế độ tự hành né vật cản, kèm bảng telemetry trực tiếp (trạng thái, khoảng cách vật cản, hướng, tọa độ, tình trạng IMU). Màn hình này thay cho màn hình test bánh xe (Wheels) ở phiên bản trước — vốn chỉ dùng để chạy thử từng bánh và đã trở nên dư thừa.</li>
 </ol>
 <p><strong>Chế độ giả lập:</strong> thông qua biến <code>USE_SIMULATOR</code>, ứng dụng có thể chạy hoàn toàn không cần ESP32 (xe ảo cập nhật 10 Hz) — rất hữu ích để phát triển và demo giao diện.</p>
 <blockquote>
@@ -1840,21 +1839,17 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 <hr>
 <hr>
 <h1>TÀI LIỆU THAM KHẢO</h1>
-<p>[1] Espressif Systems, &quot;ESP32 Series Datasheet,&quot; 2024. [Online]. Available: <a href="https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf">https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[2] Espressif Systems, &quot;ESP32-WROOM-32 Datasheet,&quot; 2024. [Online]. Available: <a href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf">https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[3] InvenSense (TDK), &quot;MPU-6000/MPU-6050 Product Specification and Register Map,&quot; Rev. 4.2, 2013. [Online]. Available: <a href="https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/">https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[4] STMicroelectronics, &quot;L298 Dual Full-Bridge Driver Datasheet,&quot; 2000. [Online]. Available: <a href="https://www.st.com/resource/en/datasheet/l298.pdf">https://www.st.com/resource/en/datasheet/l298.pdf</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[5] SparkFun Electronics, &quot;HC-SR04 Ultrasonic Sensor Module Datasheet.&quot; [Online]. Available: <a href="https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf">https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[6] P. E. Hart, N. J. Nilsson, and B. Raphael, &quot;A formal basis for the heuristic determination of minimum cost paths,&quot; <em>IEEE Trans. Syst. Sci. Cybern.</em>, vol. 4, no. 2, pp. 100–107, Jul. 1968.</p>
-<p>[7] S. Thrun, W. Burgard, and D. Fox, <em>Probabilistic Robotics</em>. Cambridge, MA: MIT Press, 2005.</p>
-<p>[8] Espressif Systems, &quot;ESP-IDF Programming Guide,&quot; 2024. [Online]. Available: <a href="https://docs.espressif.com/">https://docs.espressif.com/</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[9] Google, &quot;Flutter Documentation,&quot; 2024. [Online]. Available: <a href="https://docs.flutter.dev/">https://docs.flutter.dev/</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[10] TowerPro, &quot;SG90 9g Micro Servo Datasheet.&quot; [Online]. Available: <a href="http://www.ee.ic.ac.uk/pcheung/teaching/DE1_EE/stores/sg90_datasheet.pdf">http://www.ee.ic.ac.uk/pcheung/teaching/DE1_EE/stores/sg90_datasheet.pdf</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[11] Texas Instruments, &quot;LM393 Dual Differential Comparators Datasheet,&quot; 2017. [Online]. Available: <a href="https://www.ti.com/lit/ds/symlink/lm393.pdf">https://www.ti.com/lit/ds/symlink/lm393.pdf</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[12] PlatformIO Labs, &quot;PlatformIO Documentation,&quot; 2024. [Online]. Available: <a href="https://docs.platformio.org/">https://docs.platformio.org/</a>. [Accessed: Jun. 15, 2025].</p>
-<p>[13] W. T. Higgins, &quot;A comparison of complementary and Kalman filtering,&quot; <em>IEEE Trans. Aerosp. Electron. Syst.</em>, vol. AES-11, no. 3, pp. 321–325, May 1975.</p>
-<p>[14] J. Borenstein and L. Feng, &quot;Measurement and correction of systematic odometry errors in mobile robots,&quot; <em>IEEE Trans. Robot. Autom.</em>, vol. 12, no. 6, pp. 869–880, Dec. 1996.</p>
-<p>[15] F. Rubio, F. Valero, and C. Llopis-Albert, &quot;A review of mobile robots: Concepts, methods, theoretical framework, and applications,&quot; <em>Int. J. Adv. Robot. Syst.</em>, vol. 16, no. 2, pp. 1–22, 2019.</p>
+<p><strong>Datasheet và tài liệu kỹ thuật:</strong></p>
+<p>[1] Espressif Systems, <em>ESP32 Series Datasheet</em>, 2024. [Online]. <a href="https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf">https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf</a></p>
+<p>[2] Espressif Systems, <em>ESP32-WROOM-32 Datasheet</em>, 2024. [Online]. <a href="https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf">https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf</a></p>
+<p>[3] InvenSense (TDK), <em>MPU-6000/MPU-6050 Product Specification &amp; Register Map</em>, Rev. 3.4/4.2. [Online]. <a href="https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/">https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/</a></p>
+<p>[4] STMicroelectronics, <em>L298 Dual Full-Bridge Driver Datasheet</em>. [Online]. <a href="https://www.st.com/resource/en/datasheet/l298.pdf">https://www.st.com/resource/en/datasheet/l298.pdf</a></p>
+<p>[5] SparkFun Electronics, <em>HC-SR04 Ultrasonic Sensor Module</em>. [Online]. <a href="https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf">https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf</a></p>
+<p><strong>Tài liệu thuật toán và nền tảng:</strong></p>
+<p>[6] P. E. Hart, N. J. Nilsson, B. Raphael, &quot;A Formal Basis for the Heuristic Determination of Minimum Cost Paths&quot;, <em>IEEE Trans. on Systems Science and Cybernetics</em>, 1968.</p>
+<p>[7] S. Thrun, W. Burgard, D. Fox, <em>Probabilistic Robotics</em>, MIT Press, 2005 (chương về odometry và mô hình chuyển động vi sai).</p>
+<p>[8] Espressif Systems, <em>ESP-IDF / Arduino-ESP32 Programming Guide</em> (LEDC, GPIO interrupts, WiFi SoftAP). [Online]. <a href="https://docs.espressif.com/">https://docs.espressif.com/</a></p>
+<p>[9] Google, <em>Flutter Documentation</em> và <em>Dart Language Tour</em>. [Online]. <a href="https://docs.flutter.dev/">https://docs.flutter.dev/</a></p>
 <hr>
 <hr>
 <h1>PHỤ LỤC</h1>
