@@ -563,7 +563,27 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p>Trong quá trình thực hiện, đề tài tập trung vào các nhiệm vụ chính: khảo sát và phân tích các phương pháp định vị/dẫn đường cho robot di động; nghiên cứu các loại cảm biến phù hợp với ESP32; thiết kế sơ đồ khối và mạch nguyên lý của hệ thống; lập trình điều khiển động cơ và đọc cảm biến; cài đặt thuật toán odometry và bộ lọc bù; cài đặt thuật toán A* và bộ dựng waypoint trên ứng dụng; thiết kế giao thức UDP và cơ chế telemetry; kiểm thử hệ thống thực tế; đo đạc, tinh chỉnh tham số và đánh giá sai số; đề xuất hướng cải tiến.</p>
 <h2>1.4 ĐỐI TƯỢNG VÀ PHẠM VI NGHIÊN CỨU</h2>
 <p><strong>Đối tượng nghiên cứu:</strong> hệ thống xe robot tự hành hai bánh vi sai (differential drive) sử dụng ESP32 làm trung tâm điều khiển, định vị bằng odometry encoder kết hợp IMU, dẫn đường bằng A* trên đồ thị waypoint.</p>
-<p><strong>Phạm vi nghiên cứu:</strong> giới hạn ở quy mô phòng thí nghiệm/trong nhà, trên mặt sàn phẳng, bản đồ biết trước dạng lưới điểm 5×5 m. Đề tài <strong>không</strong> sử dụng các công nghệ cao cấp như LiDAR, camera AI, GPS hay SLAM xây bản đồ động; định vị dựa hoàn toàn vào odometry tương đối (dead-reckoning). Việc thu gọn phạm vi như vậy giúp tập trung giải quyết trọn vẹn bài toán định vị - dẫn đường - bám lộ trình cơ bản với chi phí thấp.</p>
+<p><strong>Phạm vi nghiên cứu:</strong></p>
+<p><em>Giới hạn về kỹ thuật:</em></p>
+<ul>
+<li>Định vị <strong>hoàn toàn bằng odometry tương đối</strong> (encoder + IMU, dead-reckoning); <strong>không</strong> dùng LiDAR, camera AI, GPS hay SLAM xây bản đồ động.</li>
+<li>Bản đồ <strong>biết trước</strong> dạng lưới waypoint kích thước 5×5 m; đề tài không tự dựng bản đồ môi trường.</li>
+<li>Đối tượng là xe <strong>hai bánh vi sai</strong>, chạy trong nhà trên <strong>mặt sàn phẳng</strong>, tốc độ thấp; chưa xét địa hình gồ ghề/dốc.</li>
+<li>Cảm biến khoảng cách duy nhất là <strong>HC-SR04</strong> (siêu âm, tầm 2–400 cm) cho né vật cản cơ bản; không dùng cảm biến laser/thị giác.</li>
+<li>Truyền thông qua <strong>WiFi cục bộ (SoftAP) + UDP</strong> phạm vi ngắn, hoạt động độc lập, <strong>không</strong> qua Internet.</li>
+</ul>
+<p><em>Giới hạn về điều kiện mô phỏng:</em></p>
+<ul>
+<li>Chế độ <strong>giả lập (simulator)</strong> tích hợp trong ứng dụng Flutter, mô phỏng chuyển động xe theo <strong>mô hình vi sai lý tưởng</strong> — không mô phỏng trượt bánh, nhiễu cảm biến hay sai số cơ khí như thực tế.</li>
+<li>Môi trường mô phỏng là <strong>lưới waypoint phẳng</strong>, vật cản <strong>tĩnh</strong> đặt trước; không mô phỏng động lực học hay vật cản chuyển động phức tạp.</li>
+<li>Mục đích: kiểm thử thuật toán A*, bộ dựng lộ trình và giao diện <strong>trước khi có phần cứng</strong>; kết quả cuối vẫn được kiểm chứng lại trên xe thật.</li>
+</ul>
+<p><em>Kịch bản mô phỏng / thực nghiệm:</em></p>
+<ul>
+<li><strong>Bám lộ trình:</strong> người dùng chạm chọn điểm đích trên bản đồ → ứng dụng tính đường ngắn nhất bằng A* → gửi lộ trình → xe (hoặc sim) bám theo, hiển thị vị trí theo thời gian thực.</li>
+<li><strong>Né vật cản:</strong> đặt vật cản trên đường đi → xe phát hiện bằng siêu âm → dừng, quét trái/phải rồi tự rẽ tránh (chế độ tự hành) hoặc chặn cạnh và tính lại đường bằng A* (khi đang bám lộ trình).</li>
+<li><strong>Đánh giá sai số:</strong> cho xe chạy quãng đường / góc xoay xác định, so vị trí–hướng ước lượng với giá trị thực để đo sai số định vị.</li>
+</ul>
 <h2>1.5 PHƯƠNG PHÁP NGHIÊN CỨU</h2>
 <p>Đề tài sử dụng kết hợp các phương pháp: <strong>phân tích - tổng hợp tài liệu</strong> từ các nguồn học thuật và datasheet linh kiện; <strong>mô phỏng - thực nghiệm</strong> (chế độ simulator của ứng dụng cho phép kiểm thử phần mềm trước khi có phần cứng); <strong>tính toán kỹ thuật điện tử</strong> (lựa chọn linh kiện, tính toán quãng đường/góc quay, hiệu chỉnh sai số); và <strong>lập trình nhúng</strong> trên ESP32 (C++ với PlatformIO) song song với <strong>lập trình ứng dụng</strong> (Dart/Flutter). Hệ thống được phát triển theo từng giai đoạn (phase) và kiểm thử đơn vị (unit test) cho các module thuật toán quan trọng.</p>
 <h2>1.6 BỐ CỤC ĐỀ TÀI</h2>

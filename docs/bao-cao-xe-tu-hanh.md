@@ -234,7 +234,24 @@ Trong quá trình thực hiện, đề tài tập trung vào các nhiệm vụ c
 
 **Đối tượng nghiên cứu:** hệ thống xe robot tự hành hai bánh vi sai (differential drive) sử dụng ESP32 làm trung tâm điều khiển, định vị bằng odometry encoder kết hợp IMU, dẫn đường bằng A\* trên đồ thị waypoint.
 
-**Phạm vi nghiên cứu:** giới hạn ở quy mô phòng thí nghiệm/trong nhà, trên mặt sàn phẳng, bản đồ biết trước dạng lưới điểm 5×5 m. Đề tài **không** sử dụng các công nghệ cao cấp như LiDAR, camera AI, GPS hay SLAM xây bản đồ động; định vị dựa hoàn toàn vào odometry tương đối (dead-reckoning). Việc thu gọn phạm vi như vậy giúp tập trung giải quyết trọn vẹn bài toán định vị - dẫn đường - bám lộ trình cơ bản với chi phí thấp.
+**Phạm vi nghiên cứu:**
+
+*Giới hạn về kỹ thuật:*
+- Định vị **hoàn toàn bằng odometry tương đối** (encoder + IMU, dead-reckoning); **không** dùng LiDAR, camera AI, GPS hay SLAM xây bản đồ động.
+- Bản đồ **biết trước** dạng lưới waypoint kích thước 5×5 m; đề tài không tự dựng bản đồ môi trường.
+- Đối tượng là xe **hai bánh vi sai**, chạy trong nhà trên **mặt sàn phẳng**, tốc độ thấp; chưa xét địa hình gồ ghề/dốc.
+- Cảm biến khoảng cách duy nhất là **HC-SR04** (siêu âm, tầm 2–400 cm) cho né vật cản cơ bản; không dùng cảm biến laser/thị giác.
+- Truyền thông qua **WiFi cục bộ (SoftAP) + UDP** phạm vi ngắn, hoạt động độc lập, **không** qua Internet.
+
+*Giới hạn về điều kiện mô phỏng:*
+- Chế độ **giả lập (simulator)** tích hợp trong ứng dụng Flutter, mô phỏng chuyển động xe theo **mô hình vi sai lý tưởng** — không mô phỏng trượt bánh, nhiễu cảm biến hay sai số cơ khí như thực tế.
+- Môi trường mô phỏng là **lưới waypoint phẳng**, vật cản **tĩnh** đặt trước; không mô phỏng động lực học hay vật cản chuyển động phức tạp.
+- Mục đích: kiểm thử thuật toán A\*, bộ dựng lộ trình và giao diện **trước khi có phần cứng**; kết quả cuối vẫn được kiểm chứng lại trên xe thật.
+
+*Kịch bản mô phỏng / thực nghiệm:*
+- **Bám lộ trình:** người dùng chạm chọn điểm đích trên bản đồ → ứng dụng tính đường ngắn nhất bằng A\* → gửi lộ trình → xe (hoặc sim) bám theo, hiển thị vị trí theo thời gian thực.
+- **Né vật cản:** đặt vật cản trên đường đi → xe phát hiện bằng siêu âm → dừng, quét trái/phải rồi tự rẽ tránh (chế độ tự hành) hoặc chặn cạnh và tính lại đường bằng A\* (khi đang bám lộ trình).
+- **Đánh giá sai số:** cho xe chạy quãng đường / góc xoay xác định, so vị trí–hướng ước lượng với giá trị thực để đo sai số định vị.
 
 ## 1.5 PHƯƠNG PHÁP NGHIÊN CỨU
 
