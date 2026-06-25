@@ -1237,97 +1237,97 @@ Hệ thống có kiến trúc module hóa rõ ràng, chi phí thấp, hoạt đ�
 
 # TÀI LIỆU THAM KHẢO
 
-**Datasheet và tài liệu kỹ thuật:**
+<span class="chg">**Datasheet và tài liệu kỹ thuật:**</span>
 
-[1] Espressif Systems, *ESP32 Series Datasheet*, 2024. [Online]. https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf
+<span class="chg">[1] Espressif Systems, *ESP32 Series Datasheet*, 2024. [Online]. https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf</span>
 
-[2] Espressif Systems, *ESP32-WROOM-32 Datasheet*, 2024. [Online]. https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf
+<span class="chg">[2] Espressif Systems, *ESP32-WROOM-32 Datasheet*, 2024. [Online]. https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf</span>
 
-[3] InvenSense (TDK), *MPU-6000/MPU-6050 Product Specification & Register Map*, Rev. 3.4/4.2. [Online]. https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/
+<span class="chg">[3] InvenSense (TDK), *MPU-6000/MPU-6050 Product Specification & Register Map*, Rev. 3.4/4.2. [Online]. https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/</span>
 
-[4] STMicroelectronics, *L298 Dual Full-Bridge Driver Datasheet*. [Online]. https://www.st.com/resource/en/datasheet/l298.pdf
+<span class="chg">[4] STMicroelectronics, *L298 Dual Full-Bridge Driver Datasheet*. [Online]. https://www.st.com/resource/en/datasheet/l298.pdf</span>
 
-[5] SparkFun Electronics, *HC-SR04 Ultrasonic Sensor Module*. [Online]. https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
+<span class="chg">[5] SparkFun Electronics, *HC-SR04 Ultrasonic Sensor Module*. [Online]. https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf</span>
 
-**Tài liệu thuật toán và nền tảng:**
+<span class="chg">**Tài liệu thuật toán và nền tảng:**</span>
 
-[6] P. E. Hart, N. J. Nilsson, B. Raphael, "A Formal Basis for the Heuristic Determination of Minimum Cost Paths", *IEEE Trans. on Systems Science and Cybernetics*, 1968.
+<span class="chg">[6] P. E. Hart, N. J. Nilsson, B. Raphael, "A Formal Basis for the Heuristic Determination of Minimum Cost Paths", *IEEE Trans. on Systems Science and Cybernetics*, 1968.</span>
 
-[7] S. Thrun, W. Burgard, D. Fox, *Probabilistic Robotics*, MIT Press, 2005 (chương về odometry và mô hình chuyển động vi sai).
+<span class="chg">[7] S. Thrun, W. Burgard, D. Fox, *Probabilistic Robotics*, MIT Press, 2005 (chương về odometry và mô hình chuyển động vi sai).</span>
 
-[8] Espressif Systems, *ESP-IDF / Arduino-ESP32 Programming Guide* (LEDC, GPIO interrupts, WiFi SoftAP). [Online]. https://docs.espressif.com/
+<span class="chg">[8] Espressif Systems, *ESP-IDF / Arduino-ESP32 Programming Guide* (LEDC, GPIO interrupts, WiFi SoftAP). [Online]. https://docs.espressif.com/</span>
 
-[9] Google, *Flutter Documentation* và *Dart Language Tour*. [Online]. https://docs.flutter.dev/
+<span class="chg">[9] Google, *Flutter Documentation* và *Dart Language Tour*. [Online]. https://docs.flutter.dev/</span>
 
-**Sách và bài báo khoa học về robot di động, định vị và dẫn đường:**
+<span class="chg">**Sách và bài báo khoa học về robot di động, định vị và dẫn đường:**</span>
 
-[10] R. Siegwart, I. R. Nourbakhsh, D. Scaramuzza, *Introduction to Autonomous Mobile Robots*, 2nd ed., MIT Press, 2011.
+<span class="chg">[10] R. Siegwart, I. R. Nourbakhsh, D. Scaramuzza, *Introduction to Autonomous Mobile Robots*, 2nd ed., MIT Press, 2011.</span>
 
-[11] J. Borenstein, H. R. Everett, L. Feng, *Where am I? Sensors and Methods for Mobile Robot Positioning*, University of Michigan, 1996.
+<span class="chg">[11] J. Borenstein, H. R. Everett, L. Feng, *Where am I? Sensors and Methods for Mobile Robot Positioning*, University of Michigan, 1996.</span>
 
-[12] S. M. LaValle, *Planning Algorithms*, Cambridge University Press, 2006. [Online]. http://lavalle.pl/planning/
+<span class="chg">[12] S. M. LaValle, *Planning Algorithms*, Cambridge University Press, 2006. [Online]. http://lavalle.pl/planning/</span>
 
-[13] E. W. Dijkstra, "A note on two problems in connexion with graphs", *Numerische Mathematik*, vol. 1, pp. 269–271, 1959.
+<span class="chg">[13] E. W. Dijkstra, "A note on two problems in connexion with graphs", *Numerische Mathematik*, vol. 1, pp. 269–271, 1959.</span>
 
-[14] R. Mahony, T. Hamel, J.-M. Pflimlin, "Nonlinear Complementary Filters on the Special Orthogonal Group", *IEEE Transactions on Automatic Control*, vol. 53, no. 5, pp. 1203–1218, 2008.
+<span class="chg">[14] R. Mahony, T. Hamel, J.-M. Pflimlin, "Nonlinear Complementary Filters on the Special Orthogonal Group", *IEEE Transactions on Automatic Control*, vol. 53, no. 5, pp. 1203–1218, 2008.</span>
 
-[15] G. Fragapane, D. Ivanov, M. Peron, F. Sgarbossa, J. O. Strandhagen, "Increasing flexibility and productivity in Industry 4.0 production networks with autonomous mobile robots and smart intralogistics", *Annals of Operations Research*, vol. 308, pp. 125–143, 2021.
+<span class="chg">[15] G. Fragapane, D. Ivanov, M. Peron, F. Sgarbossa, J. O. Strandhagen, "Increasing flexibility and productivity in Industry 4.0 production networks with autonomous mobile robots and smart intralogistics", *Annals of Operations Research*, vol. 308, pp. 125–143, 2021.</span>
 
-[16] C. Cadena et al., "Past, Present, and Future of Simultaneous Localization and Mapping: Toward the Robust-Perception Age", *IEEE Transactions on Robotics*, vol. 32, no. 6, pp. 1309–1332, 2016.
+<span class="chg">[16] C. Cadena et al., "Past, Present, and Future of Simultaneous Localization and Mapping: Toward the Robust-Perception Age", *IEEE Transactions on Robotics*, vol. 32, no. 6, pp. 1309–1332, 2016.</span>
 
-[17] A. Maier, A. Sharp, Y. Vagapov, "Comparative analysis and practical implementation of the ESP32 microcontroller module for the internet of things", in *Proc. 7th IEEE Int. Conf. on Internet Technologies and Applications (ITA)*, 2017, pp. 143–148.
+<span class="chg">[17] A. Maier, A. Sharp, Y. Vagapov, "Comparative analysis and practical implementation of the ESP32 microcontroller module for the internet of things", in *Proc. 7th IEEE Int. Conf. on Internet Technologies and Applications (ITA)*, 2017, pp. 143–148.</span>
 
-**Chuẩn giao tiếp, vi điều khiển và linh kiện:**
+<span class="chg">**Chuẩn giao tiếp, vi điều khiển và linh kiện:**</span>
 
-[18] Espressif Systems, *ESP32 Technical Reference Manual*, v5.x, 2023. [Online]. https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf
+<span class="chg">[18] Espressif Systems, *ESP32 Technical Reference Manual*, v5.x, 2023. [Online]. https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf</span>
 
-[19] NXP Semiconductors, *I2C-bus Specification and User Manual* (UM10204), Rev. 7.0, 2021.
+<span class="chg">[19] NXP Semiconductors, *I2C-bus Specification and User Manual* (UM10204), Rev. 7.0, 2021.</span>
 
-[20] D. W. Hart, *Power Electronics*, McGraw-Hill, 2011 (chương về điều chế độ rộng xung PWM).
+<span class="chg">[20] D. W. Hart, *Power Electronics*, McGraw-Hill, 2011 (chương về điều chế độ rộng xung PWM).</span>
 
-[21] Texas Instruments, *LMx93, LM2903 Differential Comparators Datasheet*, 2022. [Online]. https://www.ti.com/lit/ds/symlink/lm393.pdf
+<span class="chg">[21] Texas Instruments, *LMx93, LM2903 Differential Comparators Datasheet*, 2022. [Online]. https://www.ti.com/lit/ds/symlink/lm393.pdf</span>
 
-[22] IEEE, *IEEE Std 802.11-2020 — Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications*, 2021.
+<span class="chg">[22] IEEE, *IEEE Std 802.11-2020 — Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications*, 2021.</span>
 
-[23] J. Postel, "User Datagram Protocol", RFC 768, IETF, 1980. [Online]. https://www.rfc-editor.org/rfc/rfc768
+<span class="chg">[23] J. Postel, "User Datagram Protocol", RFC 768, IETF, 1980. [Online]. https://www.rfc-editor.org/rfc/rfc768</span>
 
-**Động học, định vị, hợp nhất cảm biến và tìm đường:**
+<span class="chg">**Động học, định vị, hợp nhất cảm biến và tìm đường:**</span>
 
-[24] G. Dudek, M. Jenkin, *Computational Principles of Mobile Robotics*, 2nd ed., Cambridge University Press, 2010.
+<span class="chg">[24] G. Dudek, M. Jenkin, *Computational Principles of Mobile Robotics*, 2nd ed., Cambridge University Press, 2010.</span>
 
-[25] K. M. Lynch, F. C. Park, *Modern Robotics: Mechanics, Planning, and Control*, Cambridge University Press, 2017.
+<span class="chg">[25] K. M. Lynch, F. C. Park, *Modern Robotics: Mechanics, Planning, and Control*, Cambridge University Press, 2017.</span>
 
-[26] R. E. Kalman, "A New Approach to Linear Filtering and Prediction Problems", *Journal of Basic Engineering*, vol. 82, no. 1, pp. 35–45, 1960.
+<span class="chg">[26] R. E. Kalman, "A New Approach to Linear Filtering and Prediction Problems", *Journal of Basic Engineering*, vol. 82, no. 1, pp. 35–45, 1960.</span>
 
-[27] G. Welch, G. Bishop, *An Introduction to the Kalman Filter*, Technical Report TR 95-041, University of North Carolina at Chapel Hill, 2006.
+<span class="chg">[27] G. Welch, G. Bishop, *An Introduction to the Kalman Filter*, Technical Report TR 95-041, University of North Carolina at Chapel Hill, 2006.</span>
 
-[28] S. J. Russell, P. Norvig, *Artificial Intelligence: A Modern Approach*, 4th ed., Pearson, 2021 (chương tìm kiếm heuristic, A\*).
+<span class="chg">[28] S. J. Russell, P. Norvig, *Artificial Intelligence: A Modern Approach*, 4th ed., Pearson, 2021 (chương tìm kiếm heuristic, A\*).</span>
 
-[29] S. Koenig, M. Likhachev, "D\* Lite", in *Proc. AAAI Conf. on Artificial Intelligence*, 2002, pp. 476–483.
+<span class="chg">[29] S. Koenig, M. Likhachev, "D\* Lite", in *Proc. AAAI Conf. on Artificial Intelligence*, 2002, pp. 476–483.</span>
 
-[30] P. Corke, *Robotics, Vision and Control: Fundamental Algorithms in MATLAB*, 2nd ed., Springer, 2017.
+<span class="chg">[30] P. Corke, *Robotics, Vision and Control: Fundamental Algorithms in MATLAB*, 2nd ed., Springer, 2017.</span>
 
-**Công cụ và nền tảng phát triển:**
+<span class="chg">**Công cụ và nền tảng phát triển:**</span>
 
-[31] PlatformIO Labs, *PlatformIO Documentation*. [Online]. https://docs.platformio.org/
+<span class="chg">[31] PlatformIO Labs, *PlatformIO Documentation*. [Online]. https://docs.platformio.org/</span>
 
-[32] Espressif Systems, *Non-Volatile Storage (NVS) Library — ESP-IDF Programming Guide*. [Online]. https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
+<span class="chg">[32] Espressif Systems, *Non-Volatile Storage (NVS) Library — ESP-IDF Programming Guide*. [Online]. https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html</span>
 
-**Các nghiên cứu liên quan (hợp nhất cảm biến, tìm đường, né vật cản):**
+<span class="chg">**Các nghiên cứu liên quan (hợp nhất cảm biến, tìm đường, né vật cản):**</span>
 
-[33] E. I. Al Khatib, M. A. Jaradat, M. Abdel-Hafez, M. Roigari, "Multiple Sensor Fusion for Mobile Robot Localization and Navigation Using the Extended Kalman Filter", in *Proc. 10th Int. Symp. on Mechatronics and its Applications (ISMA)*, 2015, pp. 1–5.
+<span class="chg">[33] E. I. Al Khatib, M. A. Jaradat, M. Abdel-Hafez, M. Roigari, "Multiple Sensor Fusion for Mobile Robot Localization and Navigation Using the Extended Kalman Filter", in *Proc. 10th Int. Symp. on Mechatronics and its Applications (ISMA)*, 2015, pp. 1–5.</span>
 
-[34] T. T. K. Ly, L. T. Phong, D. K. Nhan, "Autonomous Mobile Robot Localization by Using IMU and Encoder Data Fusion Technique by Kalman Filter", in *Advances in Engineering Research and Application (ICERA)*, Lecture Notes in Networks and Systems, Springer, 2024, pp. 245–256.
+<span class="chg">[34] T. T. K. Ly, L. T. Phong, D. K. Nhan, "Autonomous Mobile Robot Localization by Using IMU and Encoder Data Fusion Technique by Kalman Filter", in *Advances in Engineering Research and Application (ICERA)*, Lecture Notes in Networks and Systems, Springer, 2024, pp. 245–256.</span>
 
-[35] A. A. Housein, G. Xingyu, W. Li, Y. Huang, "Extended Kalman Filter Sensor Fusion in Practice for Mobile Robot Localization", *Int. Journal of Advanced Computer Science and Applications (IJACSA)*, vol. 13, no. 2, 2022.
+<span class="chg">[35] A. A. Housein, G. Xingyu, W. Li, Y. Huang, "Extended Kalman Filter Sensor Fusion in Practice for Mobile Robot Localization", *Int. Journal of Advanced Computer Science and Applications (IJACSA)*, vol. 13, no. 2, 2022.</span>
 
-[36] G. Huang et al., "Multi-Sensor Fusion for Wheel-Inertial-Visual Systems Using a Fuzzification-Assisted Iterated Error State Kalman Filter", *Sensors*, vol. 24, no. 23, art. 7619, 2024.
+<span class="chg">[36] G. Huang et al., "Multi-Sensor Fusion for Wheel-Inertial-Visual Systems Using a Fuzzification-Assisted Iterated Error State Kalman Filter", *Sensors*, vol. 24, no. 23, art. 7619, 2024.</span>
 
-[37] M. Yao, H. Deng, X. Feng, P. Li, Y. Li, H. Liu, "Global Path Planning for Differential Drive Mobile Robots Based on Improved BSGA\* Algorithm", *Applied Sciences*, vol. 13, no. 20, art. 11290, 2023.
+<span class="chg">[37] M. Yao, H. Deng, X. Feng, P. Li, Y. Li, H. Liu, "Global Path Planning for Differential Drive Mobile Robots Based on Improved BSGA\* Algorithm", *Applied Sciences*, vol. 13, no. 20, art. 11290, 2023.</span>
 
-[38] V. Shahapur, B. Dixon, U. Bharti, "Robotic Path Planning Implementation using Search Algorithms", *arXiv preprint* arXiv:2405.16445, 2024.
+<span class="chg">[38] V. Shahapur, B. Dixon, U. Bharti, "Robotic Path Planning Implementation using Search Algorithms", *arXiv preprint* arXiv:2405.16445, 2024.</span>
 
-[39] J. N. Yasin, S. A. S. Mohamed, M.-H. Haghbayan, J. Heikkonen, H. Tenhunen, J. Plosila, "Low-cost ultrasonic based object detection and collision avoidance method for autonomous robots", *Int. Journal of Information Technology*, vol. 13, pp. 97–107, 2020.
+<span class="chg">[39] J. N. Yasin, S. A. S. Mohamed, M.-H. Haghbayan, J. Heikkonen, H. Tenhunen, J. Plosila, "Low-cost ultrasonic based object detection and collision avoidance method for autonomous robots", *Int. Journal of Information Technology*, vol. 13, pp. 97–107, 2020.</span>
 
 ---
 ---
