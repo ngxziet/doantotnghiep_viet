@@ -326,7 +326,7 @@ với **θ_mid** là hướng trung bình trong chu kỳ. Quãng đường mỗi
 
 ### 2.2.2 Bộ lọc bù (Complementary Filter)
 
-Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị **trôi (drift)** khi tích phân lâu dài. **Bộ lọc bù** [13] kết hợp hai nguồn để bù khuyết điểm của nhau (một lựa chọn thay thế phức tạp hơn là **bộ lọc Kalman** [26], [27]):
+Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị **trôi (drift)** khi tích phân lâu dài. **Bộ lọc bù** [14] kết hợp hai nguồn để bù khuyết điểm của nhau (một lựa chọn thay thế phức tạp hơn là **bộ lọc Kalman** [26], [27]):
 
 > **θ_fused = θ_enc + α × (θ_imu − θ_enc)**
 

@@ -628,7 +628,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p><strong>[CHÈN HÌNH 2.4 — Mô hình động học xe vi sai]</strong></p>
 </blockquote>
 <h3>2.2.2 Bộ lọc bù (Complementary Filter)</h3>
-<p>Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị <strong>trôi (drift)</strong> khi tích phân lâu dài. <strong>Bộ lọc bù</strong> [13] kết hợp hai nguồn để bù khuyết điểm của nhau (một lựa chọn thay thế phức tạp hơn là <strong>bộ lọc Kalman</strong> [26], [27]):</p>
+<p>Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị <strong>trôi (drift)</strong> khi tích phân lâu dài. <strong>Bộ lọc bù</strong> [14] kết hợp hai nguồn để bù khuyết điểm của nhau (một lựa chọn thay thế phức tạp hơn là <strong>bộ lọc Kalman</strong> [26], [27]):</p>
 <blockquote>
 <p><strong>θ_fused = θ_enc + α × (θ_imu − θ_enc)</strong></p>
 </blockquote>
