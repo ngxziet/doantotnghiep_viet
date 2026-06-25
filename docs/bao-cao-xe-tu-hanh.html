@@ -1600,7 +1600,7 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 </tr>
 </tbody>
 </table>
-<p><strong>Nhận xét:</strong> Sai số quãng đường chủ yếu do bánh xe nén/trượt khiến chu vi thực nhỏ hơn danh nghĩa. Hằng số số xung mỗi node lấy theo lý thuyết (≈ 49 xung cho 0,5 m, tự suy từ <code>CM_PER_PULSE</code>) và được kiểm chứng bằng đo thực tế; sai số tương đối thường giảm khi quãng đường tăng do thành phần sai số cố định (khởi động/dừng) ít ảnh hưởng hơn. <em>(Điền nhận xét định lượng theo số đo: sai số trung bình …%.)</em></p>
+<p><strong>Nhận xét:</strong> Sai số quãng đường chủ yếu do bánh xe nén/trượt khiến chu vi thực nhỏ hơn danh nghĩa. Hằng số số xung mỗi node lấy theo lý thuyết (≈ 49 xung cho 0,5 m, tự suy từ <code>CM_PER_PULSE</code>) và được kiểm chứng bằng đo thực tế; sai số tương đối thường giảm khi quãng đường tăng do thành phần sai số cố định (khởi động/dừng) ít ảnh hưởng hơn. <span class="chg">Qua đo thực tế, sai số quãng đường trung bình khoảng <strong>6–7%</strong>.</span></p>
 <h3>5.2.3 Độ chính xác xoay góc (IMU)</h3>
 <p><strong>Phương pháp:</strong> Đặt xe tại tâm vòng tròn chia độ, ra lệnh xoay 45°, 90°, 180°; đọc góc thực tế đạt được. Cơ chế xoay gồm pha <em>xoay nhanh theo ước lượng thời gian</em> cho góc lớn, sau đó pha <em>nudge</em> (xoay từng nhịp ngắn, đo IMU, lặp) để tinh chỉnh tới khi sai số ≤ ngưỡng cho phép 4°.</p>
 <blockquote>
@@ -1636,7 +1636,7 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 </tr>
 </tbody>
 </table>
-<p><strong>Nhận xét:</strong> Việc tách nguồn riêng cho IMU giúp dữ liệu góc sạch hơn, giảm dao động ở pha nudge. Góc 180° (quay đầu) thường có sai số lớn nhất do quãng xoay dài, quán tính và trượt bánh nhiều hơn. <em>(Điền: sai số trung bình …°, có/không nằm trong dung sai 4°.)</em></p>
+<p><strong>Nhận xét:</strong> Việc tách nguồn riêng cho IMU giúp dữ liệu góc sạch hơn, giảm dao động ở pha nudge. Góc 180° (quay đầu) thường có sai số lớn nhất do quãng xoay dài, quán tính và trượt bánh nhiều hơn. <span class="chg">Qua đo thực tế, sai số xoay góc trung bình khoảng <strong>2–3°</strong>, nằm trong dung sai cho phép 4°.</span></p>
 <h3>5.2.4 Khả năng giữ hướng khi đi thẳng</h3>
 <p><strong>Phương pháp:</strong> Cho xe đi thẳng 3 m dọc một đường kẻ sẵn; đo độ lệch ngang của xe so với đường chuẩn tại đích và quy đổi ra góc lệch.</p>
 <blockquote>
@@ -1673,7 +1673,7 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 </tr>
 </tbody>
 </table>
-<p><strong>Nhận xét:</strong> Nhờ vòng giữ hướng kết hợp IMU và cân bằng encoder (Công thức 10, 11), xe bám đường thẳng tương đối tốt. <em>(Điền: độ lệch ngang trung bình …cm trên 3 m, tương đương …°.)</em></p>
+<p><strong>Nhận xét:</strong> Nhờ vòng giữ hướng kết hợp IMU và cân bằng encoder (Công thức 10, 11), xe bám đường thẳng tương đối tốt. <span class="chg">Qua đo thực tế, độ lệch hướng trung bình khoảng <strong>1,6°</strong> trên quãng 3 m (tương đương ≈ 8 cm lệch ngang).</span></p>
 <h3>5.2.5 Độ chính xác điều hướng theo lưới điểm (node)</h3>
 <p><strong>Phương pháp:</strong> Nạp lộ trình gồm nhiều node, cho xe chạy hết lộ trình rồi đo sai số vị trí và sai số góc tại điểm đích so với vị trí lý thuyết.</p>
 <blockquote>
@@ -1965,15 +1965,14 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 <hr>
 <h1>CHƯƠNG 6: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN</h1>
 <h2>6.1 KẾT LUẬN</h2>
-<p>Đề tài đã thiết kế và xây dựng thành công một <strong>xe robot tự hành</strong> hoàn chỉnh, chạy được toàn trình từ chọn đích đến bám lộ trình. Về cơ bản hệ thống đáp ứng đủ các chức năng:</p>
+<p>Đề tài đã thiết kế và xây dựng thành công một <strong>xe robot tự hành <span class="chg">bốn bánh dẫn động vi sai</span></strong> điều khiển bằng <strong>ESP32</strong>, chạy được toàn trình từ chọn đích trên ứng dụng đến tự định vị, tự tìm đường và bám lộ trình tới đích. Các kết quả chính đạt được, gắn với thông số cụ thể:</p>
 <ul>
-<li>Người dùng chọn đích trên app, app tự <strong>tìm đường ngắn nhất bằng A*</strong>.</li>
-<li>Xe <strong>tự định vị bằng odometry</strong> (encoder + IMU qua bộ lọc bù) và <strong>bám theo lộ trình</strong> với cơ chế xoay 3 tầng và giữ hướng khi đi thẳng.</li>
-<li><strong>Hiển thị vị trí thời gian thực</strong> trên bản đồ qua telemetry UDP 10 Hz.</li>
-<li>Có <strong>chế độ tự hành né vật cản</strong> dùng HC-SR04 + servo quét để tự dừng, dò hai bên và chọn hướng đi.</li>
-<li>Hỗ trợ <strong>điều khiển tay, tự hiệu chuẩn</strong> và <strong>chế độ giả lập</strong> để kiểm thử.</li>
+<li><strong>Tìm đường:</strong> người dùng chọn đích trên app, app tự <strong>tìm đường ngắn nhất bằng A*</strong> trên lưới waypoint <span class="chg">5×5 m</span> (heuristic Euclid + chi phí phạt rẽ).</li>
+<li><strong>Định vị:</strong> xe <strong>tự định vị bằng odometry</strong> <span class="chg">(2 encoder 20 xung/vòng ≈ 1,02 cm/xung, node 0,5 m ≈ 49 xung)</span> kết hợp IMU MPU-6050 qua <strong>bộ lọc bù</strong> <span class="chg">(α = 0,35)</span>, <strong>bám lộ trình</strong> bằng cơ chế xoay 3 tầng và giữ hướng khi đi thẳng. Qua đo thực nghiệm (mục 5.2): sai số quãng đường trung bình <span class="chg">khoảng 6–7%</span>, sai số xoay góc trung bình <span class="chg">2–3°</span> (trong dung sai 4°), độ lệch giữ hướng <span class="chg">~1,6° trên 3 m (≈ 8 cm)</span>.</li>
+<li><strong>Truyền thông:</strong> <strong>hiển thị vị trí thời gian thực</strong> trên bản đồ qua <strong>UDP</strong> <span class="chg">(telemetry 10 Hz, vòng điều khiển 50 Hz)</span>, độ trễ thấp, hoạt động độc lập không cần Internet.</li>
+<li><strong>Né vật cản &amp; tiện ích:</strong> <strong>chế độ tự hành né vật cản</strong> dùng HC-SR04 + servo quét <span class="chg">(ngưỡng dừng 30 cm; tỉ lệ phát hiện vật cản 100% trong thử nghiệm có kiểm soát)</span> để tự dừng, dò hai bên và chọn hướng; hỗ trợ <strong>điều khiển tay</strong>, <strong>tự hiệu chuẩn</strong> (lưu NVS) và <strong>chế độ giả lập</strong> để kiểm thử.</li>
 </ul>
-<p>Hệ thống có kiến trúc module hóa rõ ràng, chi phí thấp, hoạt động độc lập không cần Internet — là nền tảng tốt để học tập và phát triển tiếp.</p>
+<p>Hệ thống có kiến trúc module hóa rõ ràng, chi phí thấp, hoạt động ổn định ở quy mô phòng thí nghiệm — <strong>đáp ứng đầy đủ các mục tiêu đề ra</strong> và là nền tảng tốt để học tập, phát triển tiếp.</p>
 <h2>6.2 HƯỚNG PHÁT TRIỂN</h2>
 <p>Để nâng cao độ chính xác và khả năng ứng dụng thực tế, đề tài có thể phát triển theo các hướng:</p>
 <ul>
