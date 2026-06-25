@@ -75,6 +75,7 @@ Thiết kế module hóa, chi phí thấp, không phụ thuộc Internet (mạng
   - 4.1 Danh sách linh kiện
   - 4.2 Thi công phần cứng và nối dây
   - 4.3 Lập trình firmware và ứng dụng
+  - 4.4 Nhận xét và đánh giá kết quả thi công
 - **CHƯƠNG 5: KẾT QUẢ - NHẬN XÉT - ĐÁNH GIÁ**
 - **CHƯƠNG 6: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN**
 - TÀI LIỆU THAM KHẢO
@@ -991,6 +992,36 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 **Kiểm thử đơn vị:** các module thuật toán quan trọng được kiểm thử tự động: A\* (đường ngắn nhất, không có đường, cạnh bị chặn), nạp bản đồ, bộ dựng waypoint, bộ phân tích telemetry, và toán odometry — chạy được mà không cần phần cứng.
 
 > **[CHÈN HÌNH 4.2 — Ảnh màn hình bản đồ khi xe đang di chuyển]**
+
+## 4.4 NHẬN XÉT VÀ ĐÁNH GIÁ KẾT QUẢ THI CÔNG
+
+**Nhận xét quá trình thi công:**
+- **Cơ khí:** khung xe bốn bánh được lắp chắc chắn, bốn động cơ chia đều hai bên; đĩa encoder gắn đúng trục bánh mỗi bên, quay trơn không cọ. Cụm servo + HC-SR04 đặt cân ở mũi xe, quay quét không vướng dây.
+- **Điện – đấu nối:** đi dây theo Bảng 3.1 gọn gàng, **nối chung GND** toàn hệ thống; **tách riêng dây tín hiệu và dây động lực** để giảm nhiễu EMI từ động cơ; nguồn servo có **tụ lọc** tránh sụt áp gây reset ESP32 khi servo khởi động.
+- **Firmware & ứng dụng:** biên dịch – nạp – chạy trơn tru; kiểm thử từng phần độc lập trước khi tích hợp (môi trường `l298n_test` cho mạch lái động cơ, unit test cho các module thuật toán).
+
+**Các sự cố phát sinh trong thi công và cách khắc phục:**
+- Chân **GPIO34/GPIO32 chỉ input**, không có điện trở kéo nội bộ → dùng điện trở kéo sẵn trên module encoder.
+- **Encoder LM393** nhạy nhiễu EMI và bị đếm dội ở tốc độ thấp → thêm **chống dội phần mềm** (bỏ xung cách nhau < 6000 µs) và **calibrate số xung/vòng** theo lúc xe chạy thật.
+- **Bốn động cơ đấu hai kênh L298N** (mỗi kênh 2 motor song song) làm dòng mỗi kênh tăng → kiểm tra dòng nằm trong giới hạn **2 A/kênh** của L298N và gắn tản nhiệt.
+- **MPU-6050** trôi nhẹ và nhiễu khi xe rung → đặt IC phẳng gần tâm xe, bật lọc **DLPF ~44 Hz**, hợp nhất với encoder qua bộ lọc bù.
+
+**Đánh giá kết quả thi công:**
+
+> **Bảng 4.2 — Đánh giá kết quả thi công từng khối**
+
+| Khối | Kết quả thi công | Đánh giá |
+|---|---|:---:|
+| Cơ khí khung + 4 bánh + 4 động cơ | Lắp hoàn chỉnh, chắc chắn, cân đối | Đạt |
+| Mạch điều khiển ESP32 + L298N | Đấu nối đúng sơ đồ, chạy ổn định | Đạt |
+| Khối encoder (×2) | Đọc xung ổn định sau khi chống dội | Đạt (cần calibrate) |
+| Khối IMU MPU-6050 (I2C) | Giao tiếp ổn định, còn trôi nhẹ | Đạt |
+| Khối siêu âm HC-SR04 + servo quét | Quét và đo khoảng cách đúng | Đạt |
+| Khối cấp nguồn (pin + ổn áp) | Cấp đủ tải, có lọc nhiễu servo | Đạt |
+| Firmware (PlatformIO) | Biên dịch – nạp – chạy; unit test pass | Đạt |
+| Ứng dụng Flutter | Build và kết nối UDP thành công | Đạt |
+
+Nhìn chung, quá trình thi công **hoàn thành đúng thiết kế ở Chương 3**: toàn bộ các khối phần cứng được lắp đặt, đấu nối và kiểm tra hoạt động độc lập trước khi tích hợp. Các sự cố gặp phải chủ yếu đến từ **nhiễu EMI** và **đặc tính của cảm biến giá rẻ**, đều được xử lý triệt để bằng biện pháp phần cứng (đi dây tách biệt, tụ lọc, tản nhiệt, điện trở kéo) kết hợp phần mềm (chống dội, hiệu chuẩn, bộ lọc bù). So với yêu cầu thiết kế, mức độ hoàn thiện thi công **đạt yêu cầu**; hệ thống sau thi công chạy ổn định, sẵn sàng cho bước đo đạc và đánh giá định lượng ở Chương 5.
 
 ---
 ---

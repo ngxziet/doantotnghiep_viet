@@ -133,6 +133,7 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <li>4.1 Danh sách linh kiện</li>
 <li>4.2 Thi công phần cứng và nối dây</li>
 <li>4.3 Lập trình firmware và ứng dụng</li>
+<li>4.4 Nhận xét và đánh giá kết quả thi công</li>
 </ul>
 </li>
 <li><strong>CHƯƠNG 5: KẾT QUẢ - NHẬN XÉT - ĐÁNH GIÁ</strong></li>
@@ -1466,6 +1467,76 @@ flutter run --dart-define=USE_SIMULATOR=true  # chạy với giả lập
 <blockquote>
 <p><strong>[CHÈN HÌNH 4.2 — Ảnh màn hình bản đồ khi xe đang di chuyển]</strong></p>
 </blockquote>
+<h2>4.4 NHẬN XÉT VÀ ĐÁNH GIÁ KẾT QUẢ THI CÔNG</h2>
+<p><strong>Nhận xét quá trình thi công:</strong></p>
+<ul>
+<li><strong>Cơ khí:</strong> khung xe bốn bánh được lắp chắc chắn, bốn động cơ chia đều hai bên; đĩa encoder gắn đúng trục bánh mỗi bên, quay trơn không cọ. Cụm servo + HC-SR04 đặt cân ở mũi xe, quay quét không vướng dây.</li>
+<li><strong>Điện – đấu nối:</strong> đi dây theo Bảng 3.1 gọn gàng, <strong>nối chung GND</strong> toàn hệ thống; <strong>tách riêng dây tín hiệu và dây động lực</strong> để giảm nhiễu EMI từ động cơ; nguồn servo có <strong>tụ lọc</strong> tránh sụt áp gây reset ESP32 khi servo khởi động.</li>
+<li><strong>Firmware &amp; ứng dụng:</strong> biên dịch – nạp – chạy trơn tru; kiểm thử từng phần độc lập trước khi tích hợp (môi trường <code>l298n_test</code> cho mạch lái động cơ, unit test cho các module thuật toán).</li>
+</ul>
+<p><strong>Các sự cố phát sinh trong thi công và cách khắc phục:</strong></p>
+<ul>
+<li>Chân <strong>GPIO34/GPIO32 chỉ input</strong>, không có điện trở kéo nội bộ → dùng điện trở kéo sẵn trên module encoder.</li>
+<li><strong>Encoder LM393</strong> nhạy nhiễu EMI và bị đếm dội ở tốc độ thấp → thêm <strong>chống dội phần mềm</strong> (bỏ xung cách nhau &lt; 6000 µs) và <strong>calibrate số xung/vòng</strong> theo lúc xe chạy thật.</li>
+<li><strong>Bốn động cơ đấu hai kênh L298N</strong> (mỗi kênh 2 motor song song) làm dòng mỗi kênh tăng → kiểm tra dòng nằm trong giới hạn <strong>2 A/kênh</strong> của L298N và gắn tản nhiệt.</li>
+<li><strong>MPU-6050</strong> trôi nhẹ và nhiễu khi xe rung → đặt IC phẳng gần tâm xe, bật lọc <strong>DLPF ~44 Hz</strong>, hợp nhất với encoder qua bộ lọc bù.</li>
+</ul>
+<p><strong>Đánh giá kết quả thi công:</strong></p>
+<blockquote>
+<p><strong>Bảng 4.2 — Đánh giá kết quả thi công từng khối</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Khối</th>
+<th>Kết quả thi công</th>
+<th style="text-align:center">Đánh giá</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cơ khí khung + 4 bánh + 4 động cơ</td>
+<td>Lắp hoàn chỉnh, chắc chắn, cân đối</td>
+<td style="text-align:center">Đạt</td>
+</tr>
+<tr>
+<td>Mạch điều khiển ESP32 + L298N</td>
+<td>Đấu nối đúng sơ đồ, chạy ổn định</td>
+<td style="text-align:center">Đạt</td>
+</tr>
+<tr>
+<td>Khối encoder (×2)</td>
+<td>Đọc xung ổn định sau khi chống dội</td>
+<td style="text-align:center">Đạt (cần calibrate)</td>
+</tr>
+<tr>
+<td>Khối IMU MPU-6050 (I2C)</td>
+<td>Giao tiếp ổn định, còn trôi nhẹ</td>
+<td style="text-align:center">Đạt</td>
+</tr>
+<tr>
+<td>Khối siêu âm HC-SR04 + servo quét</td>
+<td>Quét và đo khoảng cách đúng</td>
+<td style="text-align:center">Đạt</td>
+</tr>
+<tr>
+<td>Khối cấp nguồn (pin + ổn áp)</td>
+<td>Cấp đủ tải, có lọc nhiễu servo</td>
+<td style="text-align:center">Đạt</td>
+</tr>
+<tr>
+<td>Firmware (PlatformIO)</td>
+<td>Biên dịch – nạp – chạy; unit test pass</td>
+<td style="text-align:center">Đạt</td>
+</tr>
+<tr>
+<td>Ứng dụng Flutter</td>
+<td>Build và kết nối UDP thành công</td>
+<td style="text-align:center">Đạt</td>
+</tr>
+</tbody>
+</table>
+<p>Nhìn chung, quá trình thi công <strong>hoàn thành đúng thiết kế ở Chương 3</strong>: toàn bộ các khối phần cứng được lắp đặt, đấu nối và kiểm tra hoạt động độc lập trước khi tích hợp. Các sự cố gặp phải chủ yếu đến từ <strong>nhiễu EMI</strong> và <strong>đặc tính của cảm biến giá rẻ</strong>, đều được xử lý triệt để bằng biện pháp phần cứng (đi dây tách biệt, tụ lọc, tản nhiệt, điện trở kéo) kết hợp phần mềm (chống dội, hiệu chuẩn, bộ lọc bù). So với yêu cầu thiết kế, mức độ hoàn thiện thi công <strong>đạt yêu cầu</strong>; hệ thống sau thi công chạy ổn định, sẵn sàng cho bước đo đạc và đánh giá định lượng ở Chương 5.</p>
 <hr>
 <hr>
 <h1>CHƯƠNG 5: KẾT QUẢ - NHẬN XÉT - ĐÁNH GIÁ</h1>
