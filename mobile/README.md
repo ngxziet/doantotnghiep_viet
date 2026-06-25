@@ -1,92 +1,86 @@
-# Mobile app - Xe tu hanh
+# Mobile app — Xe tự hành
 
-Ung dung Flutter de dieu khien xe tu hanh qua UDP. App hien thi ban do,
-tinh duong A*, gui waypoint cho ESP32 va nhan telemetry de cap nhat vi tri xe.
+Ứng dụng Flutter điều khiển xe tự hành qua UDP. App hiển thị bản đồ,
+tính đường A*, gửi waypoint cho ESP32 và nhận telemetry để cập nhật vị trí xe.
 
-## Yeu cau
+## Yêu cầu
 
 - Flutter SDK 3.x
-- Dart SDK tuong thich voi Flutter
-- Android Studio hoac thiet bi Android that
-- Neu chay voi xe that: ESP32 da nap firmware
+- Dart SDK tương thích với Flutter
+- Android Studio hoặc thiết bị Android thật
+- Nếu chạy với xe thật: ESP32 đã nạp firmware
 
-## Cai dat va chay app
+## Cài đặt và chạy app
 
 ```bash
 cd mobile
 flutter pub get
 flutter test
-flutter run
+flutter run                                    # chạy với ESP32 thật (mặc định)
+flutter run --dart-define=USE_SIMULATOR=true   # chạy giả lập (không cần ESP32)
 ```
 
-Mac dinh app dang dung ESP32 that:
+`USE_SIMULATOR` đọc qua `String.fromEnvironment('USE_SIMULATOR')` trong `lib/main.dart`.
+Không cần sửa code — chỉ cần truyền `--dart-define` khi `flutter run`.
 
-```dart
-const useSimulator = false;
-```
+## Chạy với ESP32
 
-Neu muon chay demo khong can xe, mo `lib/main.dart` va doi thanh:
-
-```dart
-const useSimulator = true;
-```
-
-## Chay voi ESP32
-
-1. Ket noi dien thoai hoac may chay app vao WiFi cua ESP32:
+1. Kết nối điện thoại hoặc máy chạy app vào WiFi của ESP32:
    - SSID: `RobotCar`
    - Password: `12345678`
    - ESP32 IP: `192.168.4.1`
-2. Dam bao `useSimulator = false` trong `lib/main.dart`.
-3. Chay app bang `flutter run`.
+2. Chạy app bằng `flutter run` (KHÔNG truyền `USE_SIMULATOR=true`).
 
 UDP ports:
 
-| Huong | Port | Noi dung |
+| Hướng | Port | Nội dung |
 | --- | --- | --- |
-| ESP32 -> App | `4210` | Telemetry JSON |
-| App -> ESP32 | `4211` | Waypoint, manual control, reset pose |
+| ESP32 → App | `4210` | Telemetry JSON (broadcast `192.168.4.255`) |
+| App → ESP32 | `4211` | Waypoint, manual, step, autonomous, reset pose, calibrate |
 
-## Encoder LM393 dang dung
+## Encoder LM393 đang dùng
 
-Xe dang dung module encoder LM393, khong phai encoder quadrature A/B. Moi banh
-chi dung 1 chan tin hieu `D0`/`OUT`; chan `A0` bo qua.
+Xe đang dùng module encoder LM393, không phải encoder quadrature A/B. Mỗi bánh
+chỉ dùng 1 chân tín hiệu `D0`/`OUT`; chân `A0` bỏ qua.
 
 | LM393 | ESP32 |
 | --- | --- |
-| VCC | 3V3 hoac 5V tuy module |
+| VCC | 3V3 hoặc 5V tuỳ module |
 | GND | GND chung |
-| D0/OUT encoder trai | GPIO34 |
-| D0/OUT encoder phai | GPIO32 |
+| D0/OUT encoder trái | GPIO34 |
+| D0/OUT encoder phải | GPIO32 |
 
-Firmware hien tai da dung dung kieu nay:
+Firmware hiện tại đã đúng kiểu này:
 
 ```cpp
 Encoder encLeft(34);
 Encoder encRight(32);
 ```
 
-Vi LM393 chi co 1 kenh xung nen no khong tu biet chieu quay. Firmware lay
-chieu tu lenh motor bang `setDirection(...)`, nen van dung duoc cho odometry
-trong de tai nay.
+Vì LM393 chỉ có 1 kênh xung nên nó không tự biết chiều quay. Firmware lấy
+chiều từ lệnh motor bằng `setDirection(...)`, nên vẫn dùng được cho odometry
+trong đề tài này.
 
-Luu y:
+Lưu ý:
 
-- Tat ca module phai noi chung GND voi ESP32.
-- Neu tin hieu `D0/OUT` cua module la 5V, nen ha ap ve 3.3V truoc khi vao ESP32.
-- GPIO34 la chan input-only, dung tot cho encoder trai.
+- Tất cả module phải nối chung GND với ESP32.
+- Nếu tín hiệu `D0/OUT` của module là 5V, nên hạ áp về 3.3V trước khi vào ESP32.
+- GPIO34 là chân input-only, dùng tốt cho encoder trái.
 
-## Man hinh trong app
+## Màn hình trong app
 
-- Map: chon diem dich va xem duong di.
-- Connection test: kiem tra ket noi ESP32.
-- Manual control: dieu khien xe bang tay.
-- Telemetry/calibration: xem pose, trang thai va reset pose.
+Bottom navigation 4 màn hình:
 
-## Lenh hay dung
+- **Map**: chọn điểm đích và xem đường đi; có thể block/unblock cạnh runtime.
+- **ESP32 Test**: xem telemetry trực tiếp, gửi ping, hiệu chuẩn IMU / motor / encoder.
+- **Control**: điều khiển xe bằng step buttons + slider tốc độ.
+- **Tự hành**: bật/tắt chế độ tự hành né vật cản, hiển thị telemetry thời gian thực.
+
+## Lệnh hay dùng
 
 ```bash
 flutter pub get
 flutter test
-flutter run
+flutter run                                  # chạy với ESP32 thật
+flutter run --dart-define=USE_SIMULATOR=true # chạy giả lập
 ```
