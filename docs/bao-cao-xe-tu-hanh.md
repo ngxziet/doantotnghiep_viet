@@ -195,19 +195,19 @@ Thiết kế module hóa, chi phí thấp, không phụ thuộc Internet (mạng
 
 ## 1.1 GIỚI THIỆU
 
-Robot di động tự hành (Autonomous Mobile Robot – AMR) đang trở thành một trong những hướng công nghệ phát triển nhanh nhất, gắn liền với làn sóng tự động hóa và cuộc Cách mạng công nghiệp 4.0. Khác với robot cố định hay xe dẫn đường tự động (AGV) truyền thống vốn bám theo vạch từ/băng dẫn cố định, AMR có khả năng tự định vị, tự lập kế hoạch đường đi và tự điều hướng trong môi trường, nhờ đó được ứng dụng ngày càng rộng rãi trong kho vận thông minh (intralogistics), robot dịch vụ, y tế, nông nghiệp và các nền tảng nghiên cứu [10], [15]. Nhiều khảo sát cho thấy việc thay thế AGV cứng nhắc bằng AMR linh hoạt giúp tăng đáng kể năng suất và khả năng thích ứng của dây chuyền sản xuất trong mô hình nhà máy thông minh [15].
+Robot di động tự hành (Autonomous Mobile Robot – AMR) đang trở thành một trong những hướng công nghệ phát triển nhanh nhất, gắn liền với làn sóng tự động hóa và cuộc Cách mạng công nghiệp 4.0. Khác với robot cố định hay xe dẫn đường tự động (AGV) truyền thống vốn bám theo vạch từ/băng dẫn cố định, AMR có khả năng tự định vị, tự lập kế hoạch đường đi và tự điều hướng trong môi trường, nhờ đó được ứng dụng ngày càng rộng rãi trong kho vận thông minh (intralogistics), robot dịch vụ, y tế, nông nghiệp và các nền tảng nghiên cứu <span class="chg">[10]</span>, <span class="chg">[15]</span>. Nhiều khảo sát cho thấy việc thay thế AGV cứng nhắc bằng AMR linh hoạt giúp tăng đáng kể năng suất và khả năng thích ứng của dây chuyền sản xuất trong mô hình nhà máy thông minh <span class="chg">[15]</span>.
 
-Dù đa dạng về hình thức, mọi robot tự hành đều phải giải quyết ba bài toán cốt lõi: **định vị** (robot biết mình đang ở đâu), **lập kế hoạch đường đi** (xác định lộ trình tới đích) và **điều khiển bám lộ trình** (di chuyển chính xác theo lộ trình đó) [10]. Về định vị, phương pháp tương đối (dead-reckoning) dựa trên odometry từ encoder bánh xe đơn giản, rẻ và tần số cao nhưng sai số tích lũy (trôi) theo quãng đường do trượt bánh và đường kính bánh không đều [11]; phương pháp tuyệt đối dùng GPS hoặc mốc định vị (landmark/beacon), còn các kỹ thuật hiện đại như định vị và dựng bản đồ đồng thời (SLAM) bằng LiDAR/camera cho độ chính xác cao nhưng đòi hỏi cảm biến đắt tiền và năng lực tính toán lớn [16].
+Dù đa dạng về hình thức, mọi robot tự hành đều phải giải quyết ba bài toán cốt lõi: **định vị** (robot biết mình đang ở đâu), **lập kế hoạch đường đi** (xác định lộ trình tới đích) và **điều khiển bám lộ trình** (di chuyển chính xác theo lộ trình đó) <span class="chg">[10]</span>. Về định vị, phương pháp tương đối (dead-reckoning) dựa trên odometry từ encoder bánh xe đơn giản, rẻ và tần số cao nhưng sai số tích lũy (trôi) theo quãng đường do trượt bánh và đường kính bánh không đều <span class="chg">[11]</span>; phương pháp tuyệt đối dùng GPS hoặc mốc định vị (landmark/beacon), còn các kỹ thuật hiện đại như định vị và dựng bản đồ đồng thời (SLAM) bằng LiDAR/camera cho độ chính xác cao nhưng đòi hỏi cảm biến đắt tiền và năng lực tính toán lớn <span class="chg">[16]</span>.
 
-Để giảm trôi của odometry, nhiều nghiên cứu đã hợp nhất encoder với cảm biến quán tính (IMU). Al Khatib và cộng sự [33] hợp nhất nhiều cảm biến (odometry, IMU) bằng bộ lọc Kalman mở rộng (EKF), nâng cao rõ rệt độ chính xác định vị và dẫn đường so với chỉ dùng đơn cảm biến. Cùng hướng đó, Ly và cộng sự [34] hợp nhất dữ liệu IMU và encoder bằng bộ lọc Kalman cho robot di động, cho thấy vị trí ước lượng bám quỹ đạo thực sát hơn hẳn odometry thuần; Housein và cộng sự [35] trình bày một triển khai EKF thực nghiệm cho cùng bài toán. Các hướng mở rộng gần đây còn kết hợp thêm thị giác (wheel–inertial–visual) bằng biến thể bộ lọc Kalman để tăng độ bền vững [36]. Tuy nhiên, bộ lọc Kalman/EKF đòi hỏi mô hình và khối lượng tính toán đáng kể; với vi điều khiển hạn chế tài nguyên, **bộ lọc bù (complementary filter)** là giải pháp nhẹ hơn, đủ tốt để kết hợp con quay hồi chuyển và encoder nhằm ổn định ước lượng hướng [14].
+Để giảm trôi của odometry, nhiều nghiên cứu đã hợp nhất encoder với cảm biến quán tính (IMU). Al Khatib và cộng sự <span class="chg">[33]</span> hợp nhất nhiều cảm biến (odometry, IMU) bằng bộ lọc Kalman mở rộng (EKF), nâng cao rõ rệt độ chính xác định vị và dẫn đường so với chỉ dùng đơn cảm biến. Cùng hướng đó, Ly và cộng sự <span class="chg">[34]</span> hợp nhất dữ liệu IMU và encoder bằng bộ lọc Kalman cho robot di động, cho thấy vị trí ước lượng bám quỹ đạo thực sát hơn hẳn odometry thuần; Housein và cộng sự <span class="chg">[35]</span> trình bày một triển khai EKF thực nghiệm cho cùng bài toán. Các hướng mở rộng gần đây còn kết hợp thêm thị giác (wheel–inertial–visual) bằng biến thể bộ lọc Kalman để tăng độ bền vững <span class="chg">[36]</span>. Tuy nhiên, bộ lọc Kalman/EKF đòi hỏi mô hình và khối lượng tính toán đáng kể; với vi điều khiển hạn chế tài nguyên, **bộ lọc bù (complementary filter)** là giải pháp nhẹ hơn, đủ tốt để kết hợp con quay hồi chuyển và encoder nhằm ổn định ước lượng hướng <span class="chg">[14]</span>.
 
-Về bài toán tìm đường, lý thuyết đồ thị cung cấp nền tảng vững chắc: thuật toán Dijkstra tìm đường đi ngắn nhất trên đồ thị có trọng số [13], còn thuật toán **A\*** mở rộng Dijkstra bằng một hàm heuristic để hướng việc tìm kiếm về phía đích, nhờ đó giảm mạnh số nút phải duyệt mà vẫn đảm bảo tối ưu khi heuristic chấp nhận được (admissible) [6]. Bên cạnh nhóm dựa trên đồ thị/lưới còn có nhóm lấy mẫu ngẫu nhiên (RRT, PRM) cho không gian cấu hình nhiều chiều [12]. Trong thực tiễn robot, A\* vẫn là lựa chọn phổ biến và liên tục được cải tiến: Shahapur và cộng sự [38] hiện thực và so sánh A\* với Dijkstra trên robot TurtleBot3 (mô phỏng Gazebo), xác nhận A\* tìm được đường tối ưu với số nút duyệt ít hơn; Yao và cộng sự [37] đề xuất biến thể A\* cải tiến (BSGA\*) cho robot vi sai nhằm khắc phục đúng các hạn chế của A\* gốc là số nút tìm kiếm lớn và đường đi kém mượt. Với môi trường trong nhà đã biết trước dưới dạng lưới điểm (waypoint), A\* là lựa chọn cân bằng tốt giữa tính tối ưu, tốc độ thực thi và độ đơn giản khi cài đặt trên thiết bị di động.
+Về bài toán tìm đường, lý thuyết đồ thị cung cấp nền tảng vững chắc: thuật toán Dijkstra tìm đường đi ngắn nhất trên đồ thị có trọng số <span class="chg">[13]</span>, còn thuật toán **A\*** mở rộng Dijkstra bằng một hàm heuristic để hướng việc tìm kiếm về phía đích, nhờ đó giảm mạnh số nút phải duyệt mà vẫn đảm bảo tối ưu khi heuristic chấp nhận được (admissible) <span class="chg">[6]</span>. Bên cạnh nhóm dựa trên đồ thị/lưới còn có nhóm lấy mẫu ngẫu nhiên (RRT, PRM) cho không gian cấu hình nhiều chiều <span class="chg">[12]</span>. Trong thực tiễn robot, A\* vẫn là lựa chọn phổ biến và liên tục được cải tiến: Shahapur và cộng sự <span class="chg">[38]</span> hiện thực và so sánh A\* với Dijkstra trên robot TurtleBot3 (mô phỏng Gazebo), xác nhận A\* tìm được đường tối ưu với số nút duyệt ít hơn; Yao và cộng sự <span class="chg">[37]</span> đề xuất biến thể A\* cải tiến (BSGA\*) cho robot vi sai nhằm khắc phục đúng các hạn chế của A\* gốc là số nút tìm kiếm lớn và đường đi kém mượt. Với môi trường trong nhà đã biết trước dưới dạng lưới điểm (waypoint), A\* là lựa chọn cân bằng tốt giữa tính tối ưu, tốc độ thực thi và độ đơn giản khi cài đặt trên thiết bị di động.
 
-Song song với định vị và tìm đường, khả năng **né vật cản** cũng được nghiên cứu theo hướng chi phí thấp. Yasin và cộng sự [39] đề xuất phương pháp phát hiện vật cản và tránh va chạm chỉ dùng cảm biến siêu âm giá rẻ, với mục tiêu tối thiểu hóa độ lệch khỏi lộ trình ban đầu — rất phù hợp cho robot ngân sách thấp. Ở quy mô công nghiệp, robot tự hành thường được trang bị cảm biến đắt tiền (LiDAR, camera độ phân giải cao, GPS-RTK) cùng máy tính mạnh để chạy SLAM và thị giác máy tính [16]; nhưng chi phí và độ phức tạp đó là rào cản lớn đối với sinh viên và các dự án học thuật. Vì vậy, hướng xây dựng robot tự hành **chi phí thấp** dựa trên vi điều khiển phổ thông ngày càng được quan tâm — tiêu biểu là ESP32, vi điều khiển lõi kép tích hợp sẵn WiFi/Bluetooth, giá rẻ, cộng đồng hỗ trợ lớn, phù hợp cho các ứng dụng IoT và robot nhỏ [17].
+Song song với định vị và tìm đường, khả năng **né vật cản** cũng được nghiên cứu theo hướng chi phí thấp. Yasin và cộng sự <span class="chg">[39]</span> đề xuất phương pháp phát hiện vật cản và tránh va chạm chỉ dùng cảm biến siêu âm giá rẻ, với mục tiêu tối thiểu hóa độ lệch khỏi lộ trình ban đầu — rất phù hợp cho robot ngân sách thấp. Ở quy mô công nghiệp, robot tự hành thường được trang bị cảm biến đắt tiền (LiDAR, camera độ phân giải cao, GPS-RTK) cùng máy tính mạnh để chạy SLAM và thị giác máy tính <span class="chg">[16]</span>; nhưng chi phí và độ phức tạp đó là rào cản lớn đối với sinh viên và các dự án học thuật. Vì vậy, hướng xây dựng robot tự hành **chi phí thấp** dựa trên vi điều khiển phổ thông ngày càng được quan tâm — tiêu biểu là ESP32, vi điều khiển lõi kép tích hợp sẵn WiFi/Bluetooth, giá rẻ, cộng đồng hỗ trợ lớn, phù hợp cho các ứng dụng IoT và robot nhỏ <span class="chg">[17]</span>.
 
-Từ tổng quan trên có thể thấy các kỹ thuật định vị (hợp nhất encoder–IMU), tìm đường (A\*) và né vật cản đều đã tương đối hoàn thiện, nhưng phần lớn được kiểm chứng trên nền tảng mạnh (PC/ROS, robot chuẩn như TurtleBot3) [38] hoặc bằng các bộ lọc tính toán nặng như EKF [33], [35]. Vẫn còn thiếu những giải pháp **tích hợp trọn vẹn** cả ba chức năng định vị – tìm đường – bám lộ trình lên một vi điều khiển chi phí thấp, hoạt động độc lập không cần Internet và dễ tiếp cận cho mục đích học tập. Xây dựng một nền tảng như vậy vừa mang ý nghĩa thực tiễn — là sản phẩm học tập giúp người thực hiện nắm vững trọn vẹn chuỗi kiến thức nền (điều khiển động cơ, đọc cảm biến, định vị, lập kế hoạch đường đi, truyền thông không dây) — vừa là khung sườn để phát triển tiếp các tính năng cao cấp hơn như tránh vật cản động, SLAM hay phối hợp đội hình nhiều robot.
+Từ tổng quan trên có thể thấy các kỹ thuật định vị (hợp nhất encoder–IMU), tìm đường (A\*) và né vật cản đều đã tương đối hoàn thiện, nhưng phần lớn được kiểm chứng trên nền tảng mạnh (PC/ROS, robot chuẩn như TurtleBot3) <span class="chg">[38]</span> hoặc bằng các bộ lọc tính toán nặng như EKF <span class="chg">[33]</span>, <span class="chg">[35]</span>. Vẫn còn thiếu những giải pháp **tích hợp trọn vẹn** cả ba chức năng định vị – tìm đường – bám lộ trình lên một vi điều khiển chi phí thấp, hoạt động độc lập không cần Internet và dễ tiếp cận cho mục đích học tập. Xây dựng một nền tảng như vậy vừa mang ý nghĩa thực tiễn — là sản phẩm học tập giúp người thực hiện nắm vững trọn vẹn chuỗi kiến thức nền (điều khiển động cơ, đọc cảm biến, định vị, lập kế hoạch đường đi, truyền thông không dây) — vừa là khung sườn để phát triển tiếp các tính năng cao cấp hơn như tránh vật cản động, SLAM hay phối hợp đội hình nhiều robot.
 
-Xuất phát từ những lý do đó, đề tài **"Xe robot tự hành định vị bằng odometry và tìm đường A\*"** được lựa chọn thực hiện. Đề tài dùng ESP32 làm bộ điều khiển trung tâm; định vị bằng odometry kết hợp encoder bánh xe và cảm biến góc MPU-6050 thông qua bộ lọc bù [14]; tìm đường bằng thuật toán A\* [6] chạy trên ứng dụng di động đa nền tảng viết bằng Flutter [9]; và liên lạc thời gian thực giữa ứng dụng với xe qua giao thức UDP trên mạng WiFi cục bộ do chính ESP32 phát ra. Việc chọn Flutter và mạng cục bộ giúp hệ thống đa nền tảng, độ trễ thấp và hoạt động độc lập với Internet. Toàn bộ hệ thống được thiết kế theo hướng module hóa, chi phí thấp và có khả năng mở rộng, hướng tới một nền tảng học thuật hoàn chỉnh cho các bài toán định vị và dẫn đường robot ở quy mô phòng thí nghiệm.
+Xuất phát từ những lý do đó, đề tài **"Xe robot tự hành định vị bằng odometry và tìm đường A\*"** được lựa chọn thực hiện. Đề tài dùng ESP32 làm bộ điều khiển trung tâm; định vị bằng odometry kết hợp encoder bánh xe và cảm biến góc MPU-6050 thông qua bộ lọc bù <span class="chg">[14]</span>; tìm đường bằng thuật toán A\* <span class="chg">[6]</span> chạy trên ứng dụng di động đa nền tảng viết bằng Flutter <span class="chg">[9]</span>; và liên lạc thời gian thực giữa ứng dụng với xe qua giao thức UDP trên mạng WiFi cục bộ do chính ESP32 phát ra. Việc chọn Flutter và mạng cục bộ giúp hệ thống đa nền tảng, độ trễ thấp và hoạt động độc lập với Internet. Toàn bộ hệ thống được thiết kế theo hướng module hóa, chi phí thấp và có khả năng mở rộng, hướng tới một nền tảng học thuật hoàn chỉnh cho các bài toán định vị và dẫn đường robot ở quy mô phòng thí nghiệm.
 
 ## 1.2 MỤC TIÊU NGHIÊN CỨU
 
@@ -275,11 +275,11 @@ Trong quá trình thực hiện, đề tài tập trung vào các nhiệm vụ c
 
 GPIO (General Purpose Input/Output) là các chân tín hiệu được cấu hình bằng phần mềm để thực hiện chức năng ngõ vào (input) hoặc ngõ ra (output). Trong đề tài, GPIO của ESP32 được dùng cho hầu hết các kết nối số: điều khiển chiều quay động cơ (các chân IN1–IN4 của L298N), phát xung trigger cho cảm biến siêu âm, điều khiển còi buzzer, và đọc tín hiệu xung từ encoder.
 
-ESP32 sử dụng mức logic **3.3 V** [18]. Mỗi chân GPIO có thể cấu hình kéo lên (pull-up)/kéo xuống (pull-down) nội bộ, và quan trọng nhất với đề tài là khả năng tạo **ngắt ngoài** (interrupt) khi có cạnh tín hiệu — được dùng để đếm xung encoder. Cần lưu ý một số chân của ESP32 chỉ có chức năng input (GPIO34, GPIO35, GPIO36, GPIO39 — không có điện trở kéo nội bộ); trong đề tài chân **GPIO34** và **GPIO32** được chọn làm ngõ vào đọc encoder.
+ESP32 sử dụng mức logic **3.3 V** <span class="chg">[18]</span>. Mỗi chân GPIO có thể cấu hình kéo lên (pull-up)/kéo xuống (pull-down) nội bộ, và quan trọng nhất với đề tài là khả năng tạo **ngắt ngoài** (interrupt) khi có cạnh tín hiệu — được dùng để đếm xung encoder. Cần lưu ý một số chân của ESP32 chỉ có chức năng input (GPIO34, GPIO35, GPIO36, GPIO39 — không có điện trở kéo nội bộ); trong đề tài chân **GPIO34** và **GPIO32** được chọn làm ngõ vào đọc encoder.
 
 ### 2.1.2 I2C
 
-I2C (Inter-Integrated Circuit) [19] là giao thức truyền thông nối tiếp đồng bộ, sử dụng hai đường:
+I2C (Inter-Integrated Circuit) <span class="chg">[19]</span> là giao thức truyền thông nối tiếp đồng bộ, sử dụng hai đường:
 - **SDA (Serial Data Line):** đường dữ liệu hai chiều.
 - **SCL (Serial Clock Line):** đường xung nhịp do master cung cấp.
 
@@ -289,9 +289,9 @@ Hệ thống I2C gồm một master (ESP32) điều khiển bus và một hoặc
 
 ### 2.1.3 PWM và bộ LEDC của ESP32
 
-PWM (Pulse Width Modulation – điều chế độ rộng xung) [20] điều khiển công suất trung bình cấp cho tải bằng cách thay đổi tỉ lệ thời gian mức cao/thấp của tín hiệu (duty cycle). Tốc độ động cơ DC tỉ lệ với duty cycle của tín hiệu PWM cấp vào chân Enable của mạch cầu H.
+PWM (Pulse Width Modulation – điều chế độ rộng xung) <span class="chg">[20]</span> điều khiển công suất trung bình cấp cho tải bằng cách thay đổi tỉ lệ thời gian mức cao/thấp của tín hiệu (duty cycle). Tốc độ động cơ DC tỉ lệ với duty cycle của tín hiệu PWM cấp vào chân Enable của mạch cầu H.
 
-ESP32 có bộ ngoại vi **LEDC** [8] chuyên tạo PWM phần cứng (không tốn CPU). Trong đề tài, hai kênh LEDC (kênh 0 cho bánh trái, kênh 1 cho bánh phải) được cấu hình **tần số 5 kHz, độ phân giải 8-bit** (duty 0–255), gắn vào hai chân Enable ENA/ENB của L298N. Giá trị PWM 0 là dừng, 255 là tốc độ tối đa.
+ESP32 có bộ ngoại vi **LEDC** <span class="chg">[8]</span> chuyên tạo PWM phần cứng (không tốn CPU). Trong đề tài, hai kênh LEDC (kênh 0 cho bánh trái, kênh 1 cho bánh phải) được cấu hình **tần số 5 kHz, độ phân giải 8-bit** (duty 0–255), gắn vào hai chân Enable ENA/ENB của L298N. Giá trị PWM 0 là dừng, 255 là tốc độ tối đa.
 
 Bộ LEDC còn được dùng để **điều khiển servo** quét cảm biến: một kênh LEDC riêng (kênh 2) được cấu hình **tần số 50 Hz, độ phân giải 16-bit** — đúng chuẩn tín hiệu servo RC (chu kỳ 20 ms, độ rộng xung 0,5–2,5 ms tương ứng góc 0–180°). Việc dùng kênh và bộ định thời (timer) tách biệt với hai kênh động cơ giúp servo và motor hoạt động đồng thời mà không xung đột tần số.
 
@@ -315,19 +315,19 @@ ESP32 đo độ rộng xung Echo (bằng hàm `pulseIn`) rồi suy ra khoảng c
 
 Encoder bánh xe tạo ra một chuỗi xung khi bánh quay. Để không bỏ sót xung khi vi điều khiển đang bận, đề tài dùng **ngắt ngoài (external interrupt)**: mỗi cạnh lên (RISING) trên chân encoder kích hoạt một ISR (Interrupt Service Routine) tăng bộ đếm xung. ISR được đặt trong RAM nội (`IRAM_ATTR`) để thực thi nhanh.
 
-Do encoder quang LM393 một kênh (chỉ có ngõ D0) không cho biết chiều quay, firmware **lấy chiều quay từ lệnh điều khiển động cơ** (motor đang tiến thì xung cộng, lùi thì xung trừ). Để lọc nhiễu điện từ (EMI) do động cơ gây ra, ISR áp dụng **chống dội phần mềm**: bỏ qua các xung cách nhau dưới **6000 µs** (cho phép tối đa ~166 xung/s, dư biên rộng so với tốc độ chạy thực tế chỉ vài chục xung/s). Ngưỡng này còn lọc các **cạnh giả** do comparator LM393 (thiếu hysteresis) [21] sinh ra ở mép khe đĩa.
+Do encoder quang LM393 một kênh (chỉ có ngõ D0) không cho biết chiều quay, firmware **lấy chiều quay từ lệnh điều khiển động cơ** (motor đang tiến thì xung cộng, lùi thì xung trừ). Để lọc nhiễu điện từ (EMI) do động cơ gây ra, ISR áp dụng **chống dội phần mềm**: bỏ qua các xung cách nhau dưới **6000 µs** (cho phép tối đa ~166 xung/s, dư biên rộng so với tốc độ chạy thực tế chỉ vài chục xung/s). Ngưỡng này còn lọc các **cạnh giả** do comparator LM393 (thiếu hysteresis) <span class="chg">[21]</span> sinh ra ở mép khe đĩa.
 
 ### 2.1.6 WiFi và giao thức UDP
 
-ESP32 tích hợp WiFi [22], có thể hoạt động ở chế độ **Access Point (SoftAP)** — tự phát ra một mạng WiFi để điện thoại kết nối trực tiếp, không cần router. Đề tài dùng chế độ này để tạo mạng cục bộ độ trễ thấp, hoạt động độc lập không cần Internet.
+ESP32 tích hợp WiFi <span class="chg">[22]</span>, có thể hoạt động ở chế độ **Access Point (SoftAP)** — tự phát ra một mạng WiFi để điện thoại kết nối trực tiếp, không cần router. Đề tài dùng chế độ này để tạo mạng cục bộ độ trễ thấp, hoạt động độc lập không cần Internet.
 
-Trên mạng đó, dữ liệu được trao đổi bằng **UDP (User Datagram Protocol)** [23] — giao thức không kết nối, không bắt tay, không đảm bảo thứ tự/độ tin cậy nhưng **độ trễ rất thấp**, rất phù hợp cho điều khiển robot thời gian thực: telemetry vị trí gửi 10 lần/giây có thể chấp nhận mất vài gói, còn lệnh quan trọng (lộ trình) được gửi lặp lại nhiều lần để bù.
+Trên mạng đó, dữ liệu được trao đổi bằng **UDP (User Datagram Protocol)** <span class="chg">[23]</span> — giao thức không kết nối, không bắt tay, không đảm bảo thứ tự/độ tin cậy nhưng **độ trễ rất thấp**, rất phù hợp cho điều khiển robot thời gian thực: telemetry vị trí gửi 10 lần/giây có thể chấp nhận mất vài gói, còn lệnh quan trọng (lộ trình) được gửi lặp lại nhiều lần để bù.
 
 ## 2.2 CÁC THUẬT TOÁN VÀ LÝ THUYẾT NỀN TẢNG
 
 ### 2.2.1 Mô hình xe vi sai và odometry
 
-Xe robot trong đề tài <span class="chg">**dẫn động vi sai kiểu skid-steer (differential drive)**</span> [25], [30]: <span class="chg">bốn bánh chia thành hai bên trái/phải, mỗi bên do một nhóm hai động cơ điều khiển độc lập</span>, hướng xe thay đổi nhờ chênh lệch tốc độ <span class="chg">hai bên</span>. <span class="chg">Mỗi bên có một encoder đo quãng đường.</span> **Odometry** (đo hành trình) [7], [24] là phương pháp ước lượng vị trí robot bằng cách tích lũy quãng đường <span class="chg">hai bên</span> đo được từ encoder. <span class="chg">(Xe bốn bánh skid-steer có hiện tượng trượt ngang khi xoay, được bù bằng IMU — xem mục 2.2.2.)</span>
+Xe robot trong đề tài <span class="chg">**dẫn động vi sai kiểu skid-steer (differential drive)**</span> <span class="chg">[25]</span>, <span class="chg">[30]</span>: <span class="chg">bốn bánh chia thành hai bên trái/phải, mỗi bên do một nhóm hai động cơ điều khiển độc lập</span>, hướng xe thay đổi nhờ chênh lệch tốc độ <span class="chg">hai bên</span>. <span class="chg">Mỗi bên có một encoder đo quãng đường.</span> **Odometry** (đo hành trình) <span class="chg">[7]</span>, <span class="chg">[24]</span> là phương pháp ước lượng vị trí robot bằng cách tích lũy quãng đường <span class="chg">hai bên</span> đo được từ encoder. <span class="chg">(Xe bốn bánh skid-steer có hiện tượng trượt ngang khi xoay, được bù bằng IMU — xem mục 2.2.2.)</span>
 
 Gọi **dL**, **dR** là quãng đường <span class="chg">bên</span> trái/phải đi được trong một chu kỳ, **L** là khoảng cách giữa <span class="chg">hai vệt bánh trái–phải (track width)</span>. Khi đó:
 - Quãng đường tịnh tiến trung tâm xe: **d = (dL + dR) / 2**
@@ -343,7 +343,7 @@ với **θ_mid** là hướng trung bình trong chu kỳ. Quãng đường mỗi
 
 ### 2.2.2 Bộ lọc bù (Complementary Filter)
 
-Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị **trôi (drift)** khi tích phân lâu dài. **Bộ lọc bù** [14] kết hợp hai nguồn để bù khuyết điểm của nhau (một lựa chọn thay thế phức tạp hơn là **bộ lọc Kalman** [26], [27]):
+Odometry chỉ dựa trên encoder sẽ tích lũy sai số hướng rất nhanh (trượt bánh, đường kính bánh không đều). Ngược lại, con quay hồi chuyển (gyro) của IMU đo vận tốc góc rất tốt trong ngắn hạn nhưng bị **trôi (drift)** khi tích phân lâu dài. **Bộ lọc bù** <span class="chg">[14]</span> kết hợp hai nguồn để bù khuyết điểm của nhau (một lựa chọn thay thế phức tạp hơn là **bộ lọc Kalman** <span class="chg">[26]</span>, <span class="chg">[27]</span>):
 
 > **θ_fused = θ_enc + α × (θ_imu − θ_enc)**
 
@@ -351,13 +351,13 @@ Hệ số **α = 0,35** được chọn để **encoder làm chủ hướng (65%
 
 ### 2.2.3 Thuật toán tìm đường A\*
 
-A\* (A-star) [6], [28] là thuật toán tìm đường đi ngắn nhất trên đồ thị có trọng số, kết hợp chi phí thực tế đã đi $g(n)$ và một hàm ước lượng (heuristic) $h(n)$ tới đích:
+A\* (A-star) <span class="chg">[6]</span>, <span class="chg">[28]</span> là thuật toán tìm đường đi ngắn nhất trên đồ thị có trọng số, kết hợp chi phí thực tế đã đi $g(n)$ và một hàm ước lượng (heuristic) $h(n)$ tới đích:
 
 > **Công thức 8:**
 >
 > **f(n) = g(n) + h(n)**
 
-Trong đề tài, đồ thị là **lưới waypoint**, trọng số mỗi cạnh là khoảng cách Euclid giữa hai node; heuristic $h(n)$ cũng là khoảng cách Euclid từ node tới đích — đây là heuristic **chấp nhận được (admissible)** vì khoảng cách đường chim bay không bao giờ lớn hơn quãng đường thực, đảm bảo A\* tìm ra đường tối ưu. Đề tài còn bổ sung một **chi phí phụ phạt rẽ (turn penalty)**: khi hai đường có cùng độ dài, A\* ưu tiên đường **ít phải rẽ hơn** để xe chạy mượt và giảm sai số tích lũy do mỗi lần xoay. Với môi trường thay đổi động, các biến thể tái lập kế hoạch như **D\* Lite** [29] cho phép cập nhật đường đi tăng tiến mà không phải tính lại từ đầu.
+Trong đề tài, đồ thị là **lưới waypoint**, trọng số mỗi cạnh là khoảng cách Euclid giữa hai node; heuristic $h(n)$ cũng là khoảng cách Euclid từ node tới đích — đây là heuristic **chấp nhận được (admissible)** vì khoảng cách đường chim bay không bao giờ lớn hơn quãng đường thực, đảm bảo A\* tìm ra đường tối ưu. Đề tài còn bổ sung một **chi phí phụ phạt rẽ (turn penalty)**: khi hai đường có cùng độ dài, A\* ưu tiên đường **ít phải rẽ hơn** để xe chạy mượt và giảm sai số tích lũy do mỗi lần xoay. Với môi trường thay đổi động, các biến thể tái lập kế hoạch như **D\* Lite** <span class="chg">[29]</span> cho phép cập nhật đường đi tăng tiến mà không phải tính lại từ đầu.
 
 > **[CHÈN HÌNH 2.5 — Minh họa quá trình mở rộng node của A* trên đồ thị]**
 
@@ -365,7 +365,7 @@ Trong đề tài, đồ thị là **lưới waypoint**, trọng số mỗi cạn
 
 ### 2.3.1 PlatformIO trên Visual Studio Code
 
-Firmware ESP32 được phát triển bằng **PlatformIO** [31] — một hệ sinh thái phát triển nhúng chạy trên VS Code, hỗ trợ quản lý thư viện, biên dịch, nạp chương trình và giám sát Serial. So với Arduino IDE truyền thống, PlatformIO mạnh hơn ở quản lý dự án nhiều file (module hóa), khai báo thư viện qua `platformio.ini`, và hỗ trợ nhiều môi trường build (đề tài có 2 môi trường: `esp32dev` cho firmware chính và `l298n_test` để test riêng mạch lái động cơ). Ngôn ngữ sử dụng là **C++** trên framework Arduino-ESP32.
+Firmware ESP32 được phát triển bằng **PlatformIO** <span class="chg">[31]</span> — một hệ sinh thái phát triển nhúng chạy trên VS Code, hỗ trợ quản lý thư viện, biên dịch, nạp chương trình và giám sát Serial. So với Arduino IDE truyền thống, PlatformIO mạnh hơn ở quản lý dự án nhiều file (module hóa), khai báo thư viện qua `platformio.ini`, và hỗ trợ nhiều môi trường build (đề tài có 2 môi trường: `esp32dev` cho firmware chính và `l298n_test` để test riêng mạch lái động cơ). Ngôn ngữ sử dụng là **C++** trên framework Arduino-ESP32.
 
 > **[CHÈN HÌNH 2.6 — Giao diện PlatformIO trên VS Code]**
 
@@ -388,7 +388,7 @@ Phần mềm thiết kế mạch (Proteus hoặc Fritzing) được dùng để 
 | `WiFi.h` (built-in) | Tạo WiFi Access Point (SoftAP) cho ESP32 |
 | `WiFiUdp.h` (built-in) | Mở socket UDP gửi telemetry / nhận lệnh |
 | `Wire.h` (built-in) | Giao tiếp I2C mức thấp với MPU-6050 (đọc/ghi thanh ghi trực tiếp, **không** dùng thư viện MPU bên ngoài) |
-| `Preferences.h` (built-in) | Lưu dữ liệu hiệu chuẩn (motor trim, encoder scale) vào NVS flash [32] |
+| `Preferences.h` (built-in) | Lưu dữ liệu hiệu chuẩn (motor trim, encoder scale) vào NVS flash <span class="chg">[32]</span> |
 | Hàm `ledc*`, `attachInterrupt`, `pulseIn` (core) | PWM phần cứng, ngắt encoder, đo xung siêu âm |
 
 **Ứng dụng (Dart / Flutter):**
@@ -485,7 +485,7 @@ Bảng 3.1 tổng hợp toàn bộ phân bổ chân GPIO của ESP32 trong hệ 
 
 **Chức năng:** trung tâm điều khiển, chạy toàn bộ firmware ở chu kỳ vòng lặp **50 Hz (20 ms)**.
 
-**Lựa chọn linh kiện:** đề tài sử dụng board **ESP32 DevKit (ESP32-WROOM-32, 38 chân)** [1], [2] vì các lý do:
+**Lựa chọn linh kiện:** đề tài sử dụng board **ESP32 DevKit (ESP32-WROOM-32, 38 chân)** <span class="chg">[1]</span>, <span class="chg">[2]</span> vì các lý do:
 - **Hiệu năng cao:** lõi kép Xtensa 240 MHz, đủ sức chạy đồng thời odometry, máy trạng thái điều hướng và UDP.
 - **Tích hợp WiFi:** phát được Access Point để app kết nối trực tiếp, không cần module mạng ngoài — đây là yếu tố then chốt giúp loại bỏ router.
 - **Nhiều GPIO và ngoại vi:** đủ chân cho <span class="chg">2 kênh động cơ</span> (6 chân), 2 encoder, I2C, siêu âm, buzzer; có bộ LEDC tạo PWM phần cứng và nhiều chân hỗ trợ ngắt.
@@ -498,7 +498,7 @@ Bảng 3.1 tổng hợp toàn bộ phân bổ chân GPIO của ESP32 trong hệ 
 
 **Chức năng:** chuyển tín hiệu điều khiển logic của ESP32 thành dòng đủ lớn để quay <span class="chg">bốn động cơ DC, gộp thành hai nhóm trái/phải</span>.
 
-**Lựa chọn linh kiện:** dùng module **L298N** (mạch cầu H đôi) [4]. <span class="chg">L298N có hai kênh cầu H điều khiển độc lập hai bên; mỗi bên đấu **song song hai động cơ** lên cùng một kênh, dùng 2 chân chiều quay (IN) và 1 chân Enable nhận PWM.</span> So với DRV8833/TB6612, L298N có sẵn, rẻ, chịu dòng tốt, tản nhiệt tích hợp, phù hợp động cơ DC giảm tốc cỡ nhỏ.
+**Lựa chọn linh kiện:** dùng module **L298N** (mạch cầu H đôi) <span class="chg">[4]</span>. <span class="chg">L298N có hai kênh cầu H điều khiển độc lập hai bên; mỗi bên đấu **song song hai động cơ** lên cùng một kênh, dùng 2 chân chiều quay (IN) và 1 chân Enable nhận PWM.</span> So với DRV8833/TB6612, L298N có sẵn, rẻ, chịu dòng tốt, tản nhiệt tích hợp, phù hợp động cơ DC giảm tốc cỡ nhỏ.
 
 > **Bảng 3.2 — Thông số kỹ thuật module L298N**
 
@@ -543,7 +543,7 @@ Khoảng cách giữa hai node là **0,5 m**, tương đương 0,5 m / 1,021 cm 
 
 **Chức năng:** đo hướng (yaw) của xe để hiệu chỉnh odometry và giữ hướng khi đi thẳng / xoay đúng góc.
 
-**Lựa chọn linh kiện:** dùng **MPU-6050** [3] (6 trục: 3 gia tốc + 3 con quay hồi chuyển), giao tiếp I2C, giá rẻ, rất phổ biến. Đề tài chỉ dùng **trục gyro Z** để tính yaw.
+**Lựa chọn linh kiện:** dùng **MPU-6050** <span class="chg">[3]</span> (6 trục: 3 gia tốc + 3 con quay hồi chuyển), giao tiếp I2C, giá rẻ, rất phổ biến. Đề tài chỉ dùng **trục gyro Z** để tính yaw.
 
 **Nguyên lý (theo `imu_mpu6050.cpp`):**
 - Khởi động: đánh thức chip, đặt tần số lấy mẫu **100 Hz**, bộ lọc DLPF ~44 Hz, dải đo con quay **±250 °/s** (độ nhạy 131 LSB/(°/s)).
@@ -568,7 +568,7 @@ Khoảng cách giữa hai node là **0,5 m**, tương đương 0,5 m / 1,021 cm 
 
 **Chức năng:** đo khoảng cách vật cản phía trước để phục vụ **chế độ tự hành né vật cản** — phát hiện chướng ngại, dừng kịp thời và đo khoảng cách hai bên (qua servo quét) để chọn hướng đi.
 
-**Lựa chọn linh kiện:** dùng **HC-SR04** [5] (siêu âm), giao tiếp số đơn giản (Trig/Echo), tầm đo 2–400 cm, rẻ, dễ tích hợp, không nhạy với ánh sáng môi trường (khác cảm biến hồng ngoại). So với cảm biến ToF laser (VL53L0X) đắt hơn, HC-SR04 đủ dùng cho mục tiêu phát hiện vật cản cơ bản.
+**Lựa chọn linh kiện:** dùng **HC-SR04** <span class="chg">[5]</span> (siêu âm), giao tiếp số đơn giản (Trig/Echo), tầm đo 2–400 cm, rẻ, dễ tích hợp, không nhạy với ánh sáng môi trường (khác cảm biến hồng ngoại). So với cảm biến ToF laser (VL53L0X) đắt hơn, HC-SR04 đủ dùng cho mục tiêu phát hiện vật cản cơ bản.
 
 **Nguyên lý (theo `ultrasonic_hcsr04.cpp`):** phát xung trigger 10 µs, đo độ rộng xung Echo bằng `pulseIn` (timeout 30 ms ≈ ngoài tầm), quy đổi sang cm theo Công thức 2 (vận tốc âm ~0,0343 cm/µs, chia 2 vì sóng đi và về). Firmware cung cấp hai cách đọc tùy ngữ cảnh:
 - **Đọc kỹ (`readDistanceCm`)** — lấy **trung vị của 5 mẫu** (median filter, có nghỉ giữa các mẫu) để khử nhiễu; dùng khi xe **đứng yên** quét hai bên, nơi cần độ chính xác cao.
@@ -636,7 +636,7 @@ Hệ thống dùng nguồn pin cấp cho cả động lực và điều khiển.
 
 ## 3.3 THIẾT KẾ PHẦN MỀM ỨNG DỤNG DI ĐỘNG (FLUTTER)
 
-Ứng dụng được xây dựng bằng **Flutter** [9], tổ chức theo mô hình phân lớp rõ ràng (models – planning – services – screens), giúp dễ kiểm thử và bảo trì.
+Ứng dụng được xây dựng bằng **Flutter** <span class="chg">[9]</span>, tổ chức theo mô hình phân lớp rõ ràng (models – planning – services – screens), giúp dễ kiểm thử và bảo trì.
 
 **Các lớp chính:**
 - **models:** `RobotState` (pose x, y, θ; khoảng cách vật cản; trạng thái — kể cả các trạng thái tự hành `exploring`/`scanning`/`avoiding`/`stuck`), `RoadMap` (Node, Edge, các cạnh bị chặn lúc chạy).
