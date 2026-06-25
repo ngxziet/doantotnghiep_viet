@@ -543,13 +543,20 @@ a { color: #000; text-decoration: none; word-break: break-all; }
 <p>Xuất phát từ những lý do đó, đề tài <strong>&quot;Xe robot tự hành định vị bằng odometry và tìm đường A*&quot;</strong> được lựa chọn thực hiện. Đề tài dùng ESP32 làm bộ điều khiển trung tâm; định vị bằng odometry kết hợp encoder bánh xe và cảm biến góc MPU-6050 thông qua bộ lọc bù [14]; tìm đường bằng thuật toán A* [6] chạy trên ứng dụng di động đa nền tảng viết bằng Flutter [9]; và liên lạc thời gian thực giữa ứng dụng với xe qua giao thức UDP trên mạng WiFi cục bộ do chính ESP32 phát ra. Việc chọn Flutter và mạng cục bộ giúp hệ thống đa nền tảng, độ trễ thấp và hoạt động độc lập với Internet. Toàn bộ hệ thống được thiết kế theo hướng module hóa, chi phí thấp và có khả năng mở rộng, hướng tới một nền tảng học thuật hoàn chỉnh cho các bài toán định vị và dẫn đường robot ở quy mô phòng thí nghiệm.</p>
 <h2>1.2 MỤC TIÊU NGHIÊN CỨU</h2>
 <p><strong>Mục tiêu lớn:</strong> Thiết kế và xây dựng một xe robot tự hành sử dụng vi điều khiển ESP32, có khả năng tự định vị, tự tìm đường và bám theo lộ trình tới điểm đích do người dùng chọn trên ứng dụng di động.</p>
-<p><strong>Mục tiêu cụ thể:</strong></p>
+<p><strong>Mục tiêu cụ thể — các kết quả dự kiến đạt được:</strong></p>
+<p><em>Về phần cứng:</em></p>
 <ul>
-<li>Nghiên cứu và lựa chọn phần cứng phù hợp: vi điều khiển, mạch lái động cơ, encoder, cảm biến quán tính, cảm biến khoảng cách.</li>
-<li>Xây dựng firmware ESP32 module hóa: điều khiển động cơ, đọc encoder/IMU/siêu âm, ước lượng odometry, máy trạng thái điều hướng giữa các node.</li>
-<li>Xây dựng ứng dụng di động (Flutter) hiển thị bản đồ, tính đường đi bằng A*, gửi lộ trình và hiển thị vị trí xe theo thời gian thực.</li>
-<li>Thiết kế giao thức truyền thông UDP độ trễ thấp giữa app và ESP32.</li>
-<li>Tích hợp cơ chế tự hiệu chuẩn để giảm sai số định vị, đảm bảo hệ thống hoạt động ổn định, chính xác trong phạm vi cho phép.</li>
+<li>Hoàn thiện cơ khí xe robot <strong>hai bánh vi sai</strong>: khung xe, hai động cơ DC giảm tốc gắn <strong>encoder quang</strong>, bánh đa hướng đỡ phía sau.</li>
+<li>Lắp và đấu nối khối điện tử quanh <strong>ESP32</strong>: mạch lái <strong>L298N</strong> + 2 động cơ, <strong>IMU MPU-6050</strong> (I2C), <strong>HC-SR04</strong> gắn trên <strong>servo quét</strong>, buzzer; cấp nguồn pin qua module ổn áp.</li>
+<li>Đi dây và bố trí <strong>chống nhiễu</strong> (tách dây tín hiệu/động lực, nối chung mass) để hệ thống chạy ổn định.</li>
+</ul>
+<p><em>Về phần mềm:</em></p>
+<ul>
+<li><strong>Firmware ESP32 module hóa</strong>: điều khiển động cơ (PWM/cầu H), đọc encoder bằng ngắt, đọc IMU + siêu âm, ước lượng <strong>odometry vi sai</strong> kết hợp <strong>bộ lọc bù</strong> IMU.</li>
+<li><strong>Máy trạng thái điều hướng node</strong>: tự xoay đúng hướng và đi thẳng đúng quãng đường giữa các node, có giữ hướng + cân bằng hai bánh; <strong>tự hiệu chuẩn</strong> (cân bằng động cơ, tỉ lệ encoder) lưu qua các lần khởi động.</li>
+<li><strong>Né vật cản</strong>: chế độ tự hành (siêu âm + servo quét, tự rẽ tránh) và né vật cản động khi bám lộ trình (chặn cạnh trên bản đồ + tính lại đường bằng A*).</li>
+<li><strong>Ứng dụng di động Flutter</strong>: hiển thị bản đồ lưới waypoint, tính đường đi ngắn nhất bằng <strong>A*</strong>, gửi lộ trình và hiển thị vị trí xe + trạng thái theo thời gian thực; có chế độ <strong>giả lập</strong> chạy không cần phần cứng.</li>
+<li><strong>Giao thức truyền thông UDP</strong> độ trễ thấp (lệnh + telemetry) kèm chia mảnh lộ trình và chống trùng gói.</li>
 </ul>
 <h2>1.3 NHIỆM VỤ NGHIÊN CỨU</h2>
 <p>Trong quá trình thực hiện, đề tài tập trung vào các nhiệm vụ chính: khảo sát và phân tích các phương pháp định vị/dẫn đường cho robot di động; nghiên cứu các loại cảm biến phù hợp với ESP32; thiết kế sơ đồ khối và mạch nguyên lý của hệ thống; lập trình điều khiển động cơ và đọc cảm biến; cài đặt thuật toán odometry và bộ lọc bù; cài đặt thuật toán A* và bộ dựng waypoint trên ứng dụng; thiết kế giao thức UDP và cơ chế telemetry; kiểm thử hệ thống thực tế; đo đạc, tinh chỉnh tham số và đánh giá sai số; đề xuất hướng cải tiến.</p>

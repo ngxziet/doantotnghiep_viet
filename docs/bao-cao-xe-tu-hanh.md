@@ -210,12 +210,19 @@ Xuất phát từ những lý do đó, đề tài **"Xe robot tự hành định
 
 **Mục tiêu lớn:** Thiết kế và xây dựng một xe robot tự hành sử dụng vi điều khiển ESP32, có khả năng tự định vị, tự tìm đường và bám theo lộ trình tới điểm đích do người dùng chọn trên ứng dụng di động.
 
-**Mục tiêu cụ thể:**
-- Nghiên cứu và lựa chọn phần cứng phù hợp: vi điều khiển, mạch lái động cơ, encoder, cảm biến quán tính, cảm biến khoảng cách.
-- Xây dựng firmware ESP32 module hóa: điều khiển động cơ, đọc encoder/IMU/siêu âm, ước lượng odometry, máy trạng thái điều hướng giữa các node.
-- Xây dựng ứng dụng di động (Flutter) hiển thị bản đồ, tính đường đi bằng A\*, gửi lộ trình và hiển thị vị trí xe theo thời gian thực.
-- Thiết kế giao thức truyền thông UDP độ trễ thấp giữa app và ESP32.
-- Tích hợp cơ chế tự hiệu chuẩn để giảm sai số định vị, đảm bảo hệ thống hoạt động ổn định, chính xác trong phạm vi cho phép.
+**Mục tiêu cụ thể — các kết quả dự kiến đạt được:**
+
+*Về phần cứng:*
+- Hoàn thiện cơ khí xe robot **hai bánh vi sai**: khung xe, hai động cơ DC giảm tốc gắn **encoder quang**, bánh đa hướng đỡ phía sau.
+- Lắp và đấu nối khối điện tử quanh **ESP32**: mạch lái **L298N** + 2 động cơ, **IMU MPU-6050** (I2C), **HC-SR04** gắn trên **servo quét**, buzzer; cấp nguồn pin qua module ổn áp.
+- Đi dây và bố trí **chống nhiễu** (tách dây tín hiệu/động lực, nối chung mass) để hệ thống chạy ổn định.
+
+*Về phần mềm:*
+- **Firmware ESP32 module hóa**: điều khiển động cơ (PWM/cầu H), đọc encoder bằng ngắt, đọc IMU + siêu âm, ước lượng **odometry vi sai** kết hợp **bộ lọc bù** IMU.
+- **Máy trạng thái điều hướng node**: tự xoay đúng hướng và đi thẳng đúng quãng đường giữa các node, có giữ hướng + cân bằng hai bánh; **tự hiệu chuẩn** (cân bằng động cơ, tỉ lệ encoder) lưu qua các lần khởi động.
+- **Né vật cản**: chế độ tự hành (siêu âm + servo quét, tự rẽ tránh) và né vật cản động khi bám lộ trình (chặn cạnh trên bản đồ + tính lại đường bằng A\*).
+- **Ứng dụng di động Flutter**: hiển thị bản đồ lưới waypoint, tính đường đi ngắn nhất bằng **A\***, gửi lộ trình và hiển thị vị trí xe + trạng thái theo thời gian thực; có chế độ **giả lập** chạy không cần phần cứng.
+- **Giao thức truyền thông UDP** độ trễ thấp (lệnh + telemetry) kèm chia mảnh lộ trình và chống trùng gói.
 
 ## 1.3 NHIỆM VỤ NGHIÊN CỨU
 
